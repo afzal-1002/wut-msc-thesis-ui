@@ -2,7 +2,7 @@ import { NgClass, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { User } from '../../../../models/user.model';
+import { User } from '../../../../models/classes/user.model';
 import { UserService } from '../../../../services/user/user.service';
 
 

@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
-import { AboutComponent } from './shared/about/about.component';
-import { HomeComponent } from './shared/home/home.component';
+import { AboutComponent } from './shared/component/about/about.component';
+import { HomeComponent } from './shared/component/home/home.component';
 import { LoginComponent } from './features/auth/login/login.component';
-import { ContactComponent } from './shared/contact/contact.component';
+import { ContactComponent } from './shared/component/contact/contact.component';
 import { NotFoundComponent } from './features/error/not-found/not-found.component';
 import { ProfileComponent } from './features/dashboard/profile/profile.component';
 import { UserDashboardComponent } from './features/dashboard/users/user-dashboard/user-dashboard.component';

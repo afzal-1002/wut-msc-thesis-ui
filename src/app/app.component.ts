@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {  RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './shared/header/header.component';
+import { HeaderComponent } from './shared/component/header/header.component';
 
 
 
@@ -16,5 +16,4 @@ import { HeaderComponent } from './shared/header/header.component';
 export class AppComponent {
   title = 'thesis-bug-ui';
   isLoogedIn: boolean = true;
- 
 }

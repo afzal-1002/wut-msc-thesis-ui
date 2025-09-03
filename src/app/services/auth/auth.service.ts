@@ -1,26 +1,55 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { User } from '../../models/user.model';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { BehaviorSubject, map } from 'rxjs';
+import { User } from '../../models/classes/user.model';
 
 @Injectable({ providedIn: 'root' })
-
 export class AuthService {
-  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
-  isLoggedIn$ = this.isLoggedInSubject.asObservable(); // for async pipe
+  private platformId = inject(PLATFORM_ID);
+  private isBrowser = isPlatformBrowser(this.platformId);
+  private storage: Storage | null = this.isBrowser ? window.localStorage : null;
 
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  currentUser$ = this.currentUserSubject.asObservable();
+  private user$ = new BehaviorSubject<User | null>(this.loadFromStorage());
+  currentUser$ = this.user$.asObservable();
 
-  login() { this.isLoggedInSubject.next(true); }
-  loginUser(user: User) { this.currentUserSubject.next(user);}
+  // ✅ boolean streams for templates with | async
+  isLoggedIn$ = this.currentUser$.pipe(map(u => !!u));
+  isUser$     = this.currentUser$.pipe(map(u => this.hasRole(u, 'user')));
+  isAdmin$    = this.currentUser$.pipe(map(u => this.hasRole(u, 'admin')));
 
-  logout() {
-    this.isLoggedInSubject.next(false);
-    this.currentUserSubject.next(null);
+  // --- public API ---
+  loginUser(user: User): void {
+    this.user$.next(user);
+    if (this.storage) {
+      try { this.storage.setItem('currentUser', JSON.stringify(user)); } catch {}
+    }
   }
-  
-  getStatus(): boolean { return this.isLoggedInSubject.value; }
-  getCurrentUserStatus(): User | null { return this.currentUserSubject.value;}
 
+  logout(): void {
+    this.user$.next(null);
+    if (this.storage) {
+      try { this.storage.removeItem('currentUser'); } catch {}
+    }
+  }
 
+  get currentUser(): User | null {
+    return this.user$.value;
+  }
+
+  // --- helpers ---
+  private loadFromStorage(): User | null {
+    if (!this.storage) return null; // SSR-safe
+    try {
+      const raw = this.storage.getItem('currentUser');
+      return raw ? (JSON.parse(raw) as User) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private hasRole(u: User | null, role: string): boolean {
+    if (!u || !u.userRole) return false;
+    const roles = Array.isArray(u.userRole) ? u.userRole : [u.userRole];
+    return roles.includes(role);
+  }
 }

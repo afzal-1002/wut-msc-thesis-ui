@@ -2,7 +2,7 @@ import { JsonPipe, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { UserService } from '../../../services/user/user.service';
-import { User } from '../../../models/user.model';
+import { User } from '../../../models/classes/user.model';
 
 
 @Component({

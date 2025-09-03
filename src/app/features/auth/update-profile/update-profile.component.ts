@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../../services/user/user.service'; 
-import { User } from '../../../models/user.model'; 
+import { User } from '../../../models/classes/user.model'; 
 
 @Component({
   selector: 'app-update-profile',

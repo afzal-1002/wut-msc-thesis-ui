@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { User } from '../../../models/user.model';
+import { User } from '../../../models/classes/user.model';
 import { UserService } from '../../../services/user/user.service';
 import { NgFor, NgIf } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -19,6 +19,8 @@ import { AuthService } from '../../../services/auth/auth.service';
 export class LoginComponent {
 
   constructor(private router: Router, public authService: AuthService, private userService: UserService) { }
+
+  userLoginName: string = '';
 
   userList: User[] = [];
 
@@ -60,6 +62,15 @@ export class LoginComponent {
       console.log('❌ Invalid credentials');
       this.invalidCredentials = true;
     }
+  }
+
+  userLogin(event:Event): void {
+    this.userLoginName = this.loginForm.get('userName')?.value || '';
+    console.log('User Login Name:', this.userLoginName);
+    
+    this.userLoginName = event.target as HTMLInputElement ? (event.target as HTMLInputElement).value : '';
+    console.log('User Login Name from Event:', this.userLoginName);
+    
   }
 
 }
