@@ -1,0 +1,81 @@
+
+
+<nav *ngIf="(authService.isLoggedIn$ | async)" class="navbar navbar-expand-lg main-navbar sticky-top">
+  <div class="container-fluid px-3">
+    <a class="navbar-brand fw-bold" routerLink="/">Bug Estimation Tool</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto d-flex align-items-center gap-3">
+
+    
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            Product <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" routerLink="/projects">Projects</a></li>
+            <li><a class="dropdown-item" routerLink="/bugs">Bug Module</a></li>
+            <li><a class="dropdown-item" routerLink="/estimations">Estimation Time</a></li>
+          </ul>
+        </li>
+
+     
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle customLink" role="button" data-bs-toggle="dropdown">
+            Use Cases <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item customLink" routerLink="/create-bug">Create Bug</a></li>
+            <li><a class="dropdown-item customLink" routerLink="/update-bug">Update Bug</a></li>
+            <li><a class="dropdown-item customLink" routerLink="/all-bugs">View All Bugs</a></li>
+          </ul>
+        </li>
+
+    
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+            User <i class="bi bi-caret-down-fill"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" [routerLink]="['view-profile', 'test']">View Profile</a></li>
+            <li><a class="dropdown-item" routerLink="/update-profile">Update Profile</a></li>
+          </ul>
+        </li>
+
+
+        <li class="nav-item">
+          <a class="btn nav-link text-danger" routerLink="/home" (click)="logOut()">Logout</a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+<div *ngIf="(authService.isLoggedIn$ | async) === false">
+  <nav class="navbar navbar-expand-lg guest-navbar sticky-top">
+    <div class="container-fluid px-3">
+      <a class="navbar-brand fw-bold" routerLink="/">Bug Estimation Tool</a>
+
+      <div class="ms-auto d-flex align-items-center gap-3">
+   
+        <div class="dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Tool
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" routerLink="/tools">View Solution</a></li>
+          </ul>
+        </div>
+
+        <a class="nav-link btn" routerLink="/register">Register</a>
+        <a class="nav-link btn btn-sm" routerLink="/login" (click)="userLoggedIn()">Login</a>
+      </div>
+    </div>
+  </nav>
+</div>
