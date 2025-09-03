@@ -1,8 +1,8 @@
 import { AsyncPipe, NgIf } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
-import { User } from "../../models/user.model";
-import { AuthService } from "../../services/auth/auth.service";
+import { User } from "../../../models/classes/user.model";
+import { AuthService } from "../../../services/auth/auth.service";
 
 @Component({
   selector: "app-header",
@@ -14,10 +14,7 @@ import { AuthService } from "../../services/auth/auth.service";
 export class HeaderComponent implements OnInit {
   user: User | null = null;
 
-  constructor(
-    private router: Router,
-    public authService: AuthService
-  ) {}
+  constructor( private router: Router, public authService: AuthService) {}
 
   ngOnInit(): void {
     this.authService.currentUser$.subscribe(user => {
