@@ -1,29 +1,20 @@
-import { AsyncPipe, NgIf } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
-import { User } from "../../../models/classes/user.model";
-import { AuthService } from "../../../services/auth/auth.service";
+import { AsyncPipe, NgIf } from '@angular/common';
+import { Component } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
-  selector: "app-header",
+  selector: 'app-header',
   standalone: true,
-  templateUrl: "./header.component.html",
-  styleUrls: ["./header.component.css"],
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css'],
   imports: [RouterLink, NgIf, AsyncPipe]
 })
-export class HeaderComponent implements OnInit {
-  user: User | null = null;
-
-  constructor( private router: Router, public authService: AuthService) {}
-
-  ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
-      this.user = user;
-    });
-  }
+export class HeaderComponent {
+  constructor(private router: Router, public authService: AuthService) {}
 
   logOut(): void {
-    this.authService.logout(); // Clear login state
+    this.authService.logout();
     this.router.navigate(['home'], { queryParams: { userLogedin: false } });
   }
 
@@ -31,11 +22,9 @@ export class HeaderComponent implements OnInit {
     this.router.navigate(['login'], { queryParams: { userLogedin: false } });
   }
 
-  isAdmin(): boolean {
-    return this.user?.userRole.includes('admin') ?? false;
-  }
-
-  isUser(): boolean {
-    return this.user?.userRole.includes('user') ?? false;
+  goToProfile(link: 'user-profile' | 'update-profile', id?: number | null): void {
+    if (!id && this.authService.currentUser) id = this.authService.currentUser.id ?? null;
+    if (id == null) return;
+    this.router.navigate([link, id]);
   }
 }

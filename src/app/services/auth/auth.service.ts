@@ -1,38 +1,30 @@
 // auth.service.ts
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { User } from '../../models/classes/user.model';
-import { SessionStorageService } from '../session/session-storage.service';
-
-
-// auth.service.ts (snippets)
+import { UserSessionService } from '../user-session/user-session.service';
 
 const LOGIN_USER = 'currentUser';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private user$: BehaviorSubject<User | null>;
-  currentUser$ = new BehaviorSubject<User | null>(null).asObservable(); // will reassign below
-  isLoggedIn$;
-  isUser$;
-  isAdmin$;
+  private user$ = new BehaviorSubject<User | null>(null);
 
-  constructor(private sessionService: SessionStorageService) {
-    const user = this.sessionService.getItem<any>(LOGIN_USER);
-    const savedUser = this.normalizeUser(user);        // <-- normalize on read
-    this.user$ = new BehaviorSubject<User | null>(savedUser);
+  // public streams with types
+  currentUser$ = this.user$.asObservable();
+  isLoggedIn$: Observable<boolean> = this.currentUser$.pipe(map(u => !!u));
+  isUser$:     Observable<boolean> = this.currentUser$.pipe(map(u => this.hasRole(u, 'user')));
+  isAdmin$:    Observable<boolean> = this.currentUser$.pipe(map(u => this.hasRole(u, 'admin')));
 
-    // expose streams
-    this.currentUser$ = this.user$.asObservable();
-    this.isLoggedIn$  = this.currentUser$.pipe(map(u => !!u));
-    this.isUser$      = this.currentUser$.pipe(map(u => this.hasRole(u, 'user')));
-    this.isAdmin$     = this.currentUser$.pipe(map(u => this.hasRole(u, 'admin')));
+  constructor(private sessionService: UserSessionService) { 
+    const saved = this.normalizeUser(this.sessionService.getItem<any>(LOGIN_USER));
+    this.user$.next(saved);
   }
 
   loginUser(user: User): void {
-    const clean = this.normalizeUser(user)!;           // <-- normalize before save
+    const clean = this.normalizeUser(user)!;
     this.user$.next(clean);
-    this.sessionService.setItem(LOGIN_USER, clean);      // store plain DTO (no underscores)
+    this.sessionService.setItem(LOGIN_USER, clean);
   }
 
   logout(): void {
@@ -41,28 +33,23 @@ export class AuthService {
   }
 
   get currentUser(): User | null {
-    const user = this.sessionService.getItem<any>(LOGIN_USER);
-    const u = this.normalizeUser(user);
+    const u = this.normalizeUser(this.sessionService.getItem<any>(LOGIN_USER));
     if (u !== this.user$.value) this.user$.next(u);
     return u;
   }
 
-  // --- helpers ---
   private hasRole(u: User | null, role: string): boolean {
     if (!u || !u.userRole) return false;
     const roles = Array.isArray(u.userRole) ? u.userRole : [u.userRole];
     return roles.includes(role);
   }
 
-  /** Accepts class instances or plain objects; returns a plain User without underscores */
   private normalizeUser(user: any): User | null {
     if (!user) return null;
     return {
       id:       user.id        ?? user._id        ?? user.userId ?? null,
       userName: user.userName  ?? user._userName  ?? user.name   ?? '',
       userRole: user.userRole  ?? user._userRole  ?? user.role   ?? [],
-      // add any other fields you need the same way:
-      // email: user.email ?? user._email ?? ''
     } as User;
   }
 }
