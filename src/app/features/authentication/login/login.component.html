@@ -40,33 +40,3 @@
 </div>
 
 
-
-
-
-
-
-<div class="container mt-4">
-    <h4 class="mb-3">User List</h4>
-
-    <table class="table table-bordered table-striped table-hover text-center">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>password</th>
-                <th>Role/th> </th>
-            </tr>
-        </thead>
-        <tbody>
-
-
-            <tr *ngFor="let user of userList">
-                <td>{{user.id}}</td>
-                <td>{{user.userName}}</td>
-                <td>{{user.password}}</td>
-                <td>{{user.userRole}}</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-

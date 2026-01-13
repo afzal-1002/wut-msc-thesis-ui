@@ -17,8 +17,12 @@ export class AuthService {
   isAdmin$:    Observable<boolean> = this.currentUser$.pipe(map(u => this.hasRole(u, 'admin')));
 
   constructor(private sessionService: UserSessionService) { 
-    const saved = this.normalizeUser(this.sessionService.getItem<any>(LOGIN_USER));
-    this.user$.next(saved);
+    // On initialization, try to restore user from session storage
+    const saved = this.sessionService.getItem<any>(LOGIN_USER);
+    console.log('🔍 AuthService constructor - restored from storage:', saved);
+    const normalized = this.normalizeUser(saved);
+    this.user$.next(normalized);
+    console.log('✅ AuthService initialized with user:', normalized);
   }
 
   loginUser(user: User): void {
@@ -33,9 +37,23 @@ export class AuthService {
   }
 
   get currentUser(): User | null {
-    const u = this.normalizeUser(this.sessionService.getItem<any>(LOGIN_USER));
-    if (u !== this.user$.value) this.user$.next(u);
-    return u;
+    // Always check session storage - it's the source of truth
+    const stored = this.sessionService.getItem<any>(LOGIN_USER);
+    const normalized = this.normalizeUser(stored);
+    
+    console.log('👁️ currentUser getter called:', { 
+      hasStored: !!stored, 
+      normalized: normalized,
+      currentBehaviorSubject: this.user$.value 
+    });
+    
+    // Sync the BehaviorSubject if they differ
+    if (normalized && normalized.userName !== this.user$.value?.userName) {
+      console.log('🔄 Syncing BehaviorSubject with stored user');
+      this.user$.next(normalized);
+    }
+    
+    return normalized;
   }
 
   private hasRole(u: User | null, role: string): boolean {
@@ -45,11 +63,40 @@ export class AuthService {
   }
 
   private normalizeUser(user: any): User | null {
-    if (!user) return null;
-    return {
-      id:       user.id        ?? user._id        ?? user.userId ?? null,
-      userName: user.userName  ?? user._userName  ?? user.name   ?? '',
-      userRole: user.userRole  ?? user._userRole  ?? user.role   ?? [],
+    if (!user) {
+      console.log('📭 normalizeUser: No user provided');
+      return null;
+    }
+    
+    // Validate that user has at least an identifier
+    const id = user.id ?? user._id ?? user.userId ?? 0;
+    const userName = user.userName ?? user._userName ?? user.username ?? user.name ?? '';
+    
+    console.log('🔧 normalizeUser - Processing user:', { id, userName, userRole: user.userRole || user._userRole });
+    
+    // If we have neither id nor username, user is invalid
+    if (!id && !userName) {
+      console.warn('❌ normalizeUser: User has no valid identifier (id or userName)');
+      return null;
+    }
+
+    const normalized = {
+      id:       id,
+      userName: userName,
+      firstName: user.firstName ?? user._firstName ?? user.first_name ?? '',
+      lastName: user.lastName ?? user._lastName ?? user.last_name ?? '',
+      userEmail: user.userEmail ?? user._userEmail ?? user.email ?? user.emailAddress ?? '',
+      phoneNumber: user.phoneNumber ?? user._phoneNumber ?? user.phone ?? '',
+      password: user.password ?? user._password ?? '',
+      userRole: user.userRole  ?? user._userRole  ?? user.roles ?? user.role ?? [],
+      isLoggedIn: user.isLoggedIn ?? user._isLoggedIn ?? true,
+      accountId: user.accountId ?? user._accountId ?? undefined,
+      displayName: user.displayName ?? user._displayName ?? undefined,
+      active: user.active ?? user._active ?? user.isActive ?? false,
+      baseUrl: user.baseUrl ?? user._baseUrl ?? undefined
     } as User;
+    
+    console.log('✅ normalizeUser - Normalized result:', normalized);
+    return normalized;
   }
 }

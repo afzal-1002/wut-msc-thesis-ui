@@ -5,69 +5,93 @@
     <button type="button" routerLink="/home" class="btn-close position-absolute top-0 end-0 m-3"
       aria-label="Close"></button>
 
-    <h4 class="text-center mb-4">Sign up</h4>
+    <h4 class="text-center mb-4">Register User</h4>
+
+    <!-- Error Message -->
+    <div class="alert alert-danger" role="alert" *ngIf="registrationError">
+      {{ registrationError }}
+    </div>
 
     <form [formGroup]="signUpForm" (ngSubmit)="registerUser()" novalidate>
 
-      <!-- Login Name -->
+      <!-- Username (Email) -->
       <div class="mb-3">
-        <input type="text" class="form-control" formControlName="userName" [ngClass]="getValidationClass('userName')"
-          placeholder="Login name" />
-        <div class="invalid-feedback" *ngIf="userName?.hasError('required') && (userName?.touched || userName?.dirty)">
-          Login name is required.
+        <label for="username" class="form-label">Username (Email)</label>
+        <input type="email" class="form-control" id="username" formControlName="username" 
+          [ngClass]="getValidationClass('username')" placeholder="user@example.com" />
+        <div class="invalid-feedback" *ngIf="username?.hasError('required')">
+          Username is required.
         </div>
-        <div class="invalid-feedback" *ngIf="userName?.hasError('minlength') && !userName?.hasError('required')">
-          Login name must be at least 5 characters.
+        <div class="invalid-feedback" *ngIf="username?.hasError('pattern')">
+          Please enter a valid email address.
         </div>
+      </div>
+
+      <!-- Base URL -->
+      <div class="mb-3">
+        <label for="baseUrl" class="form-label">Base URL <small class="text-muted">(e.g., https://bugresolution.atlassian.net)</small></label>
+        <input type="text" class="form-control" id="baseUrl" formControlName="baseUrl" 
+          [ngClass]="getValidationClass('baseUrl')" placeholder="https://your-domain.atlassian.net" />
+        <div class="invalid-feedback" *ngIf="baseUrl?.hasError('required')">
+          Base URL is required.
+        </div>
+      </div>
+
+      <!-- Jira Token -->
+      <div class="mb-3">
+        <label for="jiraToken" class="form-label">Jira Token</label>
+        <input type="password" class="form-control" id="jiraToken" formControlName="jiraToken" 
+          [ngClass]="getValidationClass('jiraToken')" placeholder="Enter your Jira API token" />
+        <div class="invalid-feedback" *ngIf="jiraToken?.hasError('required')">
+          Jira Token is required.
+        </div>
+        <small class="form-text text-muted">Get your token from Jira account settings</small>
       </div>
 
       <!-- First Name -->
       <div class="mb-3">
-        <input type="text" class="form-control" formControlName="firstName" [ngClass]="getValidationClass('firstName')"
-          placeholder="First Name" />
-        <div class="invalid-feedback"
-          *ngIf="firstName?.hasError('required') && (firstName?.touched || firstName?.dirty)">
+        <label for="firstName" class="form-label">First Name</label>
+        <input type="text" class="form-control" id="firstName" formControlName="firstName" 
+          [ngClass]="getValidationClass('firstName')" placeholder="First Name" />
+        <div class="invalid-feedback" *ngIf="firstName?.hasError('required')">
           First name is required.
         </div>
       </div>
 
       <!-- Last Name -->
       <div class="mb-3">
-        <input type="text" class="form-control" formControlName="lastName" [ngClass]="getValidationClass('lastName')"
-          placeholder="Last Name" />
-        <div class="invalid-feedback" *ngIf="lastName?.hasError('required') && (lastName?.touched || lastName?.dirty)">
+        <label for="lastName" class="form-label">Last Name</label>
+        <input type="text" class="form-control" id="lastName" formControlName="lastName" 
+          [ngClass]="getValidationClass('lastName')" placeholder="Last Name" />
+        <div class="invalid-feedback" *ngIf="lastName?.hasError('required')">
           Last name is required.
         </div>
       </div>
 
       <!-- Email -->
       <div class="mb-3">
-        <input type="email" formControlName="userEmail" class="form-control" [ngClass]="getValidationClass('userEmail')"
-          placeholder="Email" />
-        <div class="invalid-feedback" *ngIf="userEmail?.hasError('required')">
-          Email is required.
-        </div>
-        <div class="invalid-feedback" *ngIf="userEmail?.hasError('pattern') && !userEmail?.hasError('required')">
+        <label for="emailAddress" class="form-label">Email Address <small class="text-muted">(Optional)</small></label>
+        <input type="email" class="form-control" id="emailAddress" formControlName="emailAddress" 
+          [ngClass]="getValidationClass('emailAddress')" placeholder="Email" />
+        <div class="invalid-feedback" *ngIf="emailAddress?.hasError('pattern')">
           Please enter a valid email address.
         </div>
       </div>
 
-
       <!-- Phone -->
       <div class="mb-3">
-        <input type="tel" formControlName="phoneNumber" class="form-control"
+        <label for="phoneNumber" class="form-label">Phone Number <small class="text-muted">(Optional)</small></label>
+        <input type="tel" class="form-control" id="phoneNumber" formControlName="phoneNumber" 
           [ngClass]="getValidationClass('phoneNumber')" placeholder="Phone Number" />
-        <div class="invalid-feedback" *ngIf="phoneNumber?.hasError('required')">
-          Phone number is required.
-        </div>
-        <div class="invalid-feedback" *ngIf="phoneNumber?.hasError('pattern') && !phoneNumber?.hasError('required')">
+        <div class="invalid-feedback" *ngIf="phoneNumber?.hasError('pattern')">
           Please enter a valid phone number (10–15 digits).
         </div>
       </div>
 
       <!-- Password -->
       <div class="mb-3">
-        <input type="password" class="form-control" formControlName="password"
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" formControlName="password"
           [ngClass]="getValidationClass('password')" placeholder="Password" />
         <div class="invalid-feedback" *ngIf="password?.hasError('required')">
           Password is required.
@@ -80,26 +104,53 @@
         </div>
       </div>
 
-      <!-- User Roles -->
+      <!-- Roles (Multiple Select) -->
       <div class="mb-3">
-        <select class="form-select" formControlName="userRole" [ngClass]="getValidationClass('userRole')">
-          <option value="" disabled>Select a role</option> 
-          <option value="user">User</option>
-          <option value="tester">Tester</option>
-          <option value="manager">Manager</option>
-          <option value="support">Support</option>
-          <option value="viewer">Viewer</option>
-        </select>
-        <div class="invalid-feedback" *ngIf="userRole?.hasError('required') && (userRole?.touched || userRole?.dirty)">
-          Please select a role.
+        <label class="form-label">Roles <small class="text-muted">(Select one or more)</small></label>
+        <div class="border rounded p-3" [ngClass]="roles?.invalid && (roles?.touched || roles?.dirty) ? 'border-danger' : ''">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="roleUser" value="USER" 
+              (change)="onRoleChange('USER', $event)" />
+            <label class="form-check-label" for="roleUser">
+              User
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="roleAdmin" value="ADMIN" 
+              (change)="onRoleChange('ADMIN', $event)" />
+            <label class="form-check-label" for="roleAdmin">
+              Admin
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="roleTester" value="TESTER" 
+              (change)="onRoleChange('TESTER', $event)" />
+            <label class="form-check-label" for="roleTester">
+              Tester
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="roleManager" value="MANAGER" 
+              (change)="onRoleChange('MANAGER', $event)" />
+            <label class="form-check-label" for="roleManager">
+              Manager
+            </label>
+          </div>
+        </div>
+        <div class="invalid-feedback d-block" *ngIf="roles?.hasError('required') && (roles?.touched || roles?.dirty)">
+          Please select at least one role.
         </div>
       </div>
 
-
-
       <!-- Submit Button -->
       <div class="d-grid mb-3">
-        <button type="submit" class="btn signUpBtn" [disabled]="signUpForm.invalid">Sign Up</button>
+        <button type="submit" class="btn btn-primary signUpBtn" [disabled]="signUpForm.invalid || isLoading">
+          <span *ngIf="!isLoading">Register</span>
+          <span *ngIf="isLoading">
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            Registering...
+          </span>
+        </button>
       </div>
 
       <p class="text-center mb-0" style="font-size: 14px;">

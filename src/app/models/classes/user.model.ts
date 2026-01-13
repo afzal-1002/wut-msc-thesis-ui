@@ -7,9 +7,12 @@ export class User {
     private _userEmail: string,
     private _phoneNumber: string,
     private _password: string,
-    private _userRole: string [] ,
-    private _isLoggedIn: boolean
-
+    private _userRole: string[] ,
+    private _isLoggedIn: boolean,
+    private _accountId?: string,
+    private _displayName?: string,
+    private _active?: boolean,
+    private _baseUrl?: string
   ) { }
 
   get id(): number {
@@ -80,9 +83,39 @@ export class User {
     return this._userRole;
   }
 
-set userRole(value: string[]) {
-  this._userRole = value;
-}
+  set userRole(value: string[]) {
+    this._userRole = value;
+  }
 
+  get accountId(): string | undefined {
+    return this._accountId;
+  }
 
+  set accountId(value: string | undefined) {
+    this._accountId = value;
+  }
+
+  get displayName(): string | undefined {
+    return this._displayName;
+  }
+
+  set displayName(value: string | undefined) {
+    this._displayName = value;
+  }
+
+  get active(): boolean | undefined {
+    return this._active;
+  }
+
+  set active(value: boolean | undefined) {
+    this._active = value;
+  }
+
+  get baseUrl(): string | undefined {
+    return this._baseUrl;
+  }
+
+  set baseUrl(value: string | undefined) {
+    this._baseUrl = value;
+  }
 }

@@ -28,7 +28,7 @@
           </a>
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" routerLink="/projects">Projects</a></li>
-            <li><a class="dropdown-item" routerLink="/bugs">Bug Module</a></li>
+            <li><a class="dropdown-item" routerLink="/view-bugs">Bug Module</a></li>
             <li><a class="dropdown-item" routerLink="/estimations">Estimation Time</a></li>
           </ul>
         </li>
@@ -56,11 +56,13 @@
           <!-- User dropdown -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-              {{ user.userName }} <i class="bi bi-caret-down-fill"></i>
+              <span *ngIf="user.firstName && user.lastName">{{ user.firstName }} {{ user.lastName }}</span>
+              <span *ngIf="!user.firstName || !user.lastName">{{ user.displayName}}</span>
+              <i class="bi bi-caret-down-fill"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
               <li>
-                <a class="dropdown-item" [routerLink]="['/user-profile', user.id]">View Profile</a>
+                <a class="dropdown-item" routerLink="/view-profile">View Profile</a>
               </li>
               <li>
                 <a class="dropdown-item" [routerLink]="['/update-profile', user.id]">Update Profile</a>

@@ -26,13 +26,16 @@ export class UserProfileComponent {
   ngOnInit(): void {
     this.userId = Number(this.route.snapshot.paramMap.get('id'));
     console.log('Editing profile for user ID:', this.userId);
-    const user: User | undefined = this.userService.getUserById(this.userId);
-
-    if (user) {
-      this.userData = user;
-      this.user = user;
-    }
-
+    
+    this.userService.getUserById(this.userId).subscribe(
+      (user: User) => {
+        this.userData = user;
+        this.user = user;
+      },
+      (error) => {
+        console.error('Error fetching user:', error);
+      }
+    );
   }
   updateProfile(): void {
     if (this.userId != null) {

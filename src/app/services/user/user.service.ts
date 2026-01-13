@@ -1,36 +1,61 @@
 import { Injectable } from '@angular/core';
-import { OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 import { User } from '../../models/classes/user.model';
-
 
 @Injectable({
   providedIn: 'root'
 })
+export class UserService {
+  private apiUrl = `${environment.apiUrl}/api/wut`;
 
-export class UserService implements OnInit{
+  constructor(private http: HttpClient) {}
 
-  public users: User[] = [
-    new User(1, 'afzal1002', 'Muhammad', 'Afzal', 'afzal@gmail.com', "+48729294512",  '12345', ['admin'], false),
-    new User(2, 'akram9001', 'Muhammad', 'Akram', 'akram@gmail.com', "+12346598745",  'pass123',['user'],false),
-    new User(3, 'afzal', 'muhammad', 'afzal', 'afz@gmail.com', "+12346598745",  '12345',['user', 'admin'],false),
-     new User(4, 'muhammad', 'muhammad', 'afzal', 'afzal1002@gmail.com', "+12346598745",  '12345',['user', 'admin'],false)
-  ];
-
-  constructor() {}
-
-  ngOnInit(): void {
+  // Login user with username and password
+  login(username: string, password: string): Observable<any> {
+    const loginPayload = { username, password };
+    return this.http.post(`${this.apiUrl}/users/login`, loginPayload);
   }
 
-  getUserByUserName(userName: string): User | null | undefined{
-    return this.users.find( (item) => item.userName === userName);
+  // Register new user
+  register(registerData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/users/register`, registerData);
   }
 
-  getAllUsers(): User[] {
-    return this.users;
+  // Get current logged-in user from Jira with baseUrl
+  getCurrentUser(baseUrl: string): Observable<any> {
+    const params = { baseUrl };
+    return this.http.get(`${this.apiUrl}/jira-users/me`, { params });
   }
 
-  getUserById(id: number): User | undefined  {
-    const user = this.users.find((u) => u.id === id);
-    return (user); // simulates an HTTP call
+  // Get user by username
+  getUserByUserName(userName: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/users/username/${userName}`);
+  }
+
+  // Get all users
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/users`);
+  }
+
+  // Get user by ID
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/users/${id}`);
+  }
+
+  // Create a new user
+  createUser(user: User): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/users`, user);
+  }
+
+  // Update user
+  updateUser(id: number, user: User): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/users/${id}`, user);
+  }
+
+  // Delete user
+  deleteUser(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/users/${id}`);
   }
 }
