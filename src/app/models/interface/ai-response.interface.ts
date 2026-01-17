@@ -18,7 +18,9 @@ export interface AiDetailsSummary {
 }
 
 export interface AiIssueAnalysis {
-  details: AiDetailsSummary;
+  details?: AiDetailsSummary;
   issueKey: string;
-  generation: string;
+  generation?: string;
+  deepseek?: string;
+  gemini?: string;
 }

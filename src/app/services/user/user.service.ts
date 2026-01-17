@@ -15,7 +15,10 @@ export class UserService {
   // Login user with username and password
   login(username: string, password: string): Observable<any> {
     const loginPayload = { username, password };
-    return this.http.post(`${this.apiUrl}/users/login`, loginPayload);
+    // Backend validates username/password from request body; no extra headers needed.
+    return this.http.post(`${this.apiUrl}/users/login`, loginPayload, {
+      withCredentials: true
+    });
   }
 
   // Register new user

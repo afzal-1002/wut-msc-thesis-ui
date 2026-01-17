@@ -1,0 +1,17 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title mb-2">Stability &amp; Variance</h5>
+    <p class="text-muted small mb-2">Aggregated variance of estimation error and response time.</p>
+
+    <div *ngIf="isLoading" class="small text-muted">Loading stability metrics...</div>
+    <div *ngIf="error" class="small text-danger">{{ error }}</div>
+
+    <ng-container *ngIf="!isLoading && !error && results?.length">
+      <app-variance-chart [variances]="varianceBars"></app-variance-chart>
+    </ng-container>
+
+    <div *ngIf="!isLoading && !error && !results?.length" class="small text-muted">
+      No stability history available.
+    </div>
+  </div>
+</div>

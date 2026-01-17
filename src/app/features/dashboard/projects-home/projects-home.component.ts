@@ -17,10 +17,13 @@ export class ProjectsHomeComponent implements OnInit {
   errorMessage = '';
   deleteConfirmationProjectId: string | null = null;
   projectSource: 'jira' | 'local' = 'jira';
+  userId: number | string | null = null;
 
   constructor(public router: Router, private projectService: ProjectService, private authService: AuthService) {}
 
   ngOnInit(): void {
+    const user = this.authService.currentUser;
+    this.userId = user?.id ?? null;
     this.loadProjects();
   }
 

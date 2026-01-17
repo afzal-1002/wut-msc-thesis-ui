@@ -19,6 +19,10 @@ import { AuthGuard } from './services/auth/auth.guard';
 import { IssuesHomeComponent } from './features/dashboard/issues-home/issues-home.component';
 import { IssueDetailComponent } from './features/dashboard/issue-detail/issue-detail.component';
 import { AiAnalysisPageComponent } from './features/dashboard/issue-detail/ai-analysis-page/ai-analysis-page.component';
+import { AiEstimationsComponent } from './features/dashboard/ai-estimations/ai-estimations.component';
+import { AiEvaluationComponent } from './features/dashboard/ai-estimations/ai-evaluation.component';
+import { AiMetricsComponent } from './features/dashboard/ai-estimations/ai-metrics.component';
+import { AiComparisonComponent } from './features/dashboard/ai-comparison/ai-comparison.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -43,6 +47,12 @@ export const routes: Routes = [
     { path: 'issues/:key', component: IssuesHomeComponent, canActivate: [AuthGuard] },
     { path: 'issue-details/:issueKey', component: IssueDetailComponent, canActivate: [AuthGuard] },
     { path: 'issue-details/:issueKey/ai-analysis', component: AiAnalysisPageComponent, canActivate: [AuthGuard] },
+
+    // AI estimations overview and dedicated pages
+    { path: 'ai-estimations', component: AiEstimationsComponent, canActivate: [AuthGuard] },
+    { path: 'ai-estimations/evaluation', component: AiEvaluationComponent, canActivate: [AuthGuard] },
+    { path: 'ai-estimations/metrics', component: AiMetricsComponent, canActivate: [AuthGuard] },
+    { path: 'ai-estimations/comparison', component: AiComparisonComponent, canActivate: [AuthGuard] },
 
     // Dashboards (by user id)
     { path: 'user-dashboard/:userId', component: UserDashboardComponent, canActivate: [AuthGuard] },

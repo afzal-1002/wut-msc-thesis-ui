@@ -37,23 +37,11 @@ export class AuthService {
   }
 
   get currentUser(): User | null {
-    // Always check session storage - it's the source of truth
-    const stored = this.sessionService.getItem<any>(LOGIN_USER);
-    const normalized = this.normalizeUser(stored);
-    
-    console.log('👁️ currentUser getter called:', { 
-      hasStored: !!stored, 
-      normalized: normalized,
-      currentBehaviorSubject: this.user$.value 
-    });
-    
-    // Sync the BehaviorSubject if they differ
-    if (normalized && normalized.userName !== this.user$.value?.userName) {
-      console.log('🔄 Syncing BehaviorSubject with stored user');
-      this.user$.next(normalized);
-    }
-    
-    return normalized;
+    // Single source of truth during the app lifetime is the BehaviorSubject.
+    // It is initialized from session storage in the constructor.
+    const user = this.user$.value;
+    console.log('👁️ currentUser getter called (from BehaviorSubject):', user);
+    return user;
   }
 
   private hasRole(u: User | null, role: string): boolean {

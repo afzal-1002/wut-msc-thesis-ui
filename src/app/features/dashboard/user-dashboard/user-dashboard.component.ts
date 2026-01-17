@@ -23,8 +23,10 @@ export class UserDashboardComponent implements OnInit {
    // User features
    { icon: '📁', title: 'Projects',       description: 'Manage your projects',       button: 'View Projects',  link: '/projects' },
    { icon: '🐞', title: 'Bugs',           description: 'Track and report bugs',      button: 'View Bugs',      link: '/view-bugs' },
-   { icon: '🤖', title: 'AI Estimations', description: 'Predict bug fix time',       button: 'AI Analysis',    link: '/ai-analysis' },
-   { icon: '📊', title: 'View History',   description: 'View past estimates',        button: 'History',        link: '/check-history' },
+  { icon: '📊', iconImage: 'assets/image/ai-images/ai-02.png', title: 'AI Estimations Analysis', description: 'Predict bug fix time',       button: 'Open AI Estimations',    link: '/ai-estimations' },
+  { icon: '📊', title: 'Model Comparison', description: 'Compare AI models (Gemini vs DeepSeek)', button: 'Open Comparison', link: '/ai-estimations/comparison' },
+  { icon: '🧪', title: 'AI Research', description: 'Bias, stability, explainability and human-in-the-loop analysis', button: 'Open AI Research', link: '/ai-research' },
+  { icon: '🕒', title: 'Historical AI Performance',   description: 'Analyse past estimations and accuracy over time',        button: 'Open History',        link: '/ai-history' },
     { icon: '🔔', title: 'Notifications',  description: 'Stay up to date',            button: 'Alerts',         link: '/notifications' },
     { icon: '👤', title: 'Profile',        description: 'Edit your profile',          button: 'My Profile',     link: '/view-profile' },
 
@@ -62,14 +64,17 @@ export class UserDashboardComponent implements OnInit {
  
    goToLink(link: string): void {
      console.log('Navigating to:', link);
-     console.log('Current user:', this.user);
-     if (!this.user) {
-       console.warn('No user logged in. Redirecting to login page.');
+     const currentUser = this.authService.currentUser;
+     console.log('Current user from AuthService:', currentUser);
+
+     // If there is truly no logged-in user, send to login.
+     if (!currentUser) {
+       console.warn('No user in AuthService. Redirecting to login page.');
        this.router.navigate(['/login']);
        return;
      }
- 
-     if (link.startsWith('/admin') && !this.user.userRole.includes('admin')) {
+
+     if (link.startsWith('/admin') && !currentUser.userRole.includes('admin')) {
        console.warn('Access denied. User is not an admin.');
        alert('Access denied. Admins only.');
        return;

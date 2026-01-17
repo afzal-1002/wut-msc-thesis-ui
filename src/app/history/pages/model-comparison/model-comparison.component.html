@@ -1,0 +1,17 @@
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title mb-2">Historical Model Comparison</h5>
+    <p class="text-muted small mb-2">Average absolute error across history for Gemini vs DeepSeek.</p>
+
+    <div *ngIf="isLoading" class="small text-muted">Loading model comparison...</div>
+    <div *ngIf="error" class="small text-danger">{{ error }}</div>
+
+    <ng-container *ngIf="!isLoading && !error && (values[0] || values[1])">
+      <app-bar-comparison-chart [labels]="labels" [values]="values"></app-bar-comparison-chart>
+    </ng-container>
+
+    <div *ngIf="!isLoading && !error && !(values[0] || values[1])" class="small text-muted">
+      No model comparison data available.
+    </div>
+  </div>
+</div>

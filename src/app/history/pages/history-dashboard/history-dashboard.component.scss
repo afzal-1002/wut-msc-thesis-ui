@@ -1,0 +1,61 @@
+.history-dashboard-page h2 {
+  font-weight: 600;
+}
+
+.history-header-row {
+  gap: 0.75rem;
+}
+
+.history-back-btn {
+  border-radius: 999px;
+  padding: 0.2rem 0.9rem;
+  font-size: 0.8rem;
+}
+
+.history-tabs-card {
+  max-width: 900px;
+  margin: 0 auto 1.5rem;
+  padding: 0.9rem 0.75rem 1rem;
+  border-radius: 0.9rem;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.history-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 0.6rem;
+}
+
+.history-tabs .nav-link {
+  cursor: pointer;
+  border-radius: 999px;
+  text-align: center;
+  padding: 0.35rem 0.95rem;
+  font-weight: 300;
+  font-size: 0.85rem;
+  color: #1d4ed8;
+  background-color: #e0ecff;
+  border: 1px solid #c4d0ff;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.history-tabs .nav-item + .nav-item {
+  margin-left: 0.9rem;
+}
+
+.history-tabs .nav-link:hover:not(.active) {
+  background-color: #d1ddff;
+  transform: translateY(-1px);
+}
+
+.history-tabs .nav-link.active {
+  background: linear-gradient(90deg, #0b5ed7, #1d4ed8);
+  color: #ffffff;
+  box-shadow: 0 0.25rem 0.5rem rgba(37, 99, 235, 0.35);
+}
+
+.history-content {
+  margin-bottom: 2.5rem;
+}

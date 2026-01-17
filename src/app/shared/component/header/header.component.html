@@ -29,9 +29,24 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" routerLink="/projects">Projects</a></li>
             <li><a class="dropdown-item" routerLink="/view-bugs">Bug Module</a></li>
-            <li><a class="dropdown-item" routerLink="/estimations">Estimation Time</a></li>
+            <li><a class="dropdown-item" routerLink="/ai-estimations">AI Estimations Analysis</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li><a class="dropdown-item" routerLink="/ai-estimations/comparison">Model Comparison</a></li>
+            <li><a class="dropdown-item" routerLink="/ai-research">AI Research</a></li>
+            <li><a class="dropdown-item" routerLink="/ai-history">Historical AI Performance</a></li>
           </ul>
         </li>
+
+        <!-- Home link to welcome dashboard -->
+        <ng-container *ngIf="authService.currentUser$ | async as user">
+          <li class="nav-item">
+            <a class="nav-link"
+               [routerLink]="(authService.isAdmin$ | async) ? ['/admin-dashboard', user.id]
+                                                   : ['/user-dashboard',  user.id]">
+              Home
+            </a>
+          </li>
+        </ng-container>
 
         <!-- Use Cases (normal users only) -->
         <ng-container *ngIf="authService.isUser$ | async">
