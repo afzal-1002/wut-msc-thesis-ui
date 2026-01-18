@@ -216,28 +216,36 @@ export class AiComparisonComponent {
               {
                 label: 'Min (s)',
                 data: mins,
-                backgroundColor: 'rgba(76, 175, 80, 0.7)',
+                backgroundColor: '#16a34a',
+                borderColor: '#166534',
+                borderWidth: 1.5,
                 borderRadius: 8,
                 maxBarThickness: 36
               },
               {
                 label: 'Avg (s)',
                 data: avgs,
-                backgroundColor: 'rgba(33, 150, 243, 0.8)',
+                backgroundColor: '#2563eb',
+                borderColor: '#1d4ed8',
+                borderWidth: 1.5,
                 borderRadius: 8,
                 maxBarThickness: 36
               },
               {
                 label: 'Max (s)',
                 data: maxs,
-                backgroundColor: 'rgba(244, 67, 54, 0.8)',
+                backgroundColor: '#dc2626',
+                borderColor: '#b91c1c',
+                borderWidth: 1.5,
                 borderRadius: 8,
                 maxBarThickness: 36
               },
               {
                 label: 'Std dev (s)',
                 data: stds,
-                backgroundColor: 'rgba(255, 193, 7, 0.9)',
+                backgroundColor: '#f59e0b',
+                borderColor: '#b45309',
+                borderWidth: 1.5,
                 borderRadius: 8,
                 maxBarThickness: 36
               }
@@ -264,9 +272,9 @@ export class AiComparisonComponent {
             datasets: raw.map((m: any) => ({
               label: m.aiProvider,
               data: [m.minResponseTimeSec, m.avgResponseTimeSec, m.maxResponseTimeSec],
-              borderColor: m.aiProvider === 'GEMINI' ? '#1976d2' : '#43a047',
-              backgroundColor: m.aiProvider === 'GEMINI' ? 'rgba(25, 118, 210, 0.2)' : 'rgba(67, 160, 71, 0.2)',
-              fill: true,
+              borderColor: m.aiProvider === 'GEMINI' ? '#1d4ed8' : '#16a34a',
+              backgroundColor: 'transparent',
+              fill: false,
               tension: 0.3
             }))
           };
@@ -389,9 +397,9 @@ export class AiComparisonComponent {
           {
             label: 'Avg Response Time',
             data: this.performanceModels.map(m => m.value),
-            borderColor: '#1976d2',
-            backgroundColor: 'rgba(25, 118, 210, 0.2)',
-            fill: true,
+            borderColor: '#1d4ed8',
+            backgroundColor: 'transparent',
+            fill: false,
             tension: 0.3
           }
         ]
@@ -409,16 +417,16 @@ export class AiComparisonComponent {
           {
             label: 'Gemini',
             data: gemini ? [gemini.avgResponseTimeSec, gemini.minResponseTimeSec, gemini.maxResponseTimeSec, gemini.stdDeviationSec] : [0,0,0,0],
-            backgroundColor: 'rgba(25, 118, 210, 0.2)',
-            borderColor: '#1976d2',
-            pointBackgroundColor: '#1976d2'
+            backgroundColor: 'rgba(37,99,235,0.15)',
+            borderColor: '#1d4ed8',
+            pointBackgroundColor: '#1d4ed8'
           },
           {
             label: 'DeepSeek',
             data: deepseek ? [deepseek.avgResponseTimeSec, deepseek.minResponseTimeSec, deepseek.maxResponseTimeSec, deepseek.stdDeviationSec] : [0,0,0,0],
-            backgroundColor: 'rgba(67, 160, 71, 0.2)',
-            borderColor: '#43a047',
-            pointBackgroundColor: '#43a047'
+            backgroundColor: 'rgba(34,197,94,0.15)',
+            borderColor: '#16a34a',
+            pointBackgroundColor: '#16a34a'
           }
         ]
       };

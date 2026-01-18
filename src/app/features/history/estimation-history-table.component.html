@@ -3,16 +3,26 @@
     <tr>
       <th>Date</th>
       <th>Model</th>
-      <th>Accuracy</th>
+      <th>Estimated → Actual (h)</th>
       <th>Notes</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let record of history">
-      <td>{{ record.date | date:'short' }}</td>
-      <td>{{ record.model }}</td>
-      <td>{{ record.accuracy }}</td>
-      <td>{{ record.notes }}</td>
+      <td>{{ record.createdAt | date:'short' }}</td>
+      <td>{{ record.aiProvider }}</td>
+      <td>
+        <ng-container *ngIf="record.actualHours != null; else noActual">
+          {{ record.estimatedHours }} → {{ record.actualHours }}
+        </ng-container>
+        <ng-template #noActual>-</ng-template>
+      </td>
+      <td>
+        <span>
+          {{ record.explanationEnabled ? 'Explanation ON' : 'Explanation OFF' }}
+          {{ record.userPromptProvided ? '| Human-in-loop' : '' }}
+        </span>
+      </td>
     </tr>
   </tbody>
 </table>

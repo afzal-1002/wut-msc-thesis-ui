@@ -129,40 +129,108 @@
         </div>
 
         <div *ngIf="metricsResult" class="mt-3">
-          <div class="row g-3">
-            <!-- Provider comparison vertical bar chart -->
-            <div class="col-md-6">
-              <div *ngIf="providerComparison.length" class="metrics-bar-chart">
-                <canvas baseChart
-                  [data]="providerBarData"
-                  [options]="providerBarOptions"
-                  [type]="providerBarType"
-                  style="max-width: 320px; min-height: 220px;"></canvas>
-              </div>
-              <p class="chart-caption small text-muted mt-1" *ngIf="providerComparison.length">
-                Figure: Average estimated resolution time (hours) per AI model computed from the selected metrics.
-              </p>
+          <!-- Provider comparison vertical bar chart -->
+          <div *ngIf="providerComparison.length" class="mb-4">
+            <div class="metrics-bar-chart text-center">
+              <canvas baseChart
+                [data]="providerBarData"
+                [options]="providerBarOptions"
+                [type]="providerBarType"
+                style="max-width: 480px; min-height: 240px;"></canvas>
             </div>
+            <p class="chart-caption small text-muted mt-1 text-center">
+              Figure: Average estimated resolution time (hours) per AI model computed from the selected metrics.
+            </p>
+          </div>
 
-            <!-- Markdown ON/OFF pie chart (Chart.js) -->
-            <div class="col-md-6">
-              <div *ngIf="markdownDistribution.length" class="d-flex flex-column align-items-center">
-                <canvas baseChart
-                  [data]="markdownPieData"
-                  [options]="markdownPieOptions"
-                  [type]="markdownPieType"
-                  style="max-width: 320px; min-height: 220px;"></canvas>
-              </div>
-              <div *ngIf="markdownDistribution.length" class="metrics-pie-legend small mt-1">
-                <div *ngFor="let m of markdownDistribution">
-                  <span class="legend-color-box" [ngClass]="{'markdown-on': m.label === 'Markdown ON', 'markdown-off': m.label === 'Markdown OFF'}"></span>
-                  {{ m.label }}: {{ m.value }} runs
-                </div>
-              </div>
-              <p class="chart-caption small text-muted mt-1" *ngIf="markdownDistribution.length">
-                Figure: Proportion of runs with Markdown enabled vs disabled in the AI configuration (shown as a pie chart).
-              </p>
+          <!-- Markdown ON/OFF pie chart (Chart.js) -->
+          <div *ngIf="markdownDistribution.length" class="mb-4">
+            <div class="d-flex flex-column align-items-center">
+              <canvas baseChart
+                [data]="markdownPieData"
+                [options]="markdownPieOptions"
+                [type]="markdownPieType"
+                style="max-width: 420px; min-height: 240px;"></canvas>
             </div>
+            <div class="metrics-pie-legend small mt-1 text-center">
+              <div *ngFor="let m of markdownDistribution" class="d-inline-block me-3 mb-1">
+                <span class="legend-color-box" [ngClass]="{'markdown-on': m.label === 'Markdown ON', 'markdown-off': m.label === 'Markdown OFF'}"></span>
+                {{ m.label }}: {{ m.value }} runs
+              </div>
+            </div>
+            <p class="chart-caption small text-muted mt-1 text-center">
+              Figure: Proportion of runs with Markdown enabled vs disabled in the AI configuration (shown as a pie chart).
+            </p>
+          </div>
+
+          <!-- Bar chart: Avg response time per model -->
+          <div *ngIf="responseTimeBarData" class="mb-4">
+            <div class="metrics-bar-chart text-center">
+              <canvas baseChart
+                [data]="responseTimeBarData"
+                [options]="responseTimeBarOptions"
+                [type]="responseTimeBarType"
+                style="max-width: 480px; min-height: 240px;"></canvas>
+            </div>
+            <p class="chart-caption small text-muted mt-1 text-center">
+              Figure: Average response time in seconds per AI model for the current metrics selection.
+            </p>
+          </div>
+
+          <!-- Grouped bar: Min/Avg/Max estimated hours per model -->
+          <div *ngIf="estimationRangeBarData" class="mb-4">
+            <div class="metrics-bar-chart text-center">
+              <canvas baseChart
+                [data]="estimationRangeBarData"
+                [options]="estimationRangeBarOptions"
+                [type]="estimationRangeBarType"
+                style="max-width: 540px; min-height: 260px;"></canvas>
+            </div>
+            <p class="chart-caption small text-muted mt-1 text-center">
+              Figure: Minimum, average, and maximum estimated resolution time (hours) per AI model.
+            </p>
+          </div>
+
+          <!-- Line chart: Estimation evolution over time -->
+          <div *ngIf="estimationTrendLineData" class="mb-4">
+            <div class="metrics-line-chart text-center">
+              <canvas baseChart
+                [data]="estimationTrendLineData"
+                [options]="estimationTrendLineOptions"
+                [type]="estimationTrendLineType"
+                style="max-width: 540px; min-height: 260px;"></canvas>
+            </div>
+            <p class="chart-caption small text-muted mt-1 text-center">
+              Figure: Evolution of estimated resolution hours over time for each AI model (ordered by run timestamp).
+            </p>
+          </div>
+
+          <!-- Radar chart: Multi-criteria comparison -->
+          <div *ngIf="comparisonRadarData" class="mb-4">
+            <div class="metrics-radar-chart text-center">
+              <canvas baseChart
+                [data]="comparisonRadarData"
+                [options]="comparisonRadarOptions"
+                [type]="comparisonRadarType"
+                style="max-width: 480px; min-height: 280px;"></canvas>
+            </div>
+            <p class="chart-caption small text-muted mt-1 text-center">
+              Figure: Multi-criteria comparison per AI model – average response time (sec), average estimated hours, estimation range, and percentage of runs with explanations enabled.
+            </p>
+          </div>
+
+          <!-- Box-plot-style stability chart: min, Q1, median, Q3, max per model -->
+          <div *ngIf="stabilityBoxBarData" class="mb-4">
+            <div class="metrics-bar-chart text-center">
+              <canvas baseChart
+                [data]="stabilityBoxBarData"
+                [options]="stabilityBoxBarOptions"
+                [type]="stabilityBoxBarType"
+                style="max-width: 640px; min-height: 280px;"></canvas>
+            </div>
+            <p class="chart-caption small text-muted mt-1 text-center">
+              Figure: Box-plot style stability view per AI model – showing minimum, 25th percentile (Q1), median, 75th percentile (Q3) and maximum estimated resolution hours.
+            </p>
           </div>
 
           <div class="mt-3">

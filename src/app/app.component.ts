@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 import { Router, RouterOutlet, NavigationStart, NavigationEnd, NavigationError, Event } from '@angular/router';
 import { HeaderComponent } from './shared/component/header/header.component';
 
-
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -11,7 +9,6 @@ import { HeaderComponent } from './shared/component/header/header.component';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-
 
 export class AppComponent {
   title = 'thesis-bug-ui';

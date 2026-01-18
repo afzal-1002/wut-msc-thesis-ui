@@ -431,9 +431,9 @@ export class AiEvaluationComponent {
         {
           label: issueKey ? `Stability (hours) - ${issueKey}` : 'Stability (hours)',
           data: values,
-          borderColor: '#1976d2',
-          backgroundColor: 'rgba(25, 118, 210, 0.2)',
-          fill: true,
+          borderColor: '#2563eb',
+          backgroundColor: 'transparent',
+          fill: false,
           tension: 0.3
         }
       ]
@@ -787,28 +787,36 @@ export class AiEvaluationComponent {
         {
           label: 'Min (s)',
           data: mins,
-          backgroundColor: 'rgba(76, 175, 80, 0.8)',
+          backgroundColor: '#16a34a',
+          borderColor: '#166534',
+          borderWidth: 1.5,
           borderRadius: 8,
           maxBarThickness: 36
         },
         {
           label: 'Avg (s)',
           data: avgs,
-          backgroundColor: 'rgba(33, 150, 243, 0.9)',
+          backgroundColor: '#2563eb',
+          borderColor: '#1d4ed8',
+          borderWidth: 1.5,
           borderRadius: 8,
           maxBarThickness: 36
         },
         {
           label: 'Max (s)',
           data: maxs,
-          backgroundColor: 'rgba(244, 67, 54, 0.85)',
+          backgroundColor: '#dc2626',
+          borderColor: '#b91c1c',
+          borderWidth: 1.5,
           borderRadius: 8,
           maxBarThickness: 36
         },
         {
           label: 'Std dev (s)',
           data: stds,
-          backgroundColor: 'rgba(255, 193, 7, 0.9)',
+          backgroundColor: '#f59e0b',
+          borderColor: '#b45309',
+          borderWidth: 1.5,
           borderRadius: 8,
           maxBarThickness: 36
         }

@@ -83,6 +83,110 @@ export class AiMetricsComponent {
       }
     }
   };
+
+  // Additional charts for metrics analysis
+  responseTimeBarData: any = null;
+  responseTimeBarOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+        color: '#111',
+        font: { weight: 'bold', size: 12 },
+        formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+      }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, grid: { color: '#eee' } }
+    }
+  };
+  responseTimeBarType: 'bar' = 'bar';
+
+  estimationRangeBarData: any = null;
+  estimationRangeBarOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: {
+      legend: { display: true, position: 'top' },
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+        color: '#111',
+        font: { weight: 'bold', size: 11 },
+        formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+      }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, grid: { color: '#eee' } }
+    }
+  };
+  estimationRangeBarType: 'bar' = 'bar';
+
+  estimationTrendLineData: any = null;
+  estimationTrendLineOptions: ChartOptions<'line'> = {
+    responsive: true,
+    plugins: {
+      legend: { display: true, position: 'top' },
+      datalabels: {
+        anchor: 'end',
+        align: 'top',
+        color: '#111',
+        font: { weight: 'bold', size: 11 },
+        formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+      }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, grid: { color: '#eee' } }
+    }
+  };
+  estimationTrendLineType: 'line' = 'line';
+
+  comparisonRadarData: any = null;
+  comparisonRadarOptions: ChartOptions<'radar'> = {
+    responsive: true,
+    plugins: {
+      legend: { display: true, position: 'top' },
+      datalabels: {
+        color: '#111',
+        font: { weight: 'bold', size: 11 },
+        formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+      }
+    },
+    scales: {
+      r: {
+        beginAtZero: true,
+        grid: { color: '#e5e7eb' },
+        angleLines: { color: '#e5e7eb' },
+        pointLabels: { color: '#374151', font: { size: 11 } }
+      }
+    }
+  };
+  comparisonRadarType: 'radar' = 'radar';
+
+  // Box-plot style stability chart (min, Q1, median, Q3, max per model)
+  stabilityBoxBarData: any = null;
+  stabilityBoxBarOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: {
+      legend: { display: true, position: 'top' },
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+        color: '#111',
+        font: { weight: 'bold', size: 11 },
+        formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+      }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: { beginAtZero: true, grid: { color: '#eee' } }
+    }
+  };
+  stabilityBoxBarType: 'bar' = 'bar';
   activeMetricsTab: 'metrics-issue' | 'metrics-model' | 'hours-le' | 'hours-gt' | 'days-le' | 'days-gt' | 'markdown-on' | 'markdown-off' | 'explanation-on' | 'explanation-off' = 'metrics-issue';
 
   metricsIssueKey = '';
@@ -177,6 +281,7 @@ export class AiMetricsComponent {
       next: (res) => {
         this.metricsResult = res;
         this.isLoadingMetrics = false;
+        this.prepareCharts();
       },
       error: (err) => {
         this.metricsError = 'Failed to load metrics data.';
@@ -258,6 +363,436 @@ export class AiMetricsComponent {
 
   get totalMarkdownRuns(): number {
     return this.markdownDistribution.reduce((sum, m) => sum + m.value, 0) || 0;
+  }
+
+  // Build additional Chart.js datasets from current metricsResult
+  private prepareCharts(): void {
+    const metrics = this.asArray();
+    if (!metrics.length) {
+      this.responseTimeBarData = null;
+      this.estimationRangeBarData = null;
+      this.estimationTrendLineData = null;
+      this.comparisonRadarData = null;
+      this.stabilityBoxBarData = null;
+      return;
+    }
+
+    // Helper: group records by AI provider
+    const byProvider: Record<string, any[]> = {};
+    metrics.forEach(m => {
+      const provider = m.aiProvider || m.provider;
+      if (!provider) return;
+      if (!byProvider[provider]) {
+        byProvider[provider] = [];
+      }
+      byProvider[provider].push(m);
+    });
+    const providers = Object.keys(byProvider);
+    if (!providers.length) {
+      this.responseTimeBarData = null;
+      this.estimationRangeBarData = null;
+      this.estimationTrendLineData = null;
+      this.comparisonRadarData = null;
+      this.stabilityBoxBarData = null;
+      return;
+    }
+
+    // 1) Bar chart – average response time per model
+    const avgResponseTimes: number[] = providers.map(p => {
+      const arr = byProvider[p];
+      const secs = arr.map((m: any) => {
+        const sec = m.analysisTimeSec != null
+          ? Number(m.analysisTimeSec)
+          : m.analysisTimeMs != null
+            ? Number(m.analysisTimeMs) / 1000
+            : 0;
+        return isFinite(sec) ? sec : 0;
+      });
+      const sum = secs.reduce((a, b) => a + b, 0);
+      return secs.length ? sum / secs.length : 0;
+    });
+
+    this.responseTimeBarData = {
+      labels: providers,
+      datasets: [
+        {
+          label: 'Avg response time (sec)',
+          data: avgResponseTimes,
+          backgroundColor: ['#60a5fa', '#22c55e', '#a78bfa', '#f97316'],
+          borderRadius: 8,
+          maxBarThickness: 40
+        }
+      ]
+    };
+    this.responseTimeBarOptions = {
+      responsive: true,
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          beginAtZero: true,
+          max: this.computeYAxisMax(avgResponseTimes)
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          color: '#222',
+          font: { weight: 'bold', size: 12 },
+          formatter: (value: any) => {
+            const num = typeof value === 'number' ? value : Number(value);
+            return Number.isFinite(num) ? num.toFixed(2) : value;
+          }
+        }
+      }
+    };
+
+    // 2) Grouped bar chart – estimation distribution (min/avg/max hours) per model
+    const mins: number[] = [];
+    const avgs: number[] = [];
+    const maxs: number[] = [];
+
+    providers.forEach(p => {
+      const hoursArr = byProvider[p]
+        .map((m: any) => m.estimatedResolutionHours ?? m.estimatedHours)
+        .filter((v: any) => v != null)
+        .map((v: any) => Number(v));
+      if (!hoursArr.length) {
+        mins.push(0);
+        avgs.push(0);
+        maxs.push(0);
+        return;
+      }
+      const min = Math.min(...hoursArr);
+      const max = Math.max(...hoursArr);
+      const avg = hoursArr.reduce((a: number, b: number) => a + b, 0) / hoursArr.length;
+      mins.push(min);
+      avgs.push(avg);
+      maxs.push(max);
+    });
+
+    const rangeValues = [...mins, ...avgs, ...maxs];
+    this.estimationRangeBarData = {
+      labels: providers,
+      datasets: [
+        {
+          label: 'Min hours',
+          data: mins,
+          backgroundColor: '#16a34a',
+          borderColor: '#166534',
+          borderWidth: 1.5,
+          borderRadius: 8,
+          maxBarThickness: 32
+        },
+        {
+          label: 'Avg hours',
+          data: avgs,
+          backgroundColor: '#2563eb',
+          borderColor: '#1d4ed8',
+          borderWidth: 1.5,
+          borderRadius: 8,
+          maxBarThickness: 32
+        },
+        {
+          label: 'Max hours',
+          data: maxs,
+          backgroundColor: '#dc2626',
+          borderColor: '#b91c1c',
+          borderWidth: 1.5,
+          borderRadius: 8,
+          maxBarThickness: 32
+        }
+      ]
+    };
+    this.estimationRangeBarOptions = {
+      responsive: true,
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          beginAtZero: true,
+          max: this.computeYAxisMax(rangeValues)
+        }
+      },
+      plugins: {
+        legend: { display: true },
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          color: '#222',
+          font: { weight: 'bold', size: 11 },
+          formatter: (value: any) => {
+            const num = typeof value === 'number' ? value : Number(value);
+            return Number.isFinite(num) ? num.toFixed(2) : value;
+          }
+        }
+      }
+    };
+
+      // 2b) Box-plot-style grouped bar: min, Q1, median, Q3, max per model
+      const q1s: number[] = [];
+      const medians: number[] = [];
+      const q3s: number[] = [];
+
+      providers.forEach(p => {
+        const hoursArr = byProvider[p]
+          .map((m: any) => m.estimatedResolutionHours ?? m.estimatedHours)
+          .filter((v: any) => v != null)
+          .map((v: any) => Number(v))
+          .sort((a: number, b: number) => a - b);
+        if (!hoursArr.length) {
+          q1s.push(0);
+          medians.push(0);
+          q3s.push(0);
+          return;
+        }
+        const quantile = (arr: number[], p: number): number => {
+          if (!arr.length) return 0;
+          const pos = (arr.length - 1) * p;
+          const base = Math.floor(pos);
+          const rest = pos - base;
+          if (arr[base + 1] !== undefined) {
+            return arr[base] + rest * (arr[base + 1] - arr[base]);
+          }
+          return arr[base];
+        };
+        q1s.push(quantile(hoursArr, 0.25));
+        medians.push(quantile(hoursArr, 0.5));
+        q3s.push(quantile(hoursArr, 0.75));
+      });
+
+      const boxAllValues = [
+        ...mins,
+        ...q1s,
+        ...medians,
+        ...q3s,
+        ...maxs
+      ];
+
+      this.stabilityBoxBarData = {
+        labels: providers,
+        datasets: [
+          {
+            label: 'Min hours',
+            data: mins,
+            backgroundColor: '#9ca3af',
+            borderColor: '#4b5563',
+            borderWidth: 1.5,
+            borderRadius: 6,
+            maxBarThickness: 28
+          },
+          {
+            label: 'Q1 (25%)',
+            data: q1s,
+            backgroundColor: '#0ea5e9',
+            borderColor: '#0369a1',
+            borderWidth: 1.5,
+            borderRadius: 6,
+            maxBarThickness: 28
+          },
+          {
+            label: 'Median (50%)',
+            data: medians,
+            backgroundColor: '#2563eb',
+            borderColor: '#1d4ed8',
+            borderWidth: 1.5,
+            borderRadius: 6,
+            maxBarThickness: 28
+          },
+          {
+            label: 'Q3 (75%)',
+            data: q3s,
+            backgroundColor: '#3b82f6',
+            borderColor: '#1d4ed8',
+            borderWidth: 1.5,
+            borderRadius: 6,
+            maxBarThickness: 28
+          },
+          {
+            label: 'Max hours',
+            data: maxs,
+            backgroundColor: '#dc2626',
+            borderColor: '#b91c1c',
+            borderWidth: 1.5,
+            borderRadius: 6,
+            maxBarThickness: 28
+          }
+        ]
+      };
+      this.stabilityBoxBarOptions = {
+        responsive: true,
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            max: this.computeYAxisMax(boxAllValues)
+          }
+        },
+        plugins: {
+          legend: { display: true },
+          datalabels: {
+            anchor: 'end',
+            align: 'end',
+            color: '#222',
+            font: { weight: 'bold', size: 10 },
+            formatter: (value: any) => {
+              const num = typeof value === 'number' ? value : Number(value);
+              return Number.isFinite(num) ? num.toFixed(2) : value;
+            }
+          }
+        }
+      };
+
+    // 3) Line chart – estimation evolution over time
+    const timeEntries = metrics
+      .filter(m => m.estimatedResolutionHours != null || m.estimatedHours != null)
+      .map(m => ({
+        provider: m.aiProvider || m.provider,
+        createdAt: m.createdAt ? new Date(m.createdAt) : null,
+        hours: Number(m.estimatedResolutionHours ?? m.estimatedHours)
+      }))
+      .filter(e => e.provider && e.createdAt && isFinite(e.hours))
+      .sort((a, b) => (a.createdAt!.getTime() - b.createdAt!.getTime()));
+
+    if (timeEntries.length) {
+      const labels = timeEntries.map(e => e.createdAt!.toLocaleTimeString());
+      const seriesByProvider: Record<string, number[]> = {};
+      providers.forEach(p => {
+        seriesByProvider[p] = new Array(labels.length).fill(null);
+      });
+      timeEntries.forEach((e, idx) => {
+        if (!seriesByProvider[e.provider]) {
+          seriesByProvider[e.provider] = new Array(labels.length).fill(null);
+        }
+        seriesByProvider[e.provider][idx] = e.hours;
+      });
+
+      const datasets = providers.map(p => ({
+        label: p,
+        data: seriesByProvider[p],
+        borderColor: p.toUpperCase().includes('GEMINI') ? '#2563eb' : '#16a34a',
+        backgroundColor: 'transparent',
+        fill: false,
+        tension: 0.3
+      }));
+
+      this.estimationTrendLineData = { labels, datasets };
+      const trendValues = timeEntries.map(e => e.hours);
+      this.estimationTrendLineOptions = {
+        responsive: true,
+        plugins: {
+          legend: { display: true },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            color: '#222',
+            font: { weight: 'bold', size: 10 },
+            formatter: (value: any) => {
+              const num = typeof value === 'number' ? value : Number(value);
+              return Number.isFinite(num) ? num.toFixed(2) : '';
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            max: this.computeYAxisMax(trendValues)
+          }
+        }
+      };
+    } else {
+      this.estimationTrendLineData = null;
+      this.estimationTrendLineOptions = {};
+    }
+
+    // 4) Radar chart – multi-criteria comparison per model
+    const radarLabels = [
+      'Avg response time (sec)',
+      'Avg estimated hours',
+      'Estimation range (h)',
+      'Explanation enabled (%)'
+    ];
+    const radarDatasets: any[] = [];
+    const radarAllValues: number[] = [];
+
+    providers.forEach(p => {
+      const records = byProvider[p];
+      const secs = records.map((m: any) => {
+        const sec = m.analysisTimeSec != null
+          ? Number(m.analysisTimeSec)
+          : m.analysisTimeMs != null
+            ? Number(m.analysisTimeMs) / 1000
+            : 0;
+        return isFinite(sec) ? sec : 0;
+      });
+      const estArr = records
+        .map((m: any) => m.estimatedResolutionHours ?? m.estimatedHours)
+        .filter((v: any) => v != null)
+        .map((v: any) => Number(v));
+      const explanationOn = records.filter((m: any) => m.explanationEnabled === true).length;
+      const count = records.length || 1;
+
+      const avgSec = secs.length ? secs.reduce((a, b) => a + b, 0) / secs.length : 0;
+      const avgHours = estArr.length ? estArr.reduce((a, b) => a + b, 0) / estArr.length : 0;
+      const rangeHours = estArr.length ? Math.max(...estArr) - Math.min(...estArr) : 0;
+      const explanationRatio = (explanationOn / count) * 100;
+
+      const values = [avgSec, avgHours, rangeHours, explanationRatio];
+      radarAllValues.push(...values);
+
+      const isGemini = p.toUpperCase().includes('GEMINI');
+      radarDatasets.push({
+        label: p,
+        data: values,
+        backgroundColor: isGemini ? 'rgba(37,99,235,0.15)' : 'rgba(22,163,74,0.15)',
+        borderColor: isGemini ? '#2563eb' : '#16a34a',
+        pointBackgroundColor: isGemini ? '#2563eb' : '#16a34a'
+      });
+    });
+
+    this.comparisonRadarData = {
+      labels: radarLabels,
+      datasets: radarDatasets
+    };
+    this.comparisonRadarOptions = {
+      responsive: true,
+      plugins: {
+        legend: { display: true },
+        datalabels: {
+          color: '#222',
+          font: { weight: 'bold', size: 11 },
+          formatter: (value: any) => {
+            const num = typeof value === 'number' ? value : Number(value);
+            return Number.isFinite(num) ? num.toFixed(2) : value;
+          }
+        }
+      },
+      scales: {
+        r: {
+          beginAtZero: true,
+          suggestedMax: this.computeYAxisMax(radarAllValues)
+        }
+      }
+    };
+  }
+
+  // Utility: compute a nice Y-axis max with two extra units above the highest value
+  private computeYAxisMax(values: number[]): number {
+    if (!values || !values.length) {
+      return 1;
+    }
+    const finiteVals = values.filter(v => Number.isFinite(v));
+    if (!finiteVals.length) {
+      return 1;
+    }
+    const rawMax = Math.max(...finiteVals, 0);
+    if (rawMax <= 0) {
+      return 2;
+    }
+    const ceil = Math.ceil(rawMax);
+    const even = ceil % 2 === 0 ? ceil : ceil + 1;
+    return even + 2;
   }
 
   get markdownOnPercent(): number {
