@@ -127,92 +127,96 @@
         <div class="mt-3 small text-muted">
           Outputs: raw AI estimation records that are now visualized as model comparison and feature-impact charts.
         </div>
+      </div>
+    </div>
+  </div>
 
-        <div *ngIf="metricsResult" class="mt-3 metrics-chart-stack">
-          <app-ai-metrics-chart-card
-            *ngIf="providerComparison.length"
-            title="Provider Comparison"
-            subtitle="Average estimated resolution time (hours) per AI model."
-            caption="Figure: Average estimated resolution time (hours) per AI model computed from the selected metrics."
-            [chartType]="providerBarType"
-            [chartData]="providerBarData"
-            [chartOptions]="providerBarOptions">
-          </app-ai-metrics-chart-card>
+  <div *ngIf="metricsResult">
+    <div class="metrics-chart-stack">
+      <app-ai-metrics-chart-card
+        *ngIf="providerComparison.length"
+        title="Provider Comparison"
+        subtitle="Average estimated resolution time (hours) per AI model."
+        caption="Figure: Average estimated resolution time (hours) per AI model computed from the selected metrics."
+        [chartType]="providerBarType"
+        [chartData]="providerBarData"
+        [chartOptions]="providerBarOptions">
+      </app-ai-metrics-chart-card>
 
-          <app-ai-metrics-chart-card
-            *ngIf="markdownDistribution.length"
-            title="Markdown Output Distribution"
-            subtitle="Share of runs executed with Markdown or without it."
-            caption="Figure: Proportion of runs with Markdown enabled vs disabled in the AI configuration (shown as a pie chart)."
-            size="compact"
-            [chartType]="markdownPieType"
-            [chartData]="markdownPieData"
-            [chartOptions]="markdownPieOptions">
-            <ng-container *ngIf="markdownDistribution.length">
-              <div class="metrics-pie-legend small mt-1 text-center">
-                <div *ngFor="let m of markdownDistribution" class="d-inline-block me-3 mb-1">
-                  <span class="legend-color-box" [ngClass]="{'markdown-on': m.label === 'Markdown ON', 'markdown-off': m.label === 'Markdown OFF'}"></span>
-                  {{ m.label }}: {{ m.value }} runs
-                </div>
-              </div>
-            </ng-container>
-          </app-ai-metrics-chart-card>
-
-          <app-ai-metrics-chart-card
-            *ngIf="responseTimeBarData"
-            title="Performance Analysis"
-            subtitle="Average response time (seconds) per AI model."
-            caption="Figure: Average response time in seconds per AI model for the current metrics selection."
-            [chartType]="responseTimeBarType"
-            [chartData]="responseTimeBarData"
-            [chartOptions]="responseTimeBarOptions">
-          </app-ai-metrics-chart-card>
-
-          <app-ai-metrics-chart-card
-            *ngIf="estimationRangeBarData"
-            title="Distribution Breakdown"
-            subtitle="Minimum, average, and maximum estimated resolution hours per AI model."
-            caption="Figure: Minimum, average, and maximum estimated resolution time (hours) per AI model."
-            [chartType]="estimationRangeBarType"
-            [chartData]="estimationRangeBarData"
-            [chartOptions]="estimationRangeBarOptions">
-          </app-ai-metrics-chart-card>
-
-          <app-ai-metrics-chart-card
-            *ngIf="estimationTrendLineData"
-            title="Estimation Trend"
-            subtitle="Evolution of estimated resolution hours over time per provider."
-            caption="Figure: Evolution of estimated resolution hours over time for each AI model (ordered by run timestamp)."
-            [chartType]="estimationTrendLineType"
-            [chartData]="estimationTrendLineData"
-            [chartOptions]="estimationTrendLineOptions">
-          </app-ai-metrics-chart-card>
-
-          <app-ai-metrics-chart-card
-            *ngIf="comparisonRadarData"
-            title="Multi-Criteria Radar"
-            subtitle="Average response time, hours, range, and explanation share per provider."
-            caption="Figure: Multi-criteria comparison per AI model – average response time (sec), average estimated hours, estimation range, and percentage of runs with explanations enabled."
-            [chartType]="comparisonRadarType"
-            [chartData]="comparisonRadarData"
-            [chartOptions]="comparisonRadarOptions">
-          </app-ai-metrics-chart-card>
-
-          <app-ai-metrics-chart-card
-            *ngIf="stabilityBoxBarData"
-            title="Stability Spread"
-            subtitle="Min, quartiles, and max estimated hours per model."
-            caption="Figure: Box-plot style stability view per AI model – showing minimum, 25th percentile (Q1), median, 75th percentile (Q3) and maximum estimated resolution hours."
-            [chartType]="stabilityBoxBarType"
-            [chartData]="stabilityBoxBarData"
-            [chartOptions]="stabilityBoxBarOptions">
-          </app-ai-metrics-chart-card>
-
-          <div class="mt-3">
-            <h6>Raw Metrics Result</h6>
-            <pre class="small bg-light p-2 border rounded">{{ metricsResult | json }}</pre>
+      <app-ai-metrics-chart-card
+        *ngIf="markdownDistribution.length"
+        title="Markdown Output Distribution"
+        subtitle="Share of runs executed with Markdown or without it."
+        caption="Figure: Proportion of runs with Markdown enabled vs disabled in the AI configuration (shown as a pie chart)."
+        size="compact"
+        [chartType]="markdownPieType"
+        [chartData]="markdownPieData"
+        [chartOptions]="markdownPieOptions">
+        <ng-container *ngIf="markdownDistribution.length">
+          <div class="metrics-pie-legend small mt-1 text-center">
+            <div *ngFor="let m of markdownDistribution" class="d-inline-block me-3 mb-1">
+              <span class="legend-color-box" [ngClass]="{'markdown-on': m.label === 'Markdown ON', 'markdown-off': m.label === 'Markdown OFF'}"></span>
+              {{ m.label }}: {{ m.value }} runs
+            </div>
           </div>
-        </div>
+        </ng-container>
+      </app-ai-metrics-chart-card>
+
+      <app-ai-metrics-chart-card
+        *ngIf="responseTimeBarData"
+        title="Performance Analysis"
+        subtitle="Average response time (seconds) per AI model."
+        caption="Figure: Average response time in seconds per AI model for the current metrics selection."
+        [chartType]="responseTimeBarType"
+        [chartData]="responseTimeBarData"
+        [chartOptions]="responseTimeBarOptions">
+      </app-ai-metrics-chart-card>
+
+      <app-ai-metrics-chart-card
+        *ngIf="estimationRangeBarData"
+        title="Distribution Breakdown"
+        subtitle="Minimum, average, and maximum estimated resolution hours per AI model."
+        caption="Figure: Minimum, average, and maximum estimated resolution time (hours) per AI model."
+        [chartType]="estimationRangeBarType"
+        [chartData]="estimationRangeBarData"
+        [chartOptions]="estimationRangeBarOptions">
+      </app-ai-metrics-chart-card>
+
+      <app-ai-metrics-chart-card
+        *ngIf="estimationTrendLineData"
+        title="Estimation Trend"
+        subtitle="Evolution of estimated resolution hours over time per provider."
+        caption="Figure: Evolution of estimated resolution hours over time for each AI model (ordered by run timestamp)."
+        [chartType]="estimationTrendLineType"
+        [chartData]="estimationTrendLineData"
+        [chartOptions]="estimationTrendLineOptions">
+      </app-ai-metrics-chart-card>
+
+      <app-ai-metrics-chart-card
+        *ngIf="comparisonRadarData"
+        title="Multi-Criteria Radar"
+        subtitle="Average response time, hours, range, and explanation share per provider."
+        caption="Figure: Multi-criteria comparison per AI model – average response time (sec), average estimated hours, estimation range, and percentage of runs with explanations enabled."
+        [chartType]="comparisonRadarType"
+        [chartData]="comparisonRadarData"
+        [chartOptions]="comparisonRadarOptions">
+      </app-ai-metrics-chart-card>
+
+      <app-ai-metrics-chart-card
+        *ngIf="stabilityBoxBarData"
+        title="Stability Spread"
+        subtitle="Min, quartiles, and max estimated hours per model."
+        caption="Figure: Box-plot style stability view per AI model – showing minimum, 25th percentile (Q1), median, 75th percentile (Q3) and maximum estimated resolution hours."
+        [chartType]="stabilityBoxBarType"
+        [chartData]="stabilityBoxBarData"
+        [chartOptions]="stabilityBoxBarOptions">
+      </app-ai-metrics-chart-card>
+    </div>
+
+    <div class="card shadow-sm mt-3">
+      <div class="card-body">
+        <h6>Raw Metrics Result</h6>
+        <pre class="small bg-light p-2 border rounded">{{ metricsResult | json }}</pre>
       </div>
     </div>
   </div>
