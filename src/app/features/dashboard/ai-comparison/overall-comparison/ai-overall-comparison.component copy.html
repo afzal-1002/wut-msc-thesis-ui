@@ -1,0 +1,80 @@
+<!-- <div class="overall-wrapper">
+  <div *ngIf="isLoading" class="small text-muted">Loading overall comparison...</div>
+  <div *ngIf="error" class="alert alert-danger py-1 small">{{ error }}</div>
+
+  <ng-container *ngIf="!isLoading && !error">
+    <div class="overall-grid">
+      <!-- Performance -->
+      <figure class="chart-card">
+        <h5 class="chart-title mb-1">Performance Analysis</h5>
+        <p class="chart-subtitle small text-muted mb-2">Avg latency with min/max whiskers.</p>
+        <canvas baseChart [data]="performanceErrorBarData" [options]="performanceErrorBarOptions" [type]="'bar'" style="min-height: 260px;"></canvas>
+        <figcaption class="chart-caption small text-muted mt-2">Figure: DeepSeek sustains lower latency with tighter variance.</figcaption>
+      </figure>
+
+      <!-- Estimation -->
+      <figure class="chart-card">
+        <h5 class="chart-title mb-1">Estimation Behaviour</h5>
+        <p class="chart-subtitle small text-muted mb-2">Min/avg/max resolution hours.</p>
+        <canvas baseChart [data]="estimationGroupedData" [options]="estimationGroupedOptions" [type]="'bar'" style="min-height: 260px;"></canvas>
+        <figcaption class="chart-caption small text-muted mt-2">Figure: Gemini issues wider, conservative estimates; DeepSeek remains compact.</figcaption>
+      </figure>
+
+      <!-- Stability -->
+      <figure class="chart-card">
+        <h5 class="chart-title mb-1">Stability & Consistency</h5>
+        <p class="chart-subtitle small text-muted mb-2">Share of total stability score.</p>
+        <canvas
+          baseChart
+          [data]="stabilityPieData"
+          [options]="stabilityPieOptions"
+          [type]="'pie'"
+          style="max-width: 320px; min-height: 200px; margin: 0 auto;"
+        ></canvas>
+        <figcaption class="chart-caption small text-muted mt-2">
+          Figure: DeepSeek holds a larger share of stability score versus Gemini (higher slice = steadier executions).
+        </figcaption>
+      </figure>
+
+      <!-- Content quality -->
+      <figure class="chart-card">
+        <h5 class="chart-title mb-1">Content Quality & Explainability</h5>
+        <p class="chart-subtitle small text-muted mb-2">Relevance vs verbosity.</p>
+        <canvas baseChart [data]="contentBarData" [options]="contentBarOptions" [type]="'bar'" style="min-height: 260px;"></canvas>
+        <figcaption class="chart-caption small text-muted mt-2">Figure: Gemini provides longer explanations; DeepSeek stays concise.</figcaption>
+      </figure>
+
+      <!-- Radar -->
+      <figure class="chart-card chart-card--wide">
+        <h5 class="chart-title mb-1">Multi-Criteria Radar</h5>
+        <p class="chart-subtitle small text-muted mb-2">Normalized trade-offs across five metrics.</p>
+        <canvas baseChart [data]="overallRadarData" [options]="overallRadarOptions" [type]="'radar'" style="min-height: 320px;"></canvas>
+        <figcaption class="chart-caption small text-muted mt-2">Figure: Hybrid recommendation—DeepSeek for speed/stability, Gemini for depth.</figcaption>
+      </figure>
+    </div>
+
+    <div class="scorecard-card mt-4">
+      <h5 class="chart-title mb-2">Decision Summary</h5>
+      <table class="scorecard-table">
+        <thead>
+          <tr>
+            <th>Criterion</th>
+            <th>Gemini</th>
+            <th>DeepSeek</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of scorecardRows">
+            <td>{{ row.criterion }}</td>
+            <td>{{ row.gemini }}</td>
+            <td>{{ row.deepseek }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ul class="insight-list mt-3" *ngIf="insights.length">
+      <li *ngFor="let insight of insights">{{ insight }}</li>
+    </ul>
+  </ng-container>
+</div> -->
