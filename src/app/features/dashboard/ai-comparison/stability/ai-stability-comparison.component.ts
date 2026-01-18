@@ -21,7 +21,8 @@ if (typeof window !== 'undefined' && !stabilityPluginsRegistered) {
 export class AiStabilityComparisonComponent implements OnInit {
   isLoading = false;
   error = '';
-  chartData: any = null;
+  chartData: any;
+
   chartOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
@@ -31,16 +32,15 @@ export class AiStabilityComparisonComponent implements OnInit {
         align: 'end',
         color: '#111827',
         font: { weight: 'bold', size: 12 },
-        formatter: value => (typeof value === 'number' ? `${value.toFixed(2)}h` : value)
+        formatter: value => `${Number(value).toFixed(2)}h`
       }
     },
     scales: {
       x: { grid: { display: false } },
       y: {
-        type: 'linear',
         beginAtZero: true,
-        grid: { color: '#e5e7eb' },
-        title: { display: true, text: 'Std deviation (hours)' }
+        title: { display: true, text: 'Std deviation (hours)' },
+        grid: { color: '#e5e7eb' }
       }
     }
   };
@@ -48,27 +48,27 @@ export class AiStabilityComparisonComponent implements OnInit {
   constructor(private aiService: AiEstimationsService) {}
 
   ngOnInit(): void {
-    this.loadStability();
+    this.load();
   }
 
-  private loadStability(): void {
+  private load(): void {
     this.isLoading = true;
     this.error = '';
     this.aiService.getStabilityComparison().subscribe({
       next: raw => {
-        const labels = Object.keys(raw ?? {}).map(name => this.prettyName(name));
-        const values = Object.values(raw ?? {}).map(val => Number(val ?? 0));
+        const labels = Object.keys(raw ?? {}).map(v => this.prettyName(v));
+        const values = Object.values(raw ?? {}).map(v => Number(v ?? 0));
         this.chartData = {
           labels,
           datasets: [
             {
-              label: 'Avg std dev (h)',
+              label: 'Avg std dev (hours)',
               data: values,
               backgroundColor: ['#2563eb', '#16a34a'],
               borderRadius: 10,
-              barThickness: 42,
-              categoryPercentage: 0.28,
-              barPercentage: 0.45
+              barThickness: 38,
+              categoryPercentage: 0.5,
+              barPercentage: 0.7
             }
           ]
         };

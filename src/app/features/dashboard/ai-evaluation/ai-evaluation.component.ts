@@ -4,18 +4,34 @@ import { FormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
 import { AiEstimationsService } from '../../../services/ai/ai-estimations.service';
 import { forkJoin, Observable, of } from 'rxjs';
+import { AiEvalByIssueComponent } from './by-issue/ai-eval-by-issue.component';
+import { AiEvalModelComparisonComponent } from './model-comparison/ai-eval-model-comparison.component';
+import { AiEvalByModelComponent } from './by-model/ai-eval-by-model.component';
+import { AiEvalFeatureImpactComponent } from './feature-impact/ai-eval-feature-impact.component';
+import { AiEvalStabilityComponent } from './stability/ai-eval-stability.component';
+import { AiEvaluationControlsComponent } from './controls/ai-evaluation-controls.component';
 
 @Component({
   selector: 'app-ai-evaluation',
   templateUrl: './ai-evaluation.component.html',
   styleUrls: ['./ai-evaluation.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, NgChartsModule]
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgChartsModule,
+    AiEvaluationControlsComponent,
+    AiEvalByIssueComponent,
+    AiEvalModelComparisonComponent,
+    AiEvalByModelComponent,
+    AiEvalFeatureImpactComponent,
+    AiEvalStabilityComponent
+  ]
 })
 export class AiEvaluationComponent {
   // Properties for template bindings
   isLoadingEvaluation = false;
-  activeEvaluationTab: string = 'by-issue';
+  activeEvaluationTab: 'by-issue' | 'comparison' | 'by-model' | 'features' | 'stability' = 'by-issue';
   evalIssueKey: string = '';
   evalProvider: string | null = null;
   stabilityIssueKey: string = '';
@@ -868,5 +884,13 @@ export class AiEvaluationComponent {
     const ceil = Math.ceil(rawMax);
     const even = ceil % 2 === 0 ? ceil : ceil + 1;
     return even + 2;
+  }
+
+  get stabilityIssueLabel(): string {
+    return (this.evaluationResult?.issueKey ?? this.stabilityIssueKey ?? '').trim();
+  }
+
+  selectTab(tab: 'by-issue' | 'comparison' | 'by-model' | 'features' | 'stability'): void {
+    this.activeEvaluationTab = tab;
   }
 }

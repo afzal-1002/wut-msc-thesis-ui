@@ -22,7 +22,7 @@ import { AiAnalysisPageComponent } from './features/dashboard/issue-detail/ai-an
 import { AiEstimationsComponent } from './features/dashboard/ai-estimations/ai-estimations.component';
 import { AiEvaluationComponent } from './features/dashboard/ai-evaluation/ai-evaluation.component';
 import { AiMetricsComponent } from './features/dashboard/ai-metrics/ai-metrics.component';
-import { AiComparisonComponent } from './features/dashboard/ai-comparison/ai-comparison.component';
+import { AiComparisonComponent } from './features/dashboard/ai-model-comparison/ai-comparison.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },

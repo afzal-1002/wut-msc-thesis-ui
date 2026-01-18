@@ -1,0 +1,50 @@
+<div class="content-wrapper">
+  <figure class="chart-card" *ngIf="stabilityBarData?.datasets?.length">
+    <h5 class="chart-title">Stability Summary</h5>
+    <p class="chart-subtitle">Issue {{ issueLabel || 'N/A' }} — hours distribution.</p>
+    <canvas baseChart
+            [data]="stabilityBarData"
+            [options]="stabilityBarOptions"
+            [type]="stabilityBarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Min / Avg / Max hours and standard deviation.
+    </figcaption>
+  </figure>
+
+  <figure class="chart-card" *ngIf="stabilityLineData?.datasets?.length">
+    <h5 class="chart-title">Trend Line</h5>
+    <p class="chart-subtitle">Sequential metric view.</p>
+    <canvas baseChart
+            [data]="stabilityLineData"
+            [options]="stabilityLineOptions"
+            [type]="stabilityLineType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Trend of the same stability metrics plotted linearly.
+    </figcaption>
+  </figure>
+
+  <figure class="chart-card" *ngIf="stabilityPieData?.datasets?.length">
+    <h5 class="chart-title">Composition</h5>
+    <p class="chart-subtitle">Share of each metric.</p>
+    <canvas baseChart
+            [data]="stabilityPieData"
+            [options]="stabilityPieOptions"
+            [type]="stabilityPieType"
+            style="max-width: 320px; margin: 0 auto;"></canvas>
+    <figcaption class="chart-caption">
+      Figure: How each metric contributes to the total hours distribution.
+    </figcaption>
+  </figure>
+
+  <figure class="chart-card" *ngIf="stabilityRadarData?.datasets?.length">
+    <h5 class="chart-title">Radar Profile</h5>
+    <p class="chart-subtitle">Normalized stability view.</p>
+    <canvas baseChart
+            [data]="stabilityRadarData"
+            [options]="stabilityRadarOptions"
+            [type]="stabilityRadarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Radar visualization of min, avg, max hours and standard deviation.
+    </figcaption>
+  </figure>
+</div>

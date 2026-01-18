@@ -1,0 +1,25 @@
+<div class="content-wrapper">
+  <figure class="chart-card" *ngIf="modelByModelPieData">
+    <h5 class="chart-title">Model Overview</h5>
+    <p class="chart-subtitle">Pie view of runs vs time vs hours.</p>
+    <canvas baseChart
+            [data]="modelByModelPieData"
+            [options]="modelByModelPieOptions"
+            [type]="modelByModelPieType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Relative share of total runs, avg analysis time, and avg estimated hours.
+    </figcaption>
+  </figure>
+
+  <figure class="chart-card" *ngIf="modelByModelBarData?.datasets?.length">
+    <h5 class="chart-title">Key Statistics</h5>
+    <p class="chart-subtitle">Counts and averages for the chosen model.</p>
+    <canvas baseChart
+            [data]="modelByModelBarData"
+            [options]="modelByModelBarOptions"
+            [type]="modelByModelBarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Total runs, unique issues, avg analysis time (sec), and avg estimated hours.
+    </figcaption>
+  </figure>
+</div>

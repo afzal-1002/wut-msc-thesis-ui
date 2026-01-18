@@ -1,4 +1,4 @@
-/* .overall-wrapper {
+.overall-wrapper {
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
@@ -7,98 +7,62 @@
 .overall-grid {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.2rem;
 }
 
 .chart-card {
   background-color: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 0.9rem;
-  padding: 0.85rem 1rem;
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
-  width: 100%;
+  border-radius: 0.95rem;
+  padding: 0.9rem 1.15rem;
+  box-shadow: 0 10px 32px rgba(15, 23, 42, 0.08);
 }
 
-.chart-card--wide {
-  width: 100%;
+.chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.15rem;
 }
 
-.chart-card figcaption.chart-caption {
-  width: 100%;
-  margin: 0.6rem auto 0;
+.chart-subtitle {
+  font-size: 0.82rem;
+  color: #6b7280;
+  margin-bottom: 0.75rem;
+}
+
+.chart-caption {
   text-align: center;
+  font-size: 0.78rem;
+  color: #4b5563;
+  margin-top: 0.6rem;
 }
-
-.scorecard-card {
-  background-color: #f8fafc;
-  border: 1px solid #dbeafe;
-  border-radius: 0.9rem;
-  padding: 1rem 1.25rem;
-} */
 
 .scorecard-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 .scorecard-table th,
 .scorecard-table td {
-  padding: 0.5rem 0.75rem;
+  padding: 0.45rem 0.4rem;
   border-bottom: 1px solid #e5e7eb;
+  font-size: 0.85rem;
 }
 
 .scorecard-table th {
-  text-transform: uppercase;
-  font-size: 0.75rem;
-  color: #6b7280;
+  text-align: left;
+  font-weight: 600;
+  color: #111827;
+}
+
+.scorecard-table tr:last-child td {
+  border-bottom: none;
 }
 
 .insight-list {
-  list-style: disc;
-  padding-left: 1.3rem;
-  color: #374151;
-  font-size: 0.9rem;
-}
-
-.insight-list li + li {
-  margin-top: 0.35rem;
-}
-.overall-wrapper {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.overall-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.chart-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
-}
-/* 🔹 KEEP MAIN HEADINGS LEFT-ALIGNED */
-.chart-card h5 {
-  text-align: left;
-}
-
-/* 🔹 CENTER ONLY SUBTITLES */
-.chart-subtitle {
-  text-align: center;
-  font-size: 0.85rem;
-  color: #6b7280;
-}
-
-/* 🔹 CENTER FIGURE CAPTIONS */
-.chart-card figcaption {
-  text-align: center;
   margin-top: 0.75rem;
+  padding-left: 1.1rem;
+  color: #475569;
   font-size: 0.85rem;
-  color: #6b7280;
 }
-

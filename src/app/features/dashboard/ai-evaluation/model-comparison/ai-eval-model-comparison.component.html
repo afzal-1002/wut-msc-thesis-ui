@@ -1,0 +1,25 @@
+<div class="content-wrapper">
+  <figure class="chart-card" *ngIf="comparisonPerfAvgBarData?.labels?.length">
+    <h5 class="chart-title">Performance Analysis</h5>
+    <p class="chart-subtitle">Average response time (seconds).</p>
+    <canvas baseChart
+            [data]="comparisonPerfAvgBarData"
+            [options]="comparisonPerfAvgBarOptions"
+            [type]="comparisonPerfAvgBarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Average response time for Gemini vs DeepSeek across all runs.
+    </figcaption>
+  </figure>
+
+  <figure class="chart-card" *ngIf="comparisonPerfDetailBarData?.labels?.length">
+    <h5 class="chart-title">Distribution Breakdown</h5>
+    <p class="chart-subtitle">Min / Avg / Max / Std Dev per model.</p>
+    <canvas baseChart
+            [data]="comparisonPerfDetailBarData"
+            [options]="comparisonPerfDetailBarOptions"
+            [type]="comparisonPerfDetailBarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Spread of response times highlighting speed and variability per model.
+    </figcaption>
+  </figure>
+</div>

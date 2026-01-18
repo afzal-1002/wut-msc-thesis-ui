@@ -26,7 +26,7 @@ if (typeof window !== 'undefined' && !summaryPluginsRegistered) {
 export class AiSummaryComparisonComponent implements OnInit {
   isLoading = false;
   error = '';
-  chartData: any = null;
+  chartData: any;
   chartOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
@@ -42,11 +42,10 @@ export class AiSummaryComparisonComponent implements OnInit {
     scales: {
       x: { grid: { display: false } },
       y: {
-        type: 'linear',
         beginAtZero: true,
-        grid: { color: '#e5e7eb' },
         title: { display: true, text: 'Categories won' },
-        ticks: { stepSize: 1 }
+        ticks: { stepSize: 1 },
+        grid: { color: '#e5e7eb' }
       }
     }
   };
@@ -55,10 +54,10 @@ export class AiSummaryComparisonComponent implements OnInit {
   constructor(private aiService: AiEstimationsService) {}
 
   ngOnInit(): void {
-    this.loadSummary();
+    this.load();
   }
 
-  private loadSummary(): void {
+  private load(): void {
     this.isLoading = true;
     this.error = '';
     this.aiService.getComparisonSummary().subscribe({
@@ -75,8 +74,8 @@ export class AiSummaryComparisonComponent implements OnInit {
               backgroundColor: ['#2563eb', '#16a34a'],
               borderRadius: 10,
               barThickness: 42,
-              categoryPercentage: 0.28,
-              barPercentage: 0.45
+              categoryPercentage: 0.4,
+              barPercentage: 0.6
             }
           ]
         };
@@ -86,20 +85,19 @@ export class AiSummaryComparisonComponent implements OnInit {
             ...this.chartOptions.scales,
             y: {
               ...(this.chartOptions.scales?.['y'] as any),
-              type: 'linear',
               beginAtZero: true,
               min: 0,
               max: axisMax,
-              grid: { color: '#e5e7eb' },
               title: { display: true, text: 'Categories won' },
-              ticks: { stepSize: 1 }
+              ticks: { stepSize: 1 },
+              grid: { color: '#e5e7eb' }
             }
           }
         };
         this.isLoading = false;
       },
       error: err => {
-        console.error('Summary comparison load error', err);
+        console.error('Summary load error', err);
         this.error = 'Failed to load comparison summary.';
         this.isLoading = false;
       }
@@ -117,7 +115,8 @@ export class AiSummaryComparisonComponent implements OnInit {
   }
 
   private buildSummaryItems(summary: Record<string, unknown>): SummaryItem[] {
-    return Object.keys(summary ?? {}).map(key => ({
+    if (!summary) return [];
+    return Object.keys(summary).map(key => ({
       label: this.humanizeKey(key),
       value: String(summary[key] ?? '')
     }));

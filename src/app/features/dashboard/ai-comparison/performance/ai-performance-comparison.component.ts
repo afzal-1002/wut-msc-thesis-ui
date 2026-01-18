@@ -2,14 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgChartsModule } from 'ng2-charts';
 import { AiEstimationsService } from '../../../../services/ai/ai-estimations.service';
-import { ChartOptions } from 'chart.js';
+import { Chart, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Chart } from 'chart.js';
 
-let performancePluginsRegistered = false;
-if (typeof window !== 'undefined' && !performancePluginsRegistered) {
+let perfPluginsRegistered = false;
+if (typeof window !== 'undefined' && !perfPluginsRegistered) {
   Chart.register(ChartDataLabels);
-  performancePluginsRegistered = true;
+  perfPluginsRegistered = true;
 }
 
 @Component({
@@ -22,7 +21,7 @@ if (typeof window !== 'undefined' && !performancePluginsRegistered) {
 export class AiPerformanceComparisonComponent implements OnInit {
   isLoading = false;
   error = '';
-  chartData: any = null;
+  chartData: any;
   chartOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
@@ -38,10 +37,9 @@ export class AiPerformanceComparisonComponent implements OnInit {
     scales: {
       x: { grid: { display: false } },
       y: {
-        type: 'linear',
         beginAtZero: true,
-        grid: { color: '#e5e7eb' },
-        title: { display: true, text: 'Response time (s)' }
+        title: { display: true, text: 'Avg response time (s)' },
+        grid: { color: '#e5e7eb' }
       }
     }
   };
@@ -49,10 +47,10 @@ export class AiPerformanceComparisonComponent implements OnInit {
   constructor(private aiService: AiEstimationsService) {}
 
   ngOnInit(): void {
-    this.loadPerformance();
+    this.load();
   }
 
-  private loadPerformance(): void {
+  private load(): void {
     this.isLoading = true;
     this.error = '';
     this.aiService.getFullModelComparison().subscribe({
@@ -68,8 +66,8 @@ export class AiPerformanceComparisonComponent implements OnInit {
               backgroundColor: ['#2563eb', '#16a34a'],
               borderRadius: 10,
               barThickness: 42,
-              categoryPercentage: 0.28,
-              barPercentage: 0.45
+              categoryPercentage: 0.4,
+              barPercentage: 0.6
             }
           ]
         };

@@ -1,0 +1,37 @@
+<div *ngIf="hasProviderStats && maxProviderAvgHours > 0" class="content-wrapper">
+  <figure class="chart-card" *ngIf="providerBarData">
+    <h5 class="chart-title">Performance Analysis</h5>
+    <p class="chart-subtitle">Average latency comparison.</p>
+    <canvas baseChart [data]="providerBarData" [options]="providerBarOptions" [type]="providerBarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Average estimated resolution time (hours) for Gemini vs DeepSeek.
+    </figcaption>
+  </figure>
+
+  <figure class="chart-card" *ngIf="byIssueTimeBarData?.datasets?.length">
+    <h5 class="chart-title">Average Analysis Time</h5>
+    <p class="chart-subtitle">Seconds spent per issue by model.</p>
+    <canvas baseChart [data]="byIssueTimeBarData" [options]="byIssueTimeBarOptions" [type]="byIssueTimeBarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Average analysis time (seconds) for each model on the selected issue.
+    </figcaption>
+  </figure>
+
+  <figure class="chart-card" *ngIf="byIssueAllStatsBarData?.datasets?.length">
+    <h5 class="chart-title">Detailed Provider Statistics</h5>
+    <p class="chart-subtitle">Min / Max / Avg / Runs overview.</p>
+    <canvas baseChart [data]="byIssueAllStatsBarData" [options]="byIssueAllStatsBarOptions" [type]="byIssueAllStatsBarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Gemini vs DeepSeek across avg hours, avg seconds, runs, min/max estimated hours.
+    </figcaption>
+  </figure>
+
+  <figure class="chart-card" *ngIf="byIssueOverallBarData?.datasets?.length">
+    <h5 class="chart-title">Overall Issue Summary</h5>
+    <p class="chart-subtitle">Aggregate stats for the selected issue.</p>
+    <canvas baseChart [data]="byIssueOverallBarData" [options]="byIssueOverallBarOptions" [type]="byIssueOverallBarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Issue-level averages, totals, and bounds irrespective of provider.
+    </figcaption>
+  </figure>
+</div>

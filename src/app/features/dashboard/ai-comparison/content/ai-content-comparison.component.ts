@@ -21,11 +21,12 @@ if (typeof window !== 'undefined' && !contentPluginsRegistered) {
 export class AiContentComparisonComponent implements OnInit {
   isLoading = false;
   error = '';
-  chartData: any = null;
+  chartData: any;
+
   chartOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
-      legend: { display: false },
+      legend: { position: 'bottom' },
       datalabels: {
         anchor: 'end',
         align: 'end',
@@ -37,12 +38,11 @@ export class AiContentComparisonComponent implements OnInit {
     scales: {
       x: { grid: { display: false } },
       y: {
-        type: 'linear',
         beginAtZero: true,
         max: 3,
         ticks: { stepSize: 1 },
-        grid: { color: '#e5e7eb' },
-        title: { display: true, text: 'Engineering relevance score' }
+        title: { display: true, text: 'Engineering relevance score' },
+        grid: { color: '#e5e7eb' }
       }
     }
   };
@@ -50,10 +50,10 @@ export class AiContentComparisonComponent implements OnInit {
   constructor(private aiService: AiEstimationsService) {}
 
   ngOnInit(): void {
-    this.loadContent();
+    this.load();
   }
 
-  private loadContent(): void {
+  private load(): void {
     this.isLoading = true;
     this.error = '';
     this.aiService.getContentQualityComparison().subscribe({
@@ -67,18 +67,18 @@ export class AiContentComparisonComponent implements OnInit {
               label: 'Engineering relevance score',
               data: [gem, deep],
               backgroundColor: ['#22c55e', '#0f62fe'],
-              borderRadius: 8,
-              barThickness: 34,
-              categoryPercentage: 0.36,
-              barPercentage: 0.55
+              borderRadius: 10,
+              barThickness: 38,
+              categoryPercentage: 0.5,
+              barPercentage: 0.7
             }
           ]
         };
         this.isLoading = false;
       },
       error: err => {
-        console.error('Content quality load error', err);
-        this.error = 'Failed to load content-quality comparison.';
+        console.error('Content comparison load error', err);
+        this.error = 'Failed to load content quality comparison.';
         this.isLoading = false;
       }
     });
