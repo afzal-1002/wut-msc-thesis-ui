@@ -95,6 +95,13 @@
   margin-bottom: 0.35rem;
 }
 
+.metrics-chart-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+}
+
 .metrics-bar-chart {
   display: flex;
   align-items: flex-end;

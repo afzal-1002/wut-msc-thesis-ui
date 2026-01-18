@@ -6,13 +6,14 @@ import { NgChartsModule } from 'ng2-charts';
 import { FormsModule } from '@angular/forms';
 import { AiEstimationsService } from '../../../services/ai/ai-estimations.service';
 import { Router } from '@angular/router';
+import { AiMetricsChartCardComponent } from './components/ai-metrics-chart-card/ai-metrics-chart-card.component';
 
 Chart.register(ChartDataLabels);
 
 @Component({
   selector: 'app-ai-metrics',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgChartsModule],
+  imports: [CommonModule, FormsModule, NgChartsModule, AiMetricsChartCardComponent],
   templateUrl: './ai-metrics.component.html',
   styleUrls: ['./ai-metrics.component.css']
 })

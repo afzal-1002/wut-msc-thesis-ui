@@ -94,6 +94,43 @@ export class AiEvaluationComponent {
   comparisonPerfDetailBarData: any;
   comparisonPerfDetailBarOptions: any;
   comparisonPerfDetailBarType: any;
+  comparisonRadarData: any;
+  comparisonRadarOptions: any;
+  comparisonRadarType: any;
+  estimationComparisonBarData: any;
+  estimationComparisonBarOptions: any;
+  estimationComparisonBarType: any;
+  stabilityComparisonPieData: any;
+  stabilityComparisonPieOptions: any;
+  stabilityComparisonPieType: any;
+  qualityVsSpeedScatterData: any;
+  qualityVsSpeedScatterOptions: any;
+  qualityVsSpeedScatterType: any;
+  compositeScoreBarData: any;
+  compositeScoreBarOptions: any;
+  compositeScoreBarType: any;
+  advantageDivergingBarData: any;
+  advantageDivergingBarOptions: any;
+  advantageDivergingBarType: any;
+  comparisonHeatmapMatrix: Array<{ label: string; metrics: Array<{ key: string; label: string; value: number; normalized: number }> }> | null = null;
+  responseTimeBoxPlotData: Array<{ label: string; min: number; q1: number; median: number; q3: number; max: number }> | null = null;
+  responseTimeBoxPlotRange: { min: number; max: number } | null = null;
+  speedQualityBubbleData: any;
+  speedQualityBubbleOptions: any;
+  speedQualityBubbleType: any;
+  estimationRangeStackedData: any;
+  estimationRangeStackedOptions: any;
+  estimationRangeStackedType: any;
+  stabilitySlopeData: any;
+  stabilitySlopeOptions: any;
+  stabilitySlopeType: any;
+  private readonly providerPalette = [
+    { border: '#2563eb', fill: 'rgba(37, 99, 235, 0.2)', solid: 'rgba(37, 99, 235, 0.7)' },
+    { border: '#f97316', fill: 'rgba(249, 115, 22, 0.2)', solid: 'rgba(249, 115, 22, 0.7)' },
+    { border: '#10b981', fill: 'rgba(16, 185, 129, 0.2)', solid: 'rgba(16, 185, 129, 0.7)' },
+    { border: '#a855f7', fill: 'rgba(168, 85, 247, 0.2)', solid: 'rgba(168, 85, 247, 0.7)' },
+    { border: '#e11d48', fill: 'rgba(225, 29, 72, 0.2)', solid: 'rgba(225, 29, 72, 0.7)' }
+  ];
 
   // Methods for template actions
   goBack() {
@@ -385,6 +422,7 @@ export class AiEvaluationComponent {
       }
     };
     this.byIssueOverallBarType = 'bar';
+
   }
 
   private prepareStabilityCharts(result: any): void {
@@ -749,6 +787,27 @@ export class AiEvaluationComponent {
     if (!Array.isArray(full) || !full.length) {
       this.comparisonPerfAvgBarData = null;
       this.comparisonPerfDetailBarData = null;
+      this.comparisonRadarData = null;
+      this.comparisonRadarOptions = null;
+      this.estimationComparisonBarData = null;
+      this.estimationComparisonBarOptions = null;
+      this.stabilityComparisonPieData = null;
+      this.stabilityComparisonPieOptions = null;
+      this.qualityVsSpeedScatterData = null;
+      this.qualityVsSpeedScatterOptions = null;
+      this.compositeScoreBarData = null;
+      this.compositeScoreBarOptions = null;
+      this.advantageDivergingBarData = null;
+      this.advantageDivergingBarOptions = null;
+      this.comparisonHeatmapMatrix = null;
+      this.responseTimeBoxPlotData = null;
+      this.responseTimeBoxPlotRange = null;
+      this.speedQualityBubbleData = null;
+      this.speedQualityBubbleOptions = null;
+      this.estimationRangeStackedData = null;
+      this.estimationRangeStackedOptions = null;
+      this.stabilitySlopeData = null;
+      this.stabilitySlopeOptions = null;
       return;
     }
 
@@ -866,6 +925,796 @@ export class AiEvaluationComponent {
       }
     };
     this.comparisonPerfDetailBarType = 'bar';
+
+    this.buildComparisonRadar(full);
+    this.buildEstimationComparisonBar(result?.estimation);
+    this.buildStabilityComparisonPie(result?.stability);
+    this.buildQualityVsSpeedScatter(full);
+    this.buildCompositeScoreBar(full);
+    this.buildAdvantageDivergingBar(full);
+    this.buildComparisonHeatmap(full);
+    this.buildResponseTimeBoxPlot(full);
+    this.buildSpeedQualityBubble(full);
+    this.buildEstimationRangeStacked(full);
+    this.buildStabilitySlopeChart(full);
+  }
+
+  private buildComparisonRadar(full: any[]): void {
+    if (!Array.isArray(full) || !full.length) {
+      this.comparisonRadarData = null;
+      this.comparisonRadarOptions = null;
+      this.comparisonRadarType = 'radar';
+      return;
+    }
+
+    const providers = full.map(model => ({
+      label: this.formatProviderLabel(model?.aiProvider),
+      avgResponseTimeSec: this.toNumber(model?.avgResponseTimeSec),
+      avgEstimatedHours: this.toNumber(model?.avgEstimatedHours ?? model?.avgEstimatedHour),
+      stabilityScore: this.toNumber(model?.stabilityScore),
+      engineeringRelevanceScore: this.toNumber(model?.engineeringRelevanceScore),
+      avgResponseLength: this.toNumber(model?.avgResponseLength)
+    }));
+
+    if (!providers.length) {
+      this.comparisonRadarData = null;
+      this.comparisonRadarOptions = null;
+      return;
+    }
+
+    const responseSpeedValues = providers.map(p => (p.avgResponseTimeSec > 0 ? 1 / p.avgResponseTimeSec : 0));
+    const estimationValues = providers.map(p => p.avgEstimatedHours);
+    const stabilityValues = providers.map(p => p.stabilityScore);
+    const relevanceValues = providers.map(p => p.engineeringRelevanceScore);
+    const verbosityValues = providers.map(p => p.avgResponseLength);
+
+    const speedRange = this.range(responseSpeedValues);
+    const estRange = this.range(estimationValues);
+    const stabilityRange = this.range(stabilityValues);
+    const relevanceRange = this.range(relevanceValues);
+    const verbosityRange = this.range(verbosityValues);
+
+    this.comparisonRadarData = {
+      labels: ['Response Speed', 'Estimation Conservatism', 'Stability', 'Engineering Relevance', 'Response Verbosity'],
+      datasets: providers.map((provider, index) => ({
+        label: provider.label,
+        backgroundColor: this.providerFillColor(index),
+        borderColor: this.providerBorderColor(index),
+        data: [
+          this.normalizeValue(responseSpeedValues[index], speedRange),
+          this.normalizeValue(estimationValues[index], estRange),
+          this.normalizeValue(stabilityValues[index], stabilityRange),
+          this.normalizeValue(relevanceValues[index], relevanceRange),
+          this.normalizeValue(verbosityValues[index], verbosityRange)
+        ]
+      }))
+    };
+
+    this.comparisonRadarOptions = {
+      responsive: true,
+      scales: {
+        r: {
+          beginAtZero: true,
+          suggestedMax: 1
+        }
+      },
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    };
+    this.comparisonRadarType = 'radar';
+  }
+
+  private buildEstimationComparisonBar(estimation: any): void {
+    if (!estimation) {
+      this.estimationComparisonBarData = null;
+      this.estimationComparisonBarOptions = null;
+      return;
+    }
+
+    const gemini = this.toNumber(estimation.GEMINI ?? estimation.Gemini);
+    const deepseek = this.toNumber(estimation.DEEPSEEK ?? estimation.DeepSeek);
+    if (!gemini && !deepseek) {
+      this.estimationComparisonBarData = null;
+      this.estimationComparisonBarOptions = null;
+      return;
+    }
+
+    const labels = ['Gemini', 'DeepSeek'];
+    const values = [gemini, deepseek];
+    this.estimationComparisonBarData = {
+      labels,
+      datasets: [
+        {
+          label: 'Avg estimated hours',
+          data: values,
+          backgroundColor: ['#3b82f6', '#22c55e'],
+          borderRadius: 8,
+          maxBarThickness: 32
+        }
+      ]
+    };
+    this.estimationComparisonBarOptions = {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: this.computeYAxisMax(values)
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          color: '#1e293b',
+          font: { weight: 'bold', size: 12 },
+          formatter: (value: any) => {
+            const num = typeof value === 'number' ? value : Number(value);
+            return Number.isFinite(num) ? num.toFixed(2) : value;
+          }
+        }
+      }
+    };
+    this.estimationComparisonBarType = 'bar';
+  }
+
+  private buildStabilityComparisonPie(stability: any): void {
+    if (!stability) {
+      this.stabilityComparisonPieData = null;
+      this.stabilityComparisonPieOptions = null;
+      return;
+    }
+
+    const gemini = this.toNumber(stability.GEMINI ?? stability.Gemini);
+    const deepseek = this.toNumber(stability.DEEPSEEK ?? stability.DeepSeek);
+    if (!gemini && !deepseek) {
+      this.stabilityComparisonPieData = null;
+      this.stabilityComparisonPieOptions = null;
+      return;
+    }
+
+    this.stabilityComparisonPieData = {
+      labels: ['Gemini', 'DeepSeek'],
+      datasets: [
+        {
+          data: [gemini, deepseek],
+          backgroundColor: ['#60a5fa', '#34d399']
+        }
+      ]
+    };
+    this.stabilityComparisonPieOptions = {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        datalabels: {
+          color: '#0f172a',
+          font: { weight: 'bold', size: 12 },
+          formatter: (value: any) => {
+            const num = typeof value === 'number' ? value : Number(value);
+            return Number.isFinite(num) ? num.toFixed(2) : value;
+          }
+        }
+      }
+    };
+    this.stabilityComparisonPieType = 'pie';
+  }
+
+  private buildQualityVsSpeedScatter(full: any[]): void {
+    if (!Array.isArray(full) || !full.length) {
+      this.qualityVsSpeedScatterData = null;
+      this.qualityVsSpeedScatterOptions = null;
+      return;
+    }
+
+    const datasets = full
+      .map((model, index) => {
+        const avgResponseTimeSec = this.toNumber(model?.avgResponseTimeSec);
+        const engineeringRelevanceScore = this.toNumber(model?.engineeringRelevanceScore);
+        if (!Number.isFinite(avgResponseTimeSec) || !Number.isFinite(engineeringRelevanceScore)) {
+          return null;
+        }
+        return {
+          label: this.formatProviderLabel(model?.aiProvider),
+          data: [{ x: avgResponseTimeSec, y: engineeringRelevanceScore }],
+          backgroundColor: this.providerBorderColor(index),
+          pointRadius: 6
+        };
+      })
+      .filter((dataset): dataset is { label: string; data: { x: number; y: number }[]; backgroundColor: string; pointRadius: number } => !!dataset);
+
+    if (!datasets.length) {
+      this.qualityVsSpeedScatterData = null;
+      this.qualityVsSpeedScatterOptions = null;
+      return;
+    }
+
+    this.qualityVsSpeedScatterData = { datasets };
+    this.qualityVsSpeedScatterOptions = {
+      responsive: true,
+      scales: {
+        x: {
+          title: { display: true, text: 'Avg response time (s)' },
+          beginAtZero: true
+        },
+        y: {
+          title: { display: true, text: 'Engineering relevance score' },
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const label = context.dataset?.label ?? 'Model';
+              const x = context.parsed?.x ?? 0;
+              const y = context.parsed?.y ?? 0;
+              return `${label}: ${x.toFixed(2)}s, relevance ${y.toFixed(2)}`;
+            }
+          }
+        }
+      }
+    };
+    this.qualityVsSpeedScatterType = 'scatter';
+  }
+
+  private buildCompositeScoreBar(full: any[]): void {
+    const providers = this.mapComparisonProviders(full);
+    if (!providers.length) {
+      this.compositeScoreBarData = null;
+      this.compositeScoreBarOptions = null;
+      return;
+    }
+
+    const weights = { speed: 0.3, stability: 0.25, relevance: 0.25, estimation: 0.2 };
+    const speedSeries = providers.map(p => p.avgResponseTimeSec);
+    const stabilitySeries = providers.map(p => p.stabilityScore);
+    const relevanceSeries = providers.map(p => p.engineeringRelevanceScore);
+    const estimationSeries = providers.map(p => p.avgEstimatedHours);
+
+    const speedRange = this.range(speedSeries);
+    const stabilityRange = this.range(stabilitySeries);
+    const relevanceRange = this.range(relevanceSeries);
+    const estimationRange = this.range(estimationSeries);
+
+    const scores = providers.map((provider, index) => {
+      const speedScore = this.normalizeInverse(speedSeries[index], speedRange);
+      const stabilityScore = this.normalizeValue(stabilitySeries[index], stabilityRange);
+      const relevanceScore = this.normalizeValue(relevanceSeries[index], relevanceRange);
+      const estimationScore = this.normalizeInverse(estimationSeries[index], estimationRange);
+      const composite =
+        speedScore * weights.speed +
+        stabilityScore * weights.stability +
+        relevanceScore * weights.relevance +
+        estimationScore * weights.estimation;
+      return Number.isFinite(composite) ? Number(composite.toFixed(3)) : 0;
+    });
+
+    this.compositeScoreBarData = {
+      labels: providers.map(p => p.label),
+      datasets: [
+        {
+          label: 'Composite decision score',
+          data: scores,
+          backgroundColor: providers.map((_, index) => this.providerSolidColor(index)),
+          borderRadius: 8,
+          maxBarThickness: 36
+        }
+      ]
+    };
+    this.compositeScoreBarOptions = {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true, suggestedMax: 1 }
+      },
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'end',
+          color: '#0f172a',
+          font: { weight: 'bold', size: 12 },
+          formatter: (value: any) => {
+            const num = typeof value === 'number' ? value : Number(value);
+            return Number.isFinite(num) ? num.toFixed(2) : value;
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const label = context.label ?? 'Model';
+              const value = context.parsed?.y ?? context.parsed ?? 0;
+              return `${label}: composite ${value.toFixed(2)}`;
+            }
+          }
+        }
+      }
+    };
+    this.compositeScoreBarType = 'bar';
+  }
+
+  private buildAdvantageDivergingBar(full: any[]): void {
+    const providers = this.mapComparisonProviders(full);
+    if (providers.length < 2) {
+      this.advantageDivergingBarData = null;
+      this.advantageDivergingBarOptions = null;
+      return;
+    }
+
+    const sorted = [...providers].sort((a, b) => a.label.localeCompare(b.label));
+    const [primary, secondary] = sorted;
+
+    const speedSeries = sorted.map(p => p.avgResponseTimeSec);
+    const stabilitySeries = sorted.map(p => p.stabilityScore);
+    const relevanceSeries = sorted.map(p => p.engineeringRelevanceScore);
+    const estimationSeries = sorted.map(p => p.avgEstimatedHours);
+
+    const speedRange = this.range(speedSeries);
+    const stabilityRange = this.range(stabilitySeries);
+    const relevanceRange = this.range(relevanceSeries);
+    const estimationRange = this.range(estimationSeries);
+
+    const diffs = [
+      {
+        label: 'Speed advantage',
+        value: this.normalizeInverse(speedSeries[0], speedRange) - this.normalizeInverse(speedSeries[1], speedRange)
+      },
+      {
+        label: 'Stability advantage',
+        value: this.normalizeValue(stabilitySeries[0], stabilityRange) - this.normalizeValue(stabilitySeries[1], stabilityRange)
+      },
+      {
+        label: 'Engineering depth',
+        value: this.normalizeValue(relevanceSeries[0], relevanceRange) - this.normalizeValue(relevanceSeries[1], relevanceRange)
+      },
+      {
+        label: 'Estimation discipline',
+        value: this.normalizeInverse(estimationSeries[0], estimationRange) - this.normalizeInverse(estimationSeries[1], estimationRange)
+      }
+    ];
+
+    this.advantageDivergingBarData = {
+      labels: diffs.map(diff => diff.label),
+      datasets: [
+        {
+          label: `${primary.label} advantage vs ${secondary.label}`,
+          data: diffs.map(diff => Number(diff.value.toFixed(3))),
+          backgroundColor: diffs.map(diff => (diff.value >= 0 ? '#22c55e' : '#ef4444')),
+          borderRadius: 6,
+          maxBarThickness: 32
+        }
+      ]
+    };
+    this.advantageDivergingBarOptions = {
+      indexAxis: 'y',
+      responsive: true,
+      scales: {
+        x: {
+          suggestedMin: -1,
+          suggestedMax: 1,
+          grid: { color: '#e2e8f0' }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const label = context.dataset?.label ?? 'Advantage';
+              const value = context.parsed?.x ?? context.raw ?? 0;
+              const direction = value >= 0 ? primary.label : secondary.label;
+              return `${label}: ${direction} +${Math.abs(value).toFixed(2)}`;
+            }
+          }
+        }
+      }
+    };
+    this.advantageDivergingBarType = 'bar';
+  }
+
+  private buildComparisonHeatmap(full: any[]): void {
+    const providers = this.mapComparisonProviders(full);
+    if (!providers.length) {
+      this.comparisonHeatmapMatrix = null;
+      return;
+    }
+
+    const speedSeries = providers.map(p => p.avgResponseTimeSec);
+    const stabilitySeries = providers.map(p => p.stabilityScore);
+    const relevanceSeries = providers.map(p => p.engineeringRelevanceScore);
+    const estimationSeries = providers.map(p => p.avgEstimatedHours);
+    const verbositySeries = providers.map(p => p.avgResponseLength);
+
+    const speedRange = this.range(speedSeries);
+    const stabilityRange = this.range(stabilitySeries);
+    const relevanceRange = this.range(relevanceSeries);
+    const estimationRange = this.range(estimationSeries);
+    const verbosityRange = this.range(verbositySeries);
+
+    this.comparisonHeatmapMatrix = providers.map((provider, index) => ({
+      label: provider.label,
+      metrics: [
+        {
+          key: 'speed',
+          label: 'Response speed',
+          value: provider.avgResponseTimeSec,
+          normalized: this.normalizeInverse(speedSeries[index], speedRange)
+        },
+        {
+          key: 'stability',
+          label: 'Stability score',
+          value: provider.stabilityScore,
+          normalized: this.normalizeValue(stabilitySeries[index], stabilityRange)
+        },
+        {
+          key: 'relevance',
+          label: 'Engineering relevance',
+          value: provider.engineeringRelevanceScore,
+          normalized: this.normalizeValue(relevanceSeries[index], relevanceRange)
+        },
+        {
+          key: 'estimation',
+          label: 'Estimation efficiency',
+          value: provider.avgEstimatedHours,
+          normalized: this.normalizeInverse(estimationSeries[index], estimationRange)
+        },
+        {
+          key: 'verbosity',
+          label: 'Response verbosity',
+          value: provider.avgResponseLength,
+          normalized: this.normalizeValue(verbositySeries[index], verbosityRange)
+        }
+      ]
+    }));
+  }
+
+  private buildResponseTimeBoxPlot(full: any[]): void {
+    const providers = this.mapComparisonProviders(full);
+    if (!providers.length) {
+      this.responseTimeBoxPlotData = null;
+      this.responseTimeBoxPlotRange = null;
+      return;
+    }
+
+    const boxes = providers
+      .map(provider => {
+        const min = provider.minResponseTimeSec;
+        const max = provider.maxResponseTimeSec;
+        const median = provider.avgResponseTimeSec;
+        const std = provider.stdDeviationResponseTime;
+        if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
+          return null;
+        }
+        const q1 = this.clamp(median - std, min, max);
+        const q3 = this.clamp(median + std, min, max);
+        return {
+          label: provider.label,
+          min,
+          q1,
+          median,
+          q3,
+          max
+        };
+      })
+      .filter((box): box is { label: string; min: number; q1: number; median: number; q3: number; max: number } => !!box);
+
+    if (!boxes.length) {
+      this.responseTimeBoxPlotData = null;
+      this.responseTimeBoxPlotRange = null;
+      return;
+    }
+
+    const globalMin = Math.min(...boxes.map(box => box.min));
+    const globalMax = Math.max(...boxes.map(box => box.max));
+    this.responseTimeBoxPlotData = boxes;
+    this.responseTimeBoxPlotRange = { min: globalMin, max: globalMax };
+  }
+
+  private buildSpeedQualityBubble(full: any[]): void {
+    const providers = this.mapComparisonProviders(full);
+    const datasets = providers
+      .map((provider, index) => {
+        if (!Number.isFinite(provider.avgResponseTimeSec) || !Number.isFinite(provider.engineeringRelevanceScore)) {
+          return null;
+        }
+        const stabilityRadius = provider.stabilityScore > 0 ? Math.max(6, provider.stabilityScore * 10) : 6;
+        return {
+          label: provider.label,
+          data: [
+            {
+              x: provider.avgResponseTimeSec,
+              y: provider.engineeringRelevanceScore,
+              r: stabilityRadius
+            }
+          ],
+          backgroundColor: this.providerSolidColor(index),
+          borderColor: this.providerBorderColor(index),
+          borderWidth: 1,
+          hoverRadius: stabilityRadius + 2
+        };
+      })
+      .filter((dataset: { label: string; data: { x: number; y: number; r: number }[]; backgroundColor: string; borderColor: string; borderWidth: number; hoverRadius: number } | null): dataset is {
+        label: string;
+        data: { x: number; y: number; r: number }[];
+        backgroundColor: string;
+        borderColor: string;
+        borderWidth: number;
+        hoverRadius: number;
+      } => !!dataset);
+
+    if (!datasets.length) {
+      this.speedQualityBubbleData = null;
+      this.speedQualityBubbleOptions = null;
+      return;
+    }
+
+    this.speedQualityBubbleData = { datasets };
+    this.speedQualityBubbleOptions = {
+      responsive: true,
+      scales: {
+        x: {
+          title: { display: true, text: 'Avg response time (s)' },
+          beginAtZero: true
+        },
+        y: {
+          title: { display: true, text: 'Engineering relevance' },
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const label = context.dataset?.label ?? 'Model';
+              const point = context.raw ?? context.parsed;
+              if (!point) {
+                return label;
+              }
+              return `${label}: ${point.x.toFixed(2)}s, relevance ${point.y.toFixed(2)}, stability radius ${point.r}`;
+            }
+          }
+        },
+        legend: { position: 'bottom' }
+      }
+    };
+    this.speedQualityBubbleType = 'bubble';
+  }
+
+  private buildEstimationRangeStacked(full: any[]): void {
+    const providers = this.mapComparisonProviders(full);
+    if (!providers.length) {
+      this.estimationRangeStackedData = null;
+      this.estimationRangeStackedOptions = null;
+      return;
+    }
+
+    const labels = providers.map(p => p.label);
+    const minSegments: number[] = [];
+    const midSegments: number[] = [];
+    const topSegments: number[] = [];
+    providers.forEach(provider => {
+      const min = provider.minEstimatedHours > 0 ? provider.minEstimatedHours : provider.avgEstimatedHours;
+      const avg = provider.avgEstimatedHours > 0 ? provider.avgEstimatedHours : min;
+      const max = provider.maxEstimatedHours > 0 ? provider.maxEstimatedHours : avg;
+      const clampedMin = Math.min(min, avg);
+      const clampedMax = Math.max(max, avg);
+      minSegments.push(clampedMin);
+      midSegments.push(Math.max(0, avg - clampedMin));
+      topSegments.push(Math.max(0, clampedMax - avg));
+    });
+
+    const totals = providers.map((_, index) => minSegments[index] + midSegments[index] + topSegments[index]);
+    const yMax = this.computeYAxisMax(totals);
+
+    this.estimationRangeStackedData = {
+      labels,
+      datasets: [
+        {
+          label: 'Minimum hours',
+          data: minSegments,
+          backgroundColor: '#cbd5f5',
+          stack: 'estRange'
+        },
+        {
+          label: 'Avg delta',
+          data: midSegments,
+          backgroundColor: '#818cf8',
+          stack: 'estRange'
+        },
+        {
+          label: 'Tail risk',
+          data: topSegments,
+          backgroundColor: '#6366f1',
+          stack: 'estRange'
+        }
+      ]
+    };
+    this.estimationRangeStackedOptions = {
+      responsive: true,
+      scales: {
+        y: { stacked: true, beginAtZero: true, max: yMax },
+        x: { stacked: true }
+      },
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    };
+    this.estimationRangeStackedType = 'bar';
+  }
+
+  private buildStabilitySlopeChart(full: any[]): void {
+    const providers = this.mapComparisonProviders(full);
+    if (!providers.length) {
+      this.stabilitySlopeData = null;
+      this.stabilitySlopeOptions = null;
+      return;
+    }
+
+    const labels = ['Avg response (s)', 'Stability-adjusted (s)'];
+    const datasets = providers
+      .map((provider, index) => {
+        const avg = provider.avgResponseTimeSec;
+        const stability = provider.stabilityScore;
+        if (!Number.isFinite(avg) || avg <= 0) {
+          return null;
+        }
+        const normalizedStability = stability > 1 ? stability / 100 : stability;
+        const adjustmentFactor = 1 - this.clamp(normalizedStability, 0, 1) * 0.35;
+        const adjusted = Number((avg * adjustmentFactor).toFixed(3));
+        return {
+          label: provider.label,
+          data: [Number(avg.toFixed(3)), adjusted],
+          borderColor: this.providerBorderColor(index),
+          backgroundColor: this.providerFillColor(index),
+          pointBackgroundColor: this.providerBorderColor(index),
+          tension: 0.3,
+          fill: false
+        };
+      })
+      .filter((dataset: { label: string; data: number[]; borderColor: string; backgroundColor: string; pointBackgroundColor: string; tension: number; fill: boolean } | null): dataset is {
+        label: string;
+        data: number[];
+        borderColor: string;
+        backgroundColor: string;
+        pointBackgroundColor: string;
+        tension: number;
+        fill: boolean;
+      } => !!dataset);
+
+    if (!datasets.length) {
+      this.stabilitySlopeData = null;
+      this.stabilitySlopeOptions = null;
+      return;
+    }
+
+    this.stabilitySlopeData = { labels, datasets };
+    this.stabilitySlopeOptions = {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: {
+          callbacks: {
+            label: (context: any) => {
+              const label = context.dataset?.label ?? 'Model';
+              const value = context.parsed?.y ?? context.parsed ?? 0;
+              return `${label}: ${value.toFixed(2)}s`;
+            }
+          }
+        }
+      },
+      scales: {
+        y: { beginAtZero: true }
+      }
+    };
+    this.stabilitySlopeType = 'line';
+  }
+
+  private range(values: number[]): { min: number; max: number } {
+    const finite = values.filter(v => Number.isFinite(v));
+    if (!finite.length) {
+      return { min: 0, max: 1 };
+    }
+    return {
+      min: Math.min(...finite),
+      max: Math.max(...finite)
+    };
+  }
+
+  private normalizeValue(value: number, range: { min: number; max: number }): number {
+    if (!Number.isFinite(value)) {
+      return 0;
+    }
+    const span = range.max - range.min;
+    if (span <= 0) {
+      return 1;
+    }
+    return (value - range.min) / span;
+  }
+
+  private providerFillColor(index: number): string {
+    const palette = this.providerPalette[index % this.providerPalette.length];
+    return palette.fill;
+  }
+
+  private providerBorderColor(index: number): string {
+    const palette = this.providerPalette[index % this.providerPalette.length];
+    return palette.border;
+  }
+
+  private providerSolidColor(index: number): string {
+    const palette = this.providerPalette[index % this.providerPalette.length];
+    return palette.solid ?? palette.border;
+  }
+
+  private mapComparisonProviders(full: any[]): Array<{
+    label: string;
+    avgResponseTimeSec: number;
+    minResponseTimeSec: number;
+    maxResponseTimeSec: number;
+    stdDeviationResponseTime: number;
+    avgEstimatedHours: number;
+    minEstimatedHours: number;
+    maxEstimatedHours: number;
+    stabilityScore: number;
+    engineeringRelevanceScore: number;
+    avgResponseLength: number;
+  }> {
+    if (!Array.isArray(full)) {
+      return [];
+    }
+
+    return full
+      .map(model => ({
+        label: this.formatProviderLabel(model?.aiProvider),
+        avgResponseTimeSec: this.toNumber(model?.avgResponseTimeSec),
+        minResponseTimeSec: this.toNumber(model?.minResponseTimeSec ?? model?.minResponseSec),
+        maxResponseTimeSec: this.toNumber(model?.maxResponseTimeSec ?? model?.maxResponseSec),
+        stdDeviationResponseTime: this.toNumber(model?.stdDeviationResponseTime ?? model?.stdDevResponseTime ?? model?.stdResponseTime),
+        avgEstimatedHours: this.toNumber(model?.avgEstimatedHours ?? model?.avgEstimatedHour),
+        minEstimatedHours: this.toNumber(model?.minEstimatedHours ?? model?.minHours ?? model?.minEstimatedHour),
+        maxEstimatedHours: this.toNumber(model?.maxEstimatedHours ?? model?.maxHours ?? model?.maxEstimatedHour),
+        stabilityScore: this.toNumber(model?.stabilityScore ?? model?.stability ?? model?.stabilityIndex),
+        engineeringRelevanceScore: this.toNumber(model?.engineeringRelevanceScore ?? model?.relevanceScore ?? model?.engRelevance),
+        avgResponseLength: this.toNumber(model?.avgResponseLength ?? model?.avgTokens ?? model?.avgWords)
+      }))
+      .filter(provider => provider.label.trim().length > 0);
+  }
+
+  private normalizeInverse(value: number, range: { min: number; max: number }): number {
+    if (!Number.isFinite(value)) {
+      return 0;
+    }
+    const span = range.max - range.min;
+    if (span <= 0) {
+      return 1;
+    }
+    return 1 - (value - range.min) / span;
+  }
+
+  private clamp(value: number, min: number, max: number): number {
+    if (!Number.isFinite(value)) {
+      return min;
+    }
+    return Math.min(Math.max(value, min), max);
+  }
+
+  private formatProviderLabel(provider: any): string {
+    const raw = String(provider ?? '').trim();
+    const upper = raw.toUpperCase();
+    switch (upper) {
+      case 'GEMINI':
+        return 'Gemini';
+      case 'DEEPSEEK':
+        return 'DeepSeek';
+      default:
+        return raw || 'Provider';
+    }
+  }
+
+  private toNumber(value: any): number {
+    const num = typeof value === 'number' ? value : Number(value);
+    return Number.isFinite(num) ? num : 0;
   }
 
   // Utility: compute a nice Y-axis max with two extra units above the highest value

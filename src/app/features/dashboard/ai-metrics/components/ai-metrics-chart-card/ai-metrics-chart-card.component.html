@@ -1,0 +1,19 @@
+<section class="chart-card" [class.chart-card--compact]="size === 'compact'">
+  <header class="chart-card__header">
+    <h5 class="chart-card__title">{{ title }}</h5>
+    <p *ngIf="subtitle" class="chart-card__subtitle">{{ subtitle }}</p>
+  </header>
+
+  <div class="chart-card__body" [class.chart-card__body--compact]="size === 'compact'" *ngIf="hasData; else chartCardEmpty">
+    <canvas baseChart [type]="chartType" [data]="chartData" [options]="chartOptions"></canvas>
+    <div class="chart-card__addon">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <footer *ngIf="caption" class="chart-card__caption">{{ caption }}</footer>
+
+  <ng-template #chartCardEmpty>
+    <div class="chart-card__empty">{{ emptyMessage }}</div>
+  </ng-template>
+</section>
