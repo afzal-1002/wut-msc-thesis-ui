@@ -20,8 +20,8 @@ import { IssuesHomeComponent } from './features/dashboard/issues-home/issues-hom
 import { IssueDetailComponent } from './features/dashboard/issue-detail/issue-detail.component';
 import { AiAnalysisPageComponent } from './features/dashboard/issue-detail/ai-analysis-page/ai-analysis-page.component';
 import { AiEstimationsComponent } from './features/dashboard/ai-estimations/ai-estimations.component';
-import { AiEvaluationComponent } from './features/dashboard/ai-estimations/ai-evaluation.component';
-import { AiMetricsComponent } from './features/dashboard/ai-estimations/ai-metrics.component';
+import { AiEvaluationComponent } from './features/dashboard/ai-evaluation/ai-evaluation.component';
+import { AiMetricsComponent } from './features/dashboard/ai-metrics/ai-metrics.component';
 import { AiComparisonComponent } from './features/dashboard/ai-comparison/ai-comparison.component';
 
 export const routes: Routes = [
