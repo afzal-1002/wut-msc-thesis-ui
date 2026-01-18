@@ -749,9 +749,11 @@ export class AiEvaluationComponent {
         {
           data: avgs,
           label: 'Avg response time (s)',
-          backgroundColor: ['#1976d2', '#43a047'],
-          borderRadius: 8,
-          maxBarThickness: 40
+          backgroundColor: ['#60a5fa', '#f59e0b'],
+          borderColor: ['#2563eb', '#b45309'],
+          borderWidth: 1.5,
+          borderRadius: 0,
+          maxBarThickness: 28
         }
       ]
     };
@@ -787,37 +789,37 @@ export class AiEvaluationComponent {
         {
           label: 'Min (s)',
           data: mins,
-          backgroundColor: '#16a34a',
-          borderColor: '#166534',
+          backgroundColor: '#60a5fa',
+          borderColor: '#2563eb',
           borderWidth: 1.5,
-          borderRadius: 8,
+          borderRadius: 0,
           maxBarThickness: 36
         },
         {
           label: 'Avg (s)',
           data: avgs,
-          backgroundColor: '#2563eb',
-          borderColor: '#1d4ed8',
+          backgroundColor: '#f59e0b',
+          borderColor: '#b45309',
           borderWidth: 1.5,
-          borderRadius: 8,
+          borderRadius: 0,
           maxBarThickness: 36
         },
         {
           label: 'Max (s)',
           data: maxs,
-          backgroundColor: '#dc2626',
-          borderColor: '#b91c1c',
+          backgroundColor: '#f97316',
+          borderColor: '#c2410c',
           borderWidth: 1.5,
-          borderRadius: 8,
+          borderRadius: 0,
           maxBarThickness: 36
         },
         {
           label: 'Std dev (s)',
           data: stds,
-          backgroundColor: '#f59e0b',
-          borderColor: '#b45309',
+          backgroundColor: '#9ca3af',
+          borderColor: '#4b5563',
           borderWidth: 1.5,
-          borderRadius: 8,
+          borderRadius: 0,
           maxBarThickness: 36
         }
       ]

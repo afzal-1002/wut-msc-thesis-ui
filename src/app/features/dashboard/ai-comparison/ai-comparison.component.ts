@@ -4,6 +4,13 @@ import { NgChartsModule } from 'ng2-charts';
 import { AiEstimationsService } from '../../../services/ai/ai-estimations.service';
 import { forkJoin } from 'rxjs';
 import { Router } from '@angular/router';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Chart, ChartOptions, ChartType } from 'chart.js';
+import { AiOverallComparisonComponent } from './overall-comparison/ai-overall-comparison.component';
+
+if (typeof window !== 'undefined') {
+  Chart.register(ChartDataLabels);
+}
 
 interface ModelMetricPoint {
   name: string;
@@ -19,13 +26,11 @@ interface ContentMetric {
   gemini: number;
   deepSeek: number;
 }
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { ChartOptions, ChartType } from 'chart.js';
 
 @Component({
   selector: 'app-ai-comparison',
   standalone: true,
-  imports: [CommonModule, NgChartsModule],
+  imports: [CommonModule, NgChartsModule, AiOverallComparisonComponent],
   templateUrl: './ai-comparison.component.html',
   styleUrls: ['./ai-comparison.component.css']
 })
@@ -34,18 +39,60 @@ export class AiComparisonComponent {
       this.router.navigate(['../']);
     }
 
-  // Fix: Add maxResponseTimeStat for template usage
-  maxResponseTimeStat: number = 1; // TODO: Set this dynamically if needed
-  // Chart.js Bar chart configs
+      contentBarPairs: { name: string; value: number }[] = [];
+  contentYAxisTicks: number[] = [0, 0.5, 1, 1.5, 2, 2.5, 3];
+  fullComparisonMetrics: any[] = [];
+  maxResponseTimeStat = 1;
+
+  summaryBarData: any = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        label: 'Summary categories won',
+        backgroundColor: ['#66bb6a', '#42a5f5'],
+        borderColor: ['#2e7d32', '#1e88e5'],
+        borderWidth: 1.5,
+        borderRadius: 6,
+        maxBarThickness: 32
+      }
+    ]
+  };
+  summaryBarOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+        color: '#111827',
+        font: { weight: 'bold', size: 13 },
+        formatter: (value: any) => (typeof value === 'number' ? value.toFixed(0) : value)
+      }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: {
+        type: 'linear',
+        beginAtZero: true,
+        grid: { color: '#e5e7eb' }
+      }
+    }
+  };
+  summaryBarType: 'bar' = 'bar';
+
   stabilityBarData: any = {
     labels: [],
     datasets: [
       {
         data: [],
         label: 'Avg std dev (h)',
-        backgroundColor: ['#1976d2', '#43a047'],
-        borderRadius: 8,
-        maxBarThickness: 40
+        backgroundColor: ['#60a5fa', '#f59e0b'],
+        borderColor: ['#2563eb', '#b45309'],
+        borderWidth: 1.5,
+        borderRadius: 0,
+        maxBarThickness: 28
       }
     ]
   };
@@ -64,7 +111,7 @@ export class AiComparisonComponent {
     },
     scales: {
       x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      y: { type: 'linear', beginAtZero: true, grid: { color: '#eee' } }
     }
   };
   // Fix: Use string literal types for chart types
@@ -76,9 +123,11 @@ export class AiComparisonComponent {
       {
         data: [],
         label: 'Avg estimated hours',
-        backgroundColor: ['#1976d2', '#43a047'],
-        borderRadius: 8,
-        maxBarThickness: 40
+        backgroundColor: ['#60a5fa', '#f59e0b'],
+        borderColor: ['#2563eb', '#b45309'],
+        borderWidth: 1.5,
+        borderRadius: 0,
+        maxBarThickness: 28
       }
     ]
   };
@@ -97,7 +146,7 @@ export class AiComparisonComponent {
     },
     scales: {
       x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      y: { type: 'linear', beginAtZero: true, grid: { color: '#eee' } }
     }
   };
   estimationBarType: 'bar' = 'bar';
@@ -108,9 +157,11 @@ export class AiComparisonComponent {
       {
         data: [],
         label: 'Avg response time (s)',
-        backgroundColor: ['#1976d2', '#43a047'],
-        borderRadius: 8,
-        maxBarThickness: 40
+        backgroundColor: ['#60a5fa', '#f59e0b'],
+        borderColor: ['#2563eb', '#b45309'],
+        borderWidth: 1.5,
+        borderRadius: 0,
+        maxBarThickness: 28
       }
     ]
   };
@@ -129,10 +180,52 @@ export class AiComparisonComponent {
     },
     scales: {
       x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      y: { type: 'linear', beginAtZero: true, grid: { color: '#eee' } }
     }
   };
   performanceBarType: 'bar' = 'bar';
+
+  // Content quality: Engineering Score bar chart
+  contentBarChartData: any = {
+    labels: [],
+    datasets: [
+      {
+        data: [],
+        label: 'Engineering Score',
+        backgroundColor: ['#66bb6a', '#42a5f5'],
+        borderColor: ['#2e7d32', '#1e88e5'],
+        borderWidth: 1.5,
+        borderRadius: 0,
+        maxBarThickness: 40
+      }
+    ]
+  };
+  contentBarChartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: { display: false },
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+        color: '#111827',
+        font: { weight: 'bold', size: 13 },
+        formatter: (value: any) =>
+          typeof value === 'number' ? value.toFixed(2) : value
+      }
+    },
+    scales: {
+      x: { grid: { display: false } },
+      y: {
+        type: 'linear',
+        beginAtZero: true,
+        max: 3,
+        ticks: { stepSize: 1 },
+        grid: { color: '#e5e7eb' }
+      }
+    }
+  };
+  contentBarChartType: 'bar' = 'bar';
 
   // Detailed performance distribution (min / avg / max / std dev) per model
   performanceDetailBarData: any = null;
@@ -154,7 +247,7 @@ export class AiComparisonComponent {
     },
     scales: {
       x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      y: { type: 'linear', beginAtZero: true, grid: { color: '#eee' } }
     }
   };
   performanceDetailBarType: 'bar' = 'bar';
@@ -167,7 +260,7 @@ export class AiComparisonComponent {
   comparisonSummary: any = null;
 
   // UI state
-  activeTab: 'performance' | 'estimation' | 'stability' | 'content' | 'summary' = 'performance';
+  activeTab: 'overall' | 'performance' | 'estimation' | 'stability' | 'content' | 'summary' = 'overall';
   responseTimeStats: any = null;
   responseTimeSummary: any = null;
   activeResponseView: 'stats' | 'summary' | null = null;
@@ -187,14 +280,17 @@ export class AiComparisonComponent {
   constructor(private aiService: AiEstimationsService, private router: Router) {}
 
   ngOnInit(): void {
-    this.selectTab('performance');
+    this.selectTab('overall');
   }
 
-  selectTab(tab: 'performance' | 'estimation' | 'stability' | 'content' | 'summary'): void {
+  selectTab(tab: 'overall' | 'performance' | 'estimation' | 'stability' | 'content' | 'summary'): void {
     this.activeTab = tab;
     switch (tab) {
+      case 'overall':
+        return;
       case 'performance':
         this.aiService.getFullModelComparison().subscribe(raw => {
+          this.fullComparisonMetrics = raw ?? [];
           // Bar chart: Avg response time (seconds)
           this.performanceBarData.labels = raw.map((m: any) => m.aiProvider);
           const avgValues = raw.map((m: any) => Number(m.avgResponseTimeSec ?? 0));
@@ -260,7 +356,9 @@ export class AiComparisonComponent {
             scales: {
               ...this.performanceDetailBarOptions.scales,
               y: {
-                ...((this.performanceDetailBarOptions.scales && this.performanceDetailBarOptions.scales['y']) || {}),
+                type: 'linear',
+                beginAtZero: true,
+                grid: { color: '#eee' },
                 max: perfMax
               }
             }
@@ -285,13 +383,16 @@ export class AiComparisonComponent {
             scales: {
               ...this.performanceBarOptions.scales,
               y: {
-                ...((this.performanceBarOptions.scales && this.performanceBarOptions.scales['y']) || {}),
+                type: 'linear',
+                beginAtZero: true,
+                grid: { color: '#eee' },
                 max: perfAvgMax
               }
             }
           };
 
           this.prepareAllCharts();
+          this.updateMaxResponseTimeStat();
         });
         break;
       case 'estimation':
@@ -314,7 +415,9 @@ export class AiComparisonComponent {
             scales: {
               ...this.stabilityBarOptions.scales,
               y: {
-                ...((this.stabilityBarOptions.scales && this.stabilityBarOptions.scales['y']) || {}),
+                type: 'linear',
+                beginAtZero: true,
+                grid: { color: '#eee' },
                 max: stabilityMax
               }
             }
@@ -324,14 +427,14 @@ export class AiComparisonComponent {
         break;
       case 'content':
         this.aiService.getContentQualityComparison().subscribe(raw => {
+          const gem = Number(raw['GEMINI'] ?? raw['Gemini'] ?? 0);
+          const deep = Number(raw['DEEPSEEK'] ?? raw['DeepSeek'] ?? 0);
+
           this.contentMetrics = [
-            { label: 'Engineering Score', gemini: raw['GEMINI'], deepSeek: raw['DEEPSEEK'] }
+            { label: 'Engineering Score', gemini: gem, deepSeek: deep }
           ];
-          // Pie chart for content
-          this.summaryPieData = {
-            labels: Object.keys(raw),
-            datasets: [{ data: Object.values(raw), backgroundColor: ['#1976d2', '#43a047'] }]
-          };
+
+          this.updateContentChart(gem, deep);
           this.prepareAllCharts();
         });
         break;
@@ -349,12 +452,18 @@ export class AiComparisonComponent {
       legend: { display: true },
       title: { display: false },
       datalabels: {
-        display: false
+        display: true,
+        align: 'top',
+        anchor: 'end',
+        color: '#111827',
+        font: { weight: 'bold', size: 12 },
+        formatter: (value: unknown) =>
+          typeof value === 'number' ? value.toFixed(2) : value
       }
     },
     scales: {
       x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      y: { type: 'linear', beginAtZero: true, grid: { color: '#eee' } }
     }
   };
   performanceLineType: 'line' = 'line';
@@ -389,7 +498,6 @@ export class AiComparisonComponent {
 
   // Prepare all extra chart data after API loads
   prepareAllCharts(): void {
-    // Line chart: Response time trends (dummy data, replace with real if available)
     if (this.performanceModels.length) {
       this.performanceLineData = {
         labels: this.performanceModels.map(m => m.name),
@@ -406,24 +514,29 @@ export class AiComparisonComponent {
       };
     }
 
-    // Radar chart: Multi-metric comparison (dummy, replace with real if available)
-    if (this.responseTimeStats && Array.isArray(this.responseTimeStats)) {
-      const metrics = ['Avg', 'Min', 'Max', 'StdDev'];
-      const gemini = this.responseTimeStats.find((s: any) => s.aiProvider?.toLowerCase().includes('gemini'));
-      const deepseek = this.responseTimeStats.find((s: any) => s.aiProvider?.toLowerCase().includes('deepseek'));
+    if (this.fullComparisonMetrics.length) {
+      const metrics = ['Avg', 'Min', 'Max', 'Std Dev'];
+      const normalizeData = (model?: any) => [
+        Number(model?.avgResponseTimeSec ?? 0),
+        Number(model?.minResponseTimeSec ?? 0),
+        Number(model?.maxResponseTimeSec ?? 0),
+        Number(model?.stdDeviationResponseTime ?? 0)
+      ];
+      const gemini = this.fullComparisonMetrics.find(m => (m.aiProvider ?? '').toUpperCase() === 'GEMINI');
+      const deepseek = this.fullComparisonMetrics.find(m => (m.aiProvider ?? '').toUpperCase() === 'DEEPSEEK');
       this.stabilityRadarData = {
         labels: metrics,
         datasets: [
           {
             label: 'Gemini',
-            data: gemini ? [gemini.avgResponseTimeSec, gemini.minResponseTimeSec, gemini.maxResponseTimeSec, gemini.stdDeviationSec] : [0,0,0,0],
+            data: normalizeData(gemini),
             backgroundColor: 'rgba(37,99,235,0.15)',
             borderColor: '#1d4ed8',
             pointBackgroundColor: '#1d4ed8'
           },
           {
             label: 'DeepSeek',
-            data: deepseek ? [deepseek.avgResponseTimeSec, deepseek.minResponseTimeSec, deepseek.maxResponseTimeSec, deepseek.stdDeviationSec] : [0,0,0,0],
+            data: normalizeData(deepseek),
             backgroundColor: 'rgba(34,197,94,0.15)',
             borderColor: '#16a34a',
             pointBackgroundColor: '#16a34a'
@@ -432,16 +545,28 @@ export class AiComparisonComponent {
       };
     }
 
-    // Pie chart: Summary breakdown
-    if (this.summaryScores && this.summaryScores.length) {
+    const summaryScores = this.summaryScores;
+    if (summaryScores.length) {
+      const labels = summaryScores.map(s => s.name);
+      const values = summaryScores.map(s => s.value);
       this.summaryPieData = {
-        labels: this.summaryScores.map(s => s.name),
-        datasets: [
-          {
-            data: this.summaryScores.map(s => s.value),
-            backgroundColor: ['#1976d2', '#43a047']
+        labels,
+        datasets: [{ data: values, backgroundColor: ['#1976d2', '#43a047'] }]
+      };
+      this.summaryBarData.labels = labels;
+      this.summaryBarData.datasets[0].data = values;
+      const summaryMax = this.computeYAxisMax(values);
+      this.summaryBarOptions = {
+        ...this.summaryBarOptions,
+        scales: {
+          ...this.summaryBarOptions.scales,
+          y: {
+            type: 'linear',
+            beginAtZero: true,
+            grid: { color: '#e5e7eb' },
+            max: summaryMax
           }
-        ]
+        }
       };
     }
   }
@@ -468,6 +593,15 @@ export class AiComparisonComponent {
   loadResponseTimeStats(): void {
     this.activeResponseView = 'stats';
     if (this.responseTimeStats && !this.responseTimeError) return;
+    this.fetchResponseTimeStats();
+  }
+
+  private ensureResponseTimeStatsLoaded(): void {
+    if (this.responseTimeStats || this.isLoadingResponseTime) return;
+    this.fetchResponseTimeStats();
+  }
+
+  private fetchResponseTimeStats(): void {
     this.isLoadingResponseTime = true;
     this.responseTimeError = '';
     this.aiService.getResponseTimeStats().subscribe({
@@ -475,28 +609,11 @@ export class AiComparisonComponent {
         this.responseTimeStats = raw;
         this.isLoadingResponseTime = false;
         this.prepareAllCharts();
+        this.updateMaxResponseTimeStat();
       },
       error: err => {
         console.error('Response-time stats load error', err);
         this.responseTimeError = 'Failed to load response-time statistics.';
-        this.isLoadingResponseTime = false;
-      }
-    });
-  }
-
-  loadResponseTimeSummary(): void {
-    this.activeResponseView = 'summary';
-    if (this.responseTimeSummary && !this.responseTimeError) return;
-    this.isLoadingResponseTime = true;
-    this.responseTimeError = '';
-    this.aiService.getResponseTimeSummary().subscribe({
-      next: raw => {
-        this.responseTimeSummary = raw;
-        this.isLoadingResponseTime = false;
-      },
-      error: err => {
-        console.error('Response-time summary load error', err);
-        this.responseTimeError = 'Failed to load fastest vs slowest summary.';
         this.isLoadingResponseTime = false;
       }
     });
@@ -584,22 +701,11 @@ export class AiComparisonComponent {
   get maxStabilityValue(): number {
     return this.stabilitySeries.reduce((m, p) => Math.max(m, p.stdDevGemini, p.stdDevDeepSeek), 0) || 0;
   }
-  get maxContentValue(): number {
-    return this.contentMetrics.reduce((m, c) => Math.max(m, c.gemini, c.deepSeek), 0) || 0;
-  }
   get maxSummaryValue(): number {
     return this.summaryScores.reduce((m, p) => (p.value > m ? p.value : m), 0) || 0;
   }
   get maxStabilityBarValue(): number {
     return this.stabilityBarPairs.reduce((m, p) => (p.value > m ? p.value : m), 0) || 0;
-  }
-  get contentBarPairs(): ModelMetricPoint[] {
-    if (!this.contentMetrics.length) return [];
-    const metric = this.contentMetrics[0];
-    return [
-      { name: 'Gemini', value: metric.gemini },
-      { name: 'DeepSeek', value: metric.deepSeek }
-    ];
   }
   get stabilityBarPairs(): ModelMetricPoint[] {
     if (!this.stabilitySeries.length) return [];
@@ -676,5 +782,60 @@ export class AiComparisonComponent {
     const ceil = Math.ceil(rawMax);
     const even = ceil % 2 === 0 ? ceil : ceil + 1;
     return even + 2;
+  }
+
+  private updateContentChart(gem: number, deep: number): void {
+    const labels = ['Gemini', 'DeepSeek'];
+    const baseDataset = this.contentBarChartData.datasets?.[0] ?? {
+      label: 'Engineering Score',
+      backgroundColor: ['#66bb6a', '#42a5f5'],
+      borderColor: ['#2e7d32', '#1e88e5'],
+      borderWidth: 1.5,
+      borderRadius: 0,
+      maxBarThickness: 40
+    };
+    this.contentBarChartData = {
+      labels,
+      datasets: [{ ...baseDataset, data: [gem, deep] }]
+    };
+
+    const dynamicMax = Math.max(3, this.computeYAxisMax([gem, deep]));
+    this.contentBarChartOptions = {
+      ...this.contentBarChartOptions,
+      scales: {
+        ...this.contentBarChartOptions.scales,
+        y: {
+          type: 'linear',
+          beginAtZero: true,
+          max: dynamicMax,
+          ticks: { stepSize: 1 },
+          grid: { color: '#e5e7eb' }
+        }
+      }
+    };
+  }
+
+  private updateMaxResponseTimeStat(): void {
+    const values: number[] = [];
+    this.fullComparisonMetrics.forEach(model => {
+      values.push(
+        Number(model?.minResponseTimeSec ?? 0),
+        Number(model?.avgResponseTimeSec ?? 0),
+        Number(model?.maxResponseTimeSec ?? 0),
+        Number(model?.stdDeviationResponseTime ?? 0)
+      );
+    });
+    if (Array.isArray(this.responseTimeStats)) {
+      this.responseTimeStats.forEach(stat => {
+        values.push(
+          Number(stat?.minResponseTimeSec ?? 0),
+          Number(stat?.avgResponseTimeSec ?? 0),
+          Number(stat?.maxResponseTimeSec ?? 0),
+          Number(stat?.stdDeviationSec ?? stat?.stdDeviationResponseTime ?? 0)
+        );
+      });
+    }
+    const finite = values.filter(v => Number.isFinite(v) && v > 0);
+    this.maxResponseTimeStat = finite.length ? Math.max(...finite) : 1;
   }
 }

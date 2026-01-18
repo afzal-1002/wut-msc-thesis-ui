@@ -121,11 +121,6 @@
 
 .chart-caption {
   font-size: 0.78rem;
-  font-style: normal;
-  font-weight: 500;
-  color: #4b5563;
-  text-align: center;
-  margin-top: 0.35rem;
 }
 
 .summary-text {
@@ -336,35 +331,24 @@ canvas {
   display: block;
 }
 
-.chart-card {
+.bar-shell {
+  width: 40px;
+  height: 180px;
+  background: #f1f1f1;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
+  align-items: flex-end;
+  border-radius: 6px;
+}
+
+.bar {
   width: 100%;
+  border-radius: 6px 6px 0 0;
 }
 
-.chart-card .thesis-bar-chart {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
+.bar.gemini {
+  background-color: #3f51b5;
 }
 
-.chart-card .thesis-bar-chart h6 {
-  width: 100%;
-  text-align: center;
-  margin-bottom: 0.25rem;
-}
-
-.chart-card .thesis-bar-chart canvas {
-  width: 100% !important;
-  max-width: 720px;
-}
-
-.chart-card .thesis-bar-chart .chart-caption {
-  margin-top: 0.75rem;
-  text-align: center;
+.bar.deepseek {
+  background-color: #009688;
 }

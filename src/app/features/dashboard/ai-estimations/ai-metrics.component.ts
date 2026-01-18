@@ -25,9 +25,11 @@ export class AiMetricsComponent {
       {
         data: [],
         label: 'Avg Resolution Time (h)',
-        backgroundColor: ['#22c55e', '#60a5fa', '#a78bfa', '#fbbf24'],
-        borderRadius: 8,
-        maxBarThickness: 40
+        backgroundColor: ['#60a5fa', '#f59e0b', '#60a5fa', '#f59e0b'],
+        borderColor: ['#2563eb', '#b45309', '#2563eb', '#b45309'],
+        borderWidth: 1.5,
+        borderRadius: 0,
+        maxBarThickness: 28
       }
     ]
   };
@@ -418,9 +420,11 @@ export class AiMetricsComponent {
         {
           label: 'Avg response time (sec)',
           data: avgResponseTimes,
-          backgroundColor: ['#60a5fa', '#22c55e', '#a78bfa', '#f97316'],
-          borderRadius: 8,
-          maxBarThickness: 40
+          backgroundColor: ['#60a5fa', '#f59e0b', '#60a5fa', '#f59e0b'],
+          borderColor: ['#2563eb', '#b45309', '#2563eb', '#b45309'],
+          borderWidth: 1.5,
+          borderRadius: 0,
+          maxBarThickness: 28
         }
       ]
     };
@@ -479,29 +483,29 @@ export class AiMetricsComponent {
         {
           label: 'Min hours',
           data: mins,
-          backgroundColor: '#16a34a',
-          borderColor: '#166534',
+          backgroundColor: '#60a5fa',
+          borderColor: '#2563eb',
           borderWidth: 1.5,
-          borderRadius: 8,
-          maxBarThickness: 32
+          borderRadius: 0,
+          maxBarThickness: 26
         },
         {
           label: 'Avg hours',
           data: avgs,
-          backgroundColor: '#2563eb',
-          borderColor: '#1d4ed8',
+          backgroundColor: '#f59e0b',
+          borderColor: '#b45309',
           borderWidth: 1.5,
-          borderRadius: 8,
-          maxBarThickness: 32
+          borderRadius: 0,
+          maxBarThickness: 26
         },
         {
           label: 'Max hours',
           data: maxs,
-          backgroundColor: '#dc2626',
-          borderColor: '#b91c1c',
+          backgroundColor: '#f97316',
+          borderColor: '#c2410c',
           borderWidth: 1.5,
-          borderRadius: 8,
-          maxBarThickness: 32
+          borderRadius: 0,
+          maxBarThickness: 26
         }
       ]
     };
@@ -575,47 +579,47 @@ export class AiMetricsComponent {
           {
             label: 'Min hours',
             data: mins,
-            backgroundColor: '#9ca3af',
+            backgroundColor: '#e5e7eb',
             borderColor: '#4b5563',
             borderWidth: 1.5,
-            borderRadius: 6,
-            maxBarThickness: 28
+            borderRadius: 0,
+            maxBarThickness: 24
           },
           {
             label: 'Q1 (25%)',
             data: q1s,
-            backgroundColor: '#0ea5e9',
+            backgroundColor: '#bfdbfe',
             borderColor: '#0369a1',
             borderWidth: 1.5,
-            borderRadius: 6,
-            maxBarThickness: 28
+            borderRadius: 0,
+            maxBarThickness: 24
           },
           {
             label: 'Median (50%)',
             data: medians,
-            backgroundColor: '#2563eb',
+            backgroundColor: '#60a5fa',
             borderColor: '#1d4ed8',
             borderWidth: 1.5,
-            borderRadius: 6,
-            maxBarThickness: 28
+            borderRadius: 0,
+            maxBarThickness: 24
           },
           {
             label: 'Q3 (75%)',
             data: q3s,
-            backgroundColor: '#3b82f6',
+            backgroundColor: '#f59e0b',
             borderColor: '#1d4ed8',
             borderWidth: 1.5,
-            borderRadius: 6,
-            maxBarThickness: 28
+            borderRadius: 0,
+            maxBarThickness: 24
           },
           {
             label: 'Max hours',
             data: maxs,
-            backgroundColor: '#dc2626',
+            backgroundColor: '#f97316',
             borderColor: '#b91c1c',
             borderWidth: 1.5,
-            borderRadius: 6,
-            maxBarThickness: 28
+            borderRadius: 0,
+            maxBarThickness: 24
           }
         ]
       };
