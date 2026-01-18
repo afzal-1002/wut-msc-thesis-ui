@@ -23,9 +23,17 @@
       <!-- Stability -->
       <figure class="chart-card">
         <h5 class="chart-title mb-1">Stability & Consistency</h5>
-        <p class="chart-subtitle small text-muted mb-2">Stability score vs std deviation.</p>
-        <canvas baseChart [data]="stabilityLineData" [options]="stabilityLineOptions" [type]="'line'" style="min-height: 260px;"></canvas>
-        <figcaption class="chart-caption small text-muted mt-2">Figure: DeepSeek pairs higher stability scores with lower dispersion.</figcaption>
+        <p class="chart-subtitle small text-muted mb-2">Share of total stability score.</p>
+        <canvas
+          baseChart
+          [data]="stabilityPieData"
+          [options]="stabilityPieOptions"
+          [type]="'pie'"
+          style="max-width: 320px; min-height: 200px; margin: 0 auto;"
+        ></canvas>
+        <figcaption class="chart-caption small text-muted mt-2">
+          Figure: DeepSeek holds a larger share of stability score versus Gemini (higher slice = steadier executions).
+        </figcaption>
       </figure>
 
       <!-- Content quality -->

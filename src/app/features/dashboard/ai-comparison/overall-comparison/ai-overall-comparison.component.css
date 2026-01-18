@@ -1,23 +1,26 @@
 .overall-wrapper {
   width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .overall-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
 .chart-card {
   background-color: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 0.9rem;
-  padding: 1rem 1.25rem;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+  padding: 0.85rem 1rem;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+  width: 100%;
 }
 
 .chart-card--wide {
-  grid-column: span 2;
+  width: 100%;
 }
 
 .scorecard-card {

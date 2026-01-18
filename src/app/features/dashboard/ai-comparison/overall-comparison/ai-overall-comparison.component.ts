@@ -5,47 +5,17 @@ import { AiEstimationsService } from '../../../../services/ai/ai-estimations.ser
 import { Chart, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
+// Remove the custom error-bar plugin; only register datalabels.
+let overallPluginsRegistered = false;
+if (typeof window !== 'undefined' && !overallPluginsRegistered) {
+  Chart.register(ChartDataLabels);
+  overallPluginsRegistered = true;
+}
+
 interface ScoreRow {
   criterion: string;
   gemini: string;
   deepseek: string;
-}
-
-const errorBarsPlugin = {
-  id: 'overallErrorBars',
-  afterDatasetsDraw(chart: Chart) {
-    const ctx = chart.ctx;
-    chart.data.datasets.forEach((dataset: any, datasetIndex) => {
-      const meta = chart.getDatasetMeta(datasetIndex);
-      if (!meta || meta.type !== 'bar' || !dataset.errorBars) return;
-      meta.data.forEach((bar: any, index: number) => {
-        const err = dataset.errorBars[index];
-        if (!err) return;
-        const yScale = chart.scales[meta.yAxisID || 'y'];
-        const top = yScale.getPixelForValue(err.max);
-        const bottom = yScale.getPixelForValue(err.min);
-        const x = bar.x;
-        ctx.save();
-        ctx.strokeStyle = '#1f2937';
-        ctx.lineWidth = 1.4;
-        ctx.beginPath();
-        ctx.moveTo(x, top);
-        ctx.lineTo(x, bottom);
-        ctx.moveTo(x - 4, top);
-        ctx.lineTo(x + 4, top);
-        ctx.moveTo(x - 4, bottom);
-        ctx.lineTo(x + 4, bottom);
-        ctx.stroke();
-        ctx.restore();
-      });
-    });
-  }
-};
-
-let overallPluginsRegistered = false;
-if (typeof window !== 'undefined' && !overallPluginsRegistered) {
-  Chart.register(ChartDataLabels, errorBarsPlugin);
-  overallPluginsRegistered = true;
 }
 
 @Component({
@@ -89,29 +59,24 @@ export class AiOverallComparisonComponent implements OnInit {
     responsive: true,
     plugins: {
       legend: { position: 'bottom' },
-      datalabels: { anchor: 'end', align: 'end', formatter: v => `${Number(v).toFixed(1)}h` }
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+        formatter: v => `${Number(v).toFixed(2)}h`
+      }
     },
     scales: { x: { grid: { display: false } }, y: { type: 'linear', beginAtZero: true, grid: { color: '#eee' } } }
   };
 
-  stabilityLineData: any;
-  stabilityLineOptions: ChartOptions<'line'> = {
+  stabilityPieData: any;
+  stabilityPieOptions: ChartOptions<'pie'> = {
     responsive: true,
-    plugins: { legend: { position: 'bottom' }, datalabels: { display: false } },
-    scales: {
-      x: { grid: { display: false } },
-      y: {
-        type: 'linear',
-        beginAtZero: true,
-        position: 'left',
-        title: { display: true, text: 'Stability score' }
-      },
-      y1: {
-        type: 'linear',
-        beginAtZero: true,
-        position: 'right',
-        grid: { drawOnChartArea: false },
-        title: { display: true, text: 'Std deviation (s)' }
+    plugins: {
+      legend: { position: 'bottom' },
+      datalabels: {
+        color: '#111827',
+        font: { weight: 'bold', size: 12 },
+        formatter: value => Number(value).toFixed(2)
       }
     }
   };
@@ -119,7 +84,14 @@ export class AiOverallComparisonComponent implements OnInit {
   contentBarData: any;
   contentBarOptions: ChartOptions<'bar'> = {
     responsive: true,
-    plugins: { legend: { position: 'bottom' }, datalabels: { anchor: 'end', align: 'end' } },
+    plugins: {
+      legend: { position: 'bottom' },
+      datalabels: {
+        anchor: 'end',
+        align: 'end',
+        formatter: value => Number(value).toFixed(2)
+      }
+    },
     scales: {
       x: { grid: { display: false } },
       y: {
@@ -144,7 +116,11 @@ export class AiOverallComparisonComponent implements OnInit {
     responsive: true,
     plugins: {
       legend: { position: 'bottom' },
-      datalabels: { color: '#111827', font: { size: 10 }, formatter: v => `${Math.round(Number(v) * 100)}%` }
+      datalabels: {
+        color: '#111827',
+        font: { size: 10 },
+        formatter: v => `${(Number(v) * 100).toFixed(2)}%`
+      }
     },
     scales: { r: { beginAtZero: true, suggestedMax: 1, ticks: { stepSize: 0.2 } } }
   };
@@ -191,7 +167,7 @@ export class AiOverallComparisonComponent implements OnInit {
           data: avg,
           backgroundColor: ['#2563eb', '#16a34a'],
           borderRadius: 6,
-          errorBars: maxs.map((max, idx) => ({ min: mins[idx], max }))
+          barThickness: 34
         }
       ]
     };
@@ -202,33 +178,19 @@ export class AiOverallComparisonComponent implements OnInit {
     this.estimationGroupedData = {
       labels,
       datasets: [
-        { label: 'Min (h)', data: minHours, backgroundColor: '#60a5fa', borderRadius: 4 },
-        { label: 'Avg (h)', data: avgHours, backgroundColor: '#2563eb', borderRadius: 4 },
-        { label: 'Max (h)', data: maxHours, backgroundColor: '#1e3a8a', borderRadius: 4 }
+        { label: 'Min (h)', data: minHours, backgroundColor: '#60a5fa', borderRadius: 4, barThickness: 28 },
+        { label: 'Avg (h)', data: avgHours, backgroundColor: '#2563eb', borderRadius: 4, barThickness: 28 },
+        { label: 'Max (h)', data: maxHours, backgroundColor: '#1e3a8a', borderRadius: 4, barThickness: 28 }
       ]
     };
 
     const stabilityScores = this.rawModels.map(m => Number(m.stabilityScore ?? 0));
-    this.stabilityLineData = {
+    this.stabilityPieData = {
       labels,
       datasets: [
         {
-          label: 'Stability score',
           data: stabilityScores,
-          borderColor: '#0ea5e9',
-          backgroundColor: 'rgba(14,165,233,0.2)',
-          tension: 0.3,
-          fill: true,
-          yAxisID: 'y'
-        },
-        {
-          label: 'Std deviation (s)',
-          data: stds,
-          borderColor: '#f97316',
-          backgroundColor: 'rgba(249,115,22,0.2)',
-          tension: 0.3,
-          fill: false,
-          yAxisID: 'y1'
+          backgroundColor: ['#0ea5e9', '#f97316']
         }
       ]
     };
@@ -238,8 +200,8 @@ export class AiOverallComparisonComponent implements OnInit {
     this.contentBarData = {
       labels,
       datasets: [
-        { label: 'Engineering relevance score', data: relevance, backgroundColor: '#22c55e', yAxisID: 'y', borderRadius: 4 },
-        { label: 'Avg response length (k tokens)', data: responseLengthK, backgroundColor: '#0f62fe', yAxisID: 'y1', borderRadius: 4 }
+        { label: 'Engineering relevance score', data: relevance, backgroundColor: '#22c55e', yAxisID: 'y', borderRadius: 4, barThickness: 26 },
+        { label: 'Avg response length (k tokens)', data: responseLengthK, backgroundColor: '#0f62fe', yAxisID: 'y1', borderRadius: 4, barThickness: 26 }
       ]
     };
 
