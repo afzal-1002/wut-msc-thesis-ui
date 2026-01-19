@@ -109,18 +109,21 @@ export class IssueService {
   // Delete a comment from an issue
   deleteIssueComment(issueKey: string, commentId: string, baseUrl: string): Observable<any> {
     const wutCommentUrl = `${environment.apiUrl}/api/wut/jira/comment`;
+    const params = { baseUrl };
     return this.http.delete(
       `${wutCommentUrl}/${issueKey}/${commentId}`,
-      { responseType: 'text' }
+      { params, responseType: 'text' }
     ) as Observable<string>;
   }
 
   // Update a Jira comment body
   updateIssueComment(issueKey: string, commentId: string, payload: any, baseUrl: string): Observable<any> {
     const wutCommentUrl = `${environment.apiUrl}/api/wut/jira/comment`;
+    const params = { baseUrl };
     return this.http.put<any>(
       `${wutCommentUrl}/${issueKey}/${commentId}`,
-      payload
+      payload,
+      { params }
     );
   }
 
