@@ -153,10 +153,37 @@
 }
 
 .badge {
-  padding: 0.3rem 0.6rem;
-  border-radius: 3px;
-  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px; /* circular / pill shape */
+  font-size: 0.78rem;
   font-weight: 600;
+  line-height: 1;
+  min-height: 28px;
+}
+
+/* Make project type badge use a light background + subtle border instead of solid bg-primary/bg-info */
+.project-type-badge .badge {
+  background-color: #fff0f6; /* very light pink */
+  color: #3b1020; /* dark pink/gray for contrast */
+  border: 1px solid #ffd6e7; /* light pink border */
+  padding: 0.35rem 0.9rem;
+  min-width: 56px;
+  height: auto;
+}
+
+.project-type-badge .badge.bg-primary {
+  background-color: #fff0f6; /* light pink */
+  color: #3b1020;
+  border-color: #ffd6e7;
+}
+
+.project-type-badge .badge.bg-info {
+  background-color: #f3f4f6; /* light gray */
+  color: #1f2937; /* dark gray */
+  border-color: #e5e7eb;
 }
 
 .project-card-body {

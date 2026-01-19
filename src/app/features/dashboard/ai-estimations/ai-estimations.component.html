@@ -13,7 +13,7 @@
   <div class="card ai-estimations-shell-card">
     <div class="card-body">
       <div class="row justify-content-center g-4 ">
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="card option-card h-100 text-center">
             <div class="card-body d-flex flex-column justify-content-between">
               <div>
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="card option-card h-100 text-center">
             <div class="card-body d-flex flex-column justify-content-between">
               <div>
@@ -57,7 +57,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-6">
           <div class="card option-card h-100 text-center">
             <div class="card-body d-flex flex-column justify-content-between">
               <div>
@@ -77,31 +77,30 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card option-card h-100 text-center">
-          <div class="card-body d-flex flex-column justify-content-between">
-            <div>
-              <h4 class="card-title mb-2">Response Evaluation</h4>
-              <p class="card-text small text-muted mb-2">
-                Analyze detailed response timing and extremes for AI models.
-              </p>
-              <hr class="ai-estimations-card-separator" />
-              <ul class="text-start small text-muted mb-0 ps-3">
-                <li>Response time stats</li>
-                <li>Fastest/slowest model</li>
-                <li>API-backed evaluation</li>
-              </ul>
+        <div class="col-md-6">
+          <div class="card option-card h-100 text-center">
+            <div class="card-body d-flex flex-column justify-content-between">
+              <div>
+                <h4 class="card-title mb-2">Response Evaluation</h4>
+                <p class="card-text small text-muted mb-2">
+                  Analyze detailed response timing and extremes.
+                </p>
+                <hr class="ai-estimations-card-separator" />
+                <ul class="text-start small text-muted mb-0 ps-3">
+                  <li>Response time stats</li>
+                  <li>Fastest/slowest model</li>
+                  <li>API-backed evaluation</li>
+                </ul>
+              </div>
+              <button
+                type="button"
+                class="btn btn-outline-primary mt-3"
+                [routerLink]="['/ai-estimations/response-evaluation']">
+                Response Evaluation
+              </button>
             </div>
-            <button
-              type="button"
-              class="btn btn-outline-primary mt-3"
-              [routerLink]="['/ai-estimations/response-evaluation']">
-              Response Evaluation
-            </button>
           </div>
         </div>
       </div>
-    </div>
   </div>
 </div>
