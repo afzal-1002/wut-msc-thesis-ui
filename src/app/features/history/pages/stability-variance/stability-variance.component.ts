@@ -212,16 +212,16 @@ export class StabilityVarianceComponent implements OnInit {
           label: 'Stability Index (1/Total Variance)',
           data: indexData,
           backgroundColor: [
-            'rgba(255, 99, 132, 0.8)',
-            'rgba(75, 192, 192, 0.8)',
-            'rgba(255, 205, 86, 0.8)',
-            'rgba(153, 102, 255, 0.8)'
+            'rgba(139, 0, 0, 0.8)',
+            'rgba(0, 100, 100, 0.8)',
+            'rgba(184, 134, 11, 0.8)',
+            'rgba(75, 0, 130, 0.8)'
           ],
           borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(255, 205, 86, 1)',
-            'rgba(153, 102, 255, 1)'
+            'rgba(139, 0, 0, 1)',
+            'rgba(0, 100, 100, 1)',
+            'rgba(184, 134, 11, 1)',
+            'rgba(75, 0, 130, 1)'
           ],
           borderWidth: 2,
           borderRadius: 8
