@@ -45,6 +45,19 @@
   gap: 0.35rem;
 }
 
+.chart-card__canvas {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.chart-card__canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
 .chart-card__body canvas,
 .chart-card__body--compact canvas {
   width: 100%;

@@ -1,46 +1,49 @@
-<section class="ai-research-section">
-  <div class="ai-research-section__header">
-    <h5 class="ai-research-section__title">Stability &amp; Variance</h5>
-    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="goBack()">Back to Home</button>
+<div class="container mt-4 ai-research-page">
+  <div class="research-header">
+    <div>
+      <h2 class="research-header__title">Stability &amp; Variance</h2>
+      <p class="research-header__subtitle">
+        Matches the evaluation dashboards by charting provider-level variance next to an aggregate dispersion radar.
+      </p>
+    </div>
+    <button type="button" class="btn btn-outline-secondary research-back-btn" (click)="goBack()">
+      &larr; Back
+    </button>
   </div>
 
-  <p class="ai-research-section__description">
-    Analyses run-to-run stability and variance in estimation and response time across AI models.
-  </p>
+  <div *ngIf="isLoading" class="research-status research-status--loading">Loading stability analysis&#8230;</div>
+  <div *ngIf="!isLoading && error" class="research-status research-status--error">{{ error }}</div>
 
-  <div *ngIf="isLoading" class="ai-research-status text-muted">Loading stability analysis...</div>
-  <div *ngIf="error" class="ai-research-status text-danger">{{ error }}</div>
-
-  <ng-container *ngIf="result">
-    <div class="ai-research-chart-stack">
-      <app-ai-research-chart-card
-        title="Variance by Provider"
-        subtitle="Estimation vs response time variance"
-        caption="Figure: Stability and variance profile of AI estimations and response times across repeated experiments."
-      >
-        <app-grouped-bar-chart
-          *ngIf="varianceCategories.length"
-          [categories]="varianceCategories"
-          [seriesALabel]="'Estimation variance'"
-          [seriesBLabel]="'Response time variance'"
-          [seriesAValues]="estimationVariancePerProvider"
-          [seriesBValues]="responseTimeVariancePerProvider">
-        </app-grouped-bar-chart>
-      </app-ai-research-chart-card>
-
-      <app-ai-research-chart-card
-        title="Variance Summary"
-        subtitle="Average dispersion across all models"
-      >
-        <div class="variance-summary-wrapper">
-          <app-variance-chart [variances]="varianceSummary"></app-variance-chart>
+  <div class="chart-stack" *ngIf="!isLoading && !error">
+    <app-ai-metrics-chart-card
+      title="Variance by Provider"
+      subtitle="Estimation vs response time variance"
+      caption="Figure: Grouped-bar presentation reused from the evaluation tabs to highlight jitter in estimation or latency per model."
+      [chartType]="'bar'"
+      [chartData]="varianceComparisonChartData"
+      [chartOptions]="varianceComparisonChartOptions">
+      <div class="metric-band" *ngIf="varianceSummaryChips.length">
+        <div class="metric-chip" *ngFor="let chip of varianceSummaryChips">
+          <span class="metric-chip__label">{{ chip.label }}</span>
+          <span class="metric-chip__value">{{ chip.value }}</span>
         </div>
-      </app-ai-research-chart-card>
-    </div>
+      </div>
+    </app-ai-metrics-chart-card>
 
-    <section class="ai-research-raw-card">
-      <h6 class="mb-2">Raw Stability Metrics</h6>
-      <pre class="small p-2">{{ result | json }}</pre>
-    </section>
-  </ng-container>
-</section>
+    <app-ai-metrics-chart-card
+      title="Average Variance Footprint"
+      subtitle="Radar of aggregate dispersion"
+      caption="Figure: Condenses estimation and latency spread into the same polar visualization used elsewhere in the thesis appendices."
+      [chartType]="'radar'"
+      [chartData]="varianceSummaryChartData"
+      [chartOptions]="varianceSummaryChartOptions"
+      [dense]="true"
+      [canvasMinHeight]="260">
+    </app-ai-metrics-chart-card>
+  </div>
+
+  <section class="raw-result-card" *ngIf="result">
+    <h5 class="mb-2">Raw Stability Metrics</h5>
+    <pre class="small mb-0">{{ result | json }}</pre>
+  </section>
+</div>

@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { ChartType } from 'chart.js';
+import { Chart, ChartType } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+let dataLabelsRegistered = false;
+if (typeof window !== 'undefined' && !dataLabelsRegistered) {
+  Chart.register(ChartDataLabels);
+  dataLabelsRegistered = true;
+}
 
 @Component({
   selector: 'app-ai-metrics-chart-card',

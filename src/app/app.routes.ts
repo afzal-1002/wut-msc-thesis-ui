@@ -31,6 +31,7 @@ import { AiStabilityVarianceComponent } from './features/ai-research/stability-v
 import { AiHumanInTheLoopComponent } from './features/ai-research/human-in-loop/ai-human-in-loop.component';
 import { AiHybridStrategyComponent } from './features/ai-research/hybrid-strategy/ai-hybrid-strategy.component';
 import { AiResearchSummaryComponent } from './features/ai-research/research-summary/ai-research-summary.component';
+import { AiEstimationHistoryPageComponent } from './features/history/ai-estimation-history-page.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -62,6 +63,7 @@ export const routes: Routes = [
     { path: 'ai-estimations/metrics', component: AiMetricsComponent, canActivate: [AuthGuard] },
     { path: 'ai-estimations/comparison', component: AiComparisonComponent, canActivate: [AuthGuard] },
     { path: 'ai-estimations/response-evaluation', component: AiResponseEvaluationComponent, canActivate: [AuthGuard] },
+    { path: 'ai-history', component: AiEstimationHistoryPageComponent, canActivate: [AuthGuard] },
     {
         path: 'ai-research',
         component: AiResearchDashboardComponent,

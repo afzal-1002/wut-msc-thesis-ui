@@ -10,14 +10,17 @@
   </header>
 
   <div class="chart-card__body" [class.chart-card__body--compact]="size === 'compact'" *ngIf="hasData; else chartCardEmpty">
-    <canvas
-      baseChart
-      [type]="chartType"
-      [data]="chartData"
-      [options]="chartOptions"
+    <div
+      class="chart-card__canvas"
       [style.max-width.px]="resolvedMaxWidth"
-      [style.min-height.px]="resolvedMinHeight"
-      [style.height.px]="resolvedMinHeight"></canvas>
+      [style.min-height.px]="resolvedMinHeight">
+      <canvas
+        baseChart
+        [type]="chartType"
+        [data]="chartData"
+        [options]="chartOptions"
+        [height]="resolvedMinHeight"></canvas>
+    </div>
     <div class="chart-card__addon">
       <ng-content></ng-content>
     </div>
