@@ -83,6 +83,11 @@ export class IssuesHomeComponent implements OnInit {
         issue.fields?.priority?.name?.toLowerCase() === this.filterPriority.toLowerCase();
       
       return matchesSearch && matchesStatus && matchesPriority;
+    }).sort((a, b) => {
+      // Extract issue numbers from keys (e.g., "BUG-9" -> 9)
+      const numA = parseInt(a.key?.split('-')[1] || '0', 10);
+      const numB = parseInt(b.key?.split('-')[1] || '0', 10);
+      return numA - numB; // Ascending order
     });
   }
 
