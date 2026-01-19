@@ -71,6 +71,11 @@ export class ExplainabilityImpactComponent implements OnInit {
     const providers = this.chartData.map(d => d.provider);
     const withExplanation = this.chartData.map(d => d.withExplanation);
     const withoutExplanation = this.chartData.map(d => d.withoutExplanation);
+    
+    // Calculate axis padding (20% above max value)
+    const allValues = [...withExplanation, ...withoutExplanation];
+    const maxValue = Math.max(...allValues);
+    const axisMax = maxValue * 1.2;
 
     this.responseTimeChartConfig = {
       type: 'bar',
@@ -112,6 +117,7 @@ export class ExplainabilityImpactComponent implements OnInit {
         scales: {
           y: {
             beginAtZero: true,
+            max: axisMax,
             ticks: {
               callback: function(value) {
                 return (value as number).toFixed(1) + 's';
@@ -140,6 +146,10 @@ export class ExplainabilityImpactComponent implements OnInit {
     const providers = this.chartData.map(d => d.provider);
     const overhead = this.chartData.map(d => Math.round(d.overheadDelta * 1000) / 1000);
     const colors = ['#f59e0b', '#ec4899'];
+    
+    // Calculate axis padding (20% above max value)
+    const maxValue = Math.max(...overhead);
+    const axisMax = maxValue * 1.2;
 
     this.overheadChartConfig = {
       type: 'bar',
@@ -172,6 +182,7 @@ export class ExplainabilityImpactComponent implements OnInit {
         scales: {
           y: {
             beginAtZero: true,
+            max: axisMax,
             ticks: {
               callback: function(value) {
                 return (value as number).toFixed(2) + 's';
@@ -202,6 +213,9 @@ export class ExplainabilityImpactComponent implements OnInit {
     const enabledTimes = this.chartData.map(d => Math.round(d.withExplanation * 100) / 100);
 
     // Explanation Disabled
+    const disabledMaxValue = Math.max(...disabledTimes);
+    const disabledAxisMax = disabledMaxValue * 1.2;
+    
     this.sideBySideDisabledChartConfig = {
       type: 'bar',
       data: {
@@ -232,7 +246,7 @@ export class ExplainabilityImpactComponent implements OnInit {
         scales: {
           y: {
             beginAtZero: true,
-            max: 10,
+            max: disabledAxisMax,
             ticks: {
               callback: function(value) {
                 return (value as number).toFixed(1) + 's';
@@ -249,6 +263,9 @@ export class ExplainabilityImpactComponent implements OnInit {
     };
 
     // Explanation Enabled
+    const enabledMaxValue = Math.max(...enabledTimes);
+    const enabledAxisMax = enabledMaxValue * 1.2;
+    
     this.sideBySideEnabledChartConfig = {
       type: 'bar',
       data: {
@@ -279,7 +296,7 @@ export class ExplainabilityImpactComponent implements OnInit {
         scales: {
           y: {
             beginAtZero: true,
-            max: 10,
+            max: enabledAxisMax,
             ticks: {
               callback: function(value) {
                 return (value as number).toFixed(1) + 's';

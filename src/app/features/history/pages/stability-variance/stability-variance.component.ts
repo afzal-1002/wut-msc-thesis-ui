@@ -81,12 +81,18 @@ export class StabilityVarianceComponent implements OnInit {
   }
 
   initDualBarChart(): void {
+    const estData = this.stabilityVarianceData.map(d => Math.round(d.estimationVariance * 100) / 100);
+    const respData = this.stabilityVarianceData.map(d => Math.round(d.responseTimeVariance * 100) / 100);
+    const allValues = [...estData, ...respData];
+    const maxValue = Math.max(...allValues);
+    const axisMax = maxValue * 1.2; // Add 20% padding
+
     this.dualBarChartData = {
       labels: this.stabilityVarianceData.map(d => d.provider),
       datasets: [
         {
           label: 'Estimation Variance (Hours)',
-          data: this.stabilityVarianceData.map(d => Math.round(d.estimationVariance * 100) / 100),
+          data: estData,
           backgroundColor: 'rgba(54, 162, 235, 0.8)',
           borderColor: 'rgba(54, 162, 235, 1)',
           borderWidth: 1,
@@ -94,7 +100,7 @@ export class StabilityVarianceComponent implements OnInit {
         },
         {
           label: 'Response Time Variance (Seconds)',
-          data: this.stabilityVarianceData.map(d => Math.round(d.responseTimeVariance * 100) / 100),
+          data: respData,
           backgroundColor: 'rgba(75, 192, 192, 0.8)',
           borderColor: 'rgba(75, 192, 192, 1)',
           borderWidth: 1,
@@ -133,6 +139,7 @@ export class StabilityVarianceComponent implements OnInit {
       scales: {
         y: {
           beginAtZero: true,
+          max: axisMax,
           ticks: { font: { size: 11 } },
           title: { display: true, text: 'Variance Value', font: { size: 12, weight: 'bold' } }
         },
@@ -190,12 +197,16 @@ export class StabilityVarianceComponent implements OnInit {
   }
 
   initStabilityIndexChart(): void {
+    const indexData = this.stabilityIndexData.map(d => Math.round(d.stabilityIndex * 10000) / 10000);
+    const maxValue = Math.max(...indexData);
+    const axisMax = maxValue * 1.2; // Add 20% padding
+
     this.stabilityIndexChartData = {
       labels: this.stabilityIndexData.map(d => d.provider),
       datasets: [
         {
           label: 'Stability Index (1/Total Variance)',
-          data: this.stabilityIndexData.map(d => Math.round(d.stabilityIndex * 10000) / 10000),
+          data: indexData,
           backgroundColor: [
             'rgba(255, 99, 132, 0.8)',
             'rgba(75, 192, 192, 0.8)',
@@ -241,6 +252,7 @@ export class StabilityVarianceComponent implements OnInit {
       scales: {
         x: {
           beginAtZero: true,
+          max: axisMax,
           ticks: { font: { size: 11 } },
           title: { display: true, text: 'Stability Index (Higher = More Stable)', font: { size: 12, weight: 'bold' } }
         },

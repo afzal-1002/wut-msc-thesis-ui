@@ -121,6 +121,10 @@ export class EstimationHistoryComponent implements OnInit {
   }
 
   private initEstimationComparisonChart(): void {
+    const data = this.estimationComparisonData.map(d => Math.round(d.avgEstimation * 100) / 100);
+    const maxValue = Math.max(...data);
+    const axisMax = maxValue * 1.2; // Add 20% padding
+    
     this.estimationComparisonChartConfig = {
       type: 'bar',
       data: {
@@ -128,7 +132,7 @@ export class EstimationHistoryComponent implements OnInit {
         datasets: [
           {
             label: 'Average Estimation (hours)',
-            data: this.estimationComparisonData.map(d => Math.round(d.avgEstimation * 100) / 100),
+            data: data,
             backgroundColor: '#3b82f6',
             borderColor: '#1e40af',
             borderWidth: 1
@@ -145,6 +149,12 @@ export class EstimationHistoryComponent implements OnInit {
             align: 'top',
             font: { weight: 'bold' },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: axisMax
           }
         }
       }
@@ -189,6 +199,10 @@ export class EstimationHistoryComponent implements OnInit {
   }
 
   private initPerformanceChart(): void {
+    const data = this.performanceMetricsData.map(d => Math.round(d.avgAnalysisTime * 100) / 100);
+    const maxValue = Math.max(...data);
+    const axisMax = maxValue * 1.2; // Add 20% padding
+    
     this.performanceChartConfig = {
       type: 'bar',
       data: {
@@ -196,7 +210,7 @@ export class EstimationHistoryComponent implements OnInit {
         datasets: [
           {
             label: 'Avg Analysis Time (sec)',
-            data: this.performanceMetricsData.map(d => Math.round(d.avgAnalysisTime * 100) / 100),
+            data: data,
             backgroundColor: '#8b5cf6',
             borderColor: '#6d28d9',
             borderWidth: 1
@@ -213,6 +227,12 @@ export class EstimationHistoryComponent implements OnInit {
             align: 'top',
             font: { weight: 'bold' },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: axisMax
           }
         }
       }
@@ -237,6 +257,10 @@ export class EstimationHistoryComponent implements OnInit {
     const providers = Array.from(groupedByProvider.keys());
     const withExplanation = providers.map(p => groupedByProvider.get(p).with);
     const withoutExplanation = providers.map(p => groupedByProvider.get(p).without);
+    
+    const allValues = [...withExplanation, ...withoutExplanation];
+    const maxValue = Math.max(...allValues);
+    const axisMax = maxValue * 1.2; // Add 20% padding
 
     this.explanationImpactChartConfig = {
       type: 'bar',
@@ -266,6 +290,12 @@ export class EstimationHistoryComponent implements OnInit {
             font: { weight: 'bold' },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
           }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: axisMax
+          }
         }
       }
     };
@@ -289,6 +319,10 @@ export class EstimationHistoryComponent implements OnInit {
     const providers = Array.from(groupedByProvider.keys());
     const withPrompt = providers.map(p => groupedByProvider.get(p).with);
     const withoutPrompt = providers.map(p => groupedByProvider.get(p).without);
+    
+    const allValues = [...withPrompt, ...withoutPrompt];
+    const maxValue = Math.max(...allValues);
+    const axisMax = maxValue * 1.2; // Add 20% padding
 
     this.promptImpactChartConfig = {
       type: 'bar',
@@ -317,6 +351,12 @@ export class EstimationHistoryComponent implements OnInit {
             align: 'top',
             font: { weight: 'bold' },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: axisMax
           }
         }
       }
@@ -361,6 +401,10 @@ export class EstimationHistoryComponent implements OnInit {
       backgroundColor: idx === 0 ? '#3b82f6' : '#ef4444'
     }));
 
+    const allValues = datasets.flatMap(d => d.data as number[]);
+    const maxValue = Math.max(...allValues);
+    const axisMax = maxValue * 1.2; // Add 20% padding
+
     this.frequencyHeatmapChartConfig = {
       type: 'bar',
       data: {
@@ -377,6 +421,12 @@ export class EstimationHistoryComponent implements OnInit {
             align: 'top',
             font: { weight: 'bold' },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(0) : value)
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: axisMax
           }
         }
       }
