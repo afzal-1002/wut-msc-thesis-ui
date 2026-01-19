@@ -72,10 +72,12 @@ export class ExplainabilityImpactComponent implements OnInit {
     const withExplanation = this.chartData.map(d => d.withExplanation);
     const withoutExplanation = this.chartData.map(d => d.withoutExplanation);
     
-    // Calculate axis padding (max value + 2)
+    // Calculate axis padding with intelligent rounding
     const allValues = [...withExplanation, ...withoutExplanation];
     const maxValue = Math.max(...allValues);
-    const axisMax = maxValue + 2;
+    const roundedMax = maxValue < 1 ? Math.ceil(maxValue * 10) / 10 : Math.round(maxValue);
+    const increment = maxValue < 1 ? maxValue : 2;
+    const axisMax = roundedMax + increment;
 
     this.responseTimeChartConfig = {
       type: 'bar',
@@ -147,9 +149,11 @@ export class ExplainabilityImpactComponent implements OnInit {
     const overhead = this.chartData.map(d => Math.round(d.overheadDelta * 1000) / 1000);
     const colors = ['#f59e0b', '#ec4899'];
     
-    // Calculate axis padding (max value + 2)
+    // Calculate axis padding with intelligent rounding
     const maxValue = Math.max(...overhead);
-    const axisMax = maxValue + 2;
+    const roundedMax = maxValue < 1 ? Math.ceil(maxValue * 10) / 10 : Math.round(maxValue);
+    const increment = maxValue < 1 ? maxValue : 2;
+    const axisMax = roundedMax + increment;
 
     this.overheadChartConfig = {
       type: 'bar',
@@ -214,7 +218,9 @@ export class ExplainabilityImpactComponent implements OnInit {
 
     // Explanation Disabled
     const disabledMaxValue = Math.max(...disabledTimes);
-    const disabledAxisMax = disabledMaxValue + 2;
+    const disabledRoundedMax = disabledMaxValue < 1 ? Math.ceil(disabledMaxValue * 10) / 10 : Math.round(disabledMaxValue);
+    const disabledIncrement = disabledMaxValue < 1 ? disabledMaxValue : 2;
+    const disabledAxisMax = disabledRoundedMax + disabledIncrement;
     
     this.sideBySideDisabledChartConfig = {
       type: 'bar',
@@ -264,7 +270,9 @@ export class ExplainabilityImpactComponent implements OnInit {
 
     // Explanation Enabled
     const enabledMaxValue = Math.max(...enabledTimes);
-    const enabledAxisMax = enabledMaxValue + 2;
+    const enabledRoundedMax = enabledMaxValue < 1 ? Math.ceil(enabledMaxValue * 10) / 10 : Math.round(enabledMaxValue);
+    const enabledIncrement = enabledMaxValue < 1 ? enabledMaxValue : 2;
+    const enabledAxisMax = enabledRoundedMax + enabledIncrement;
     
     this.sideBySideEnabledChartConfig = {
       type: 'bar',

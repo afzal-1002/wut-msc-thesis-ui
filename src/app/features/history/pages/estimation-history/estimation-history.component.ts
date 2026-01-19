@@ -403,7 +403,9 @@ export class EstimationHistoryComponent implements OnInit {
 
     const allValues = datasets.flatMap(d => d.data as number[]);
     const maxValue = Math.max(...allValues);
-    const axisMax = maxValue + 2;
+    const roundedMax = maxValue < 1 ? Math.ceil(maxValue * 10) / 10 : Math.round(maxValue);
+    const increment = maxValue < 1 ? maxValue : 2;
+    const axisMax = roundedMax + increment;
 
     this.frequencyHeatmapChartConfig = {
       type: 'bar',
