@@ -71,11 +71,14 @@ export class HistoryService {
 
     return Array.from(grouped.entries()).map(([provider, items]) => {
       const validEstimates = items.filter(i => i.estimatedHours).map(i => i.estimatedHours!);
+      const avg = validEstimates.length > 0 ? validEstimates.reduce((a, b) => a + b, 0) / validEstimates.length : 0;
+      const min = validEstimates.length > 0 ? Math.min(...validEstimates) : 0;
+      const max = validEstimates.length > 0 ? Math.max(...validEstimates) : 0;
       return {
         provider,
-        avgEstimation: validEstimates.length > 0 ? validEstimates.reduce((a, b) => a + b, 0) / validEstimates.length : 0,
-        minEstimation: Math.min(...validEstimates),
-        maxEstimation: Math.max(...validEstimates),
+        avgEstimation: parseFloat(avg.toFixed(2)),
+        minEstimation: parseFloat(min.toFixed(2)),
+        maxEstimation: parseFloat(max.toFixed(2)),
         count: items.length
       };
     });
@@ -97,12 +100,17 @@ export class HistoryService {
         const geminiItems = items.filter(i => i.aiProvider === 'GEMINI' && i.estimatedHours);
         const deepseekItems = items.filter(i => i.aiProvider === 'DEEPSEEK' && i.estimatedHours);
         
+        const geminiEst = geminiItems.length > 0 ? geminiItems.reduce((a, b) => a + b.estimatedHours!, 0) / geminiItems.length : undefined;
+        const deepseekEst = deepseekItems.length > 0 ? deepseekItems.reduce((a, b) => a + b.estimatedHours!, 0) / deepseekItems.length : undefined;
+        const geminiT = geminiItems.length > 0 ? geminiItems.reduce((a, b) => a + (b.analysisTimeSec || 0), 0) / geminiItems.length : undefined;
+        const deepseekT = deepseekItems.length > 0 ? deepseekItems.reduce((a, b) => a + (b.analysisTimeSec || 0), 0) / deepseekItems.length : undefined;
+        
         return {
           date,
-          geminiEstimation: geminiItems.length > 0 ? geminiItems.reduce((a, b) => a + b.estimatedHours!, 0) / geminiItems.length : undefined,
-          deepseekEstimation: deepseekItems.length > 0 ? deepseekItems.reduce((a, b) => a + b.estimatedHours!, 0) / deepseekItems.length : undefined,
-          geminiTime: geminiItems.length > 0 ? geminiItems.reduce((a, b) => a + (b.analysisTimeSec || 0), 0) / geminiItems.length : undefined,
-          deepseekTime: deepseekItems.length > 0 ? deepseekItems.reduce((a, b) => a + (b.analysisTimeSec || 0), 0) / deepseekItems.length : undefined
+          geminiEstimation: geminiEst ? parseFloat(geminiEst.toFixed(2)) : undefined,
+          deepseekEstimation: deepseekEst ? parseFloat(deepseekEst.toFixed(2)) : undefined,
+          geminiTime: geminiT ? parseFloat(geminiT.toFixed(2)) : undefined,
+          deepseekTime: deepseekT ? parseFloat(deepseekT.toFixed(2)) : undefined
         };
       });
   }
@@ -120,12 +128,13 @@ export class HistoryService {
 
     return Array.from(grouped.entries()).map(([provider, times]) => {
       const sorted = times.sort((a, b) => a - b);
+      const avg = times.reduce((a, b) => a + b, 0) / times.length;
       return {
         provider,
-        avgAnalysisTime: times.reduce((a, b) => a + b, 0) / times.length,
-        minAnalysisTime: Math.min(...times),
-        maxAnalysisTime: Math.max(...times),
-        medianAnalysisTime: sorted[Math.floor(sorted.length / 2)]
+        avgAnalysisTime: parseFloat(avg.toFixed(2)),
+        minAnalysisTime: parseFloat(Math.min(...times).toFixed(2)),
+        maxAnalysisTime: parseFloat(Math.max(...times).toFixed(2)),
+        medianAnalysisTime: parseFloat(sorted[Math.floor(sorted.length / 2)].toFixed(2))
       };
     });
   }
@@ -145,10 +154,11 @@ export class HistoryService {
     grouped.forEach((items, key) => {
       const [provider, explEnabled] = key.split('-');
       const validEstimates = items.filter(i => i.estimatedHours).map(i => i.estimatedHours!);
+      const avg = validEstimates.length > 0 ? validEstimates.reduce((a, b) => a + b, 0) / validEstimates.length : 0;
       result.push({
         explanationEnabled: explEnabled === 'true',
         provider,
-        avgEstimation: validEstimates.length > 0 ? validEstimates.reduce((a, b) => a + b, 0) / validEstimates.length : 0,
+        avgEstimation: parseFloat(avg.toFixed(2)),
         count: items.length
       });
     });
@@ -172,11 +182,13 @@ export class HistoryService {
       const [provider, promptProvided] = key.split('-');
       const validEstimates = items.filter(i => i.estimatedHours).map(i => i.estimatedHours!);
       const times = items.filter(i => i.analysisTimeSec).map(i => i.analysisTimeSec!);
+      const avgEst = validEstimates.length > 0 ? validEstimates.reduce((a, b) => a + b, 0) / validEstimates.length : 0;
+      const avgTime = times.length > 0 ? times.reduce((a, b) => a + b, 0) / times.length : 0;
       result.push({
         promptProvided: promptProvided === 'true',
         provider,
-        avgEstimation: validEstimates.length > 0 ? validEstimates.reduce((a, b) => a + b, 0) / validEstimates.length : 0,
-        avgAnalysisTime: times.length > 0 ? times.reduce((a, b) => a + b, 0) / times.length : 0,
+        avgEstimation: parseFloat(avgEst.toFixed(2)),
+        avgAnalysisTime: parseFloat(avgTime.toFixed(2)),
         count: items.length
       });
     });
@@ -322,8 +334,8 @@ export class HistoryService {
   processStabilityScatter(data: StabilityHistoryResult[]): StabilityScatterPoint[] {
     return data.map(item => ({
       provider: item.aiProvider,
-      estimationVariance: item.estimationVariance,
-      responseTimeVariance: item.responseTimeVariance
+      estimationVariance: parseFloat(item.estimationVariance.toFixed(2)),
+      responseTimeVariance: parseFloat(item.responseTimeVariance.toFixed(2))
     }));
   }
 }
