@@ -3,12 +3,15 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HistoryService } from '../../services/history.service';
 import { ExplainabilityHistoryResult } from '../../models/history.models';
-import { BarComparisonChartComponent } from '../../../../shared/charts/bar-comparison-chart.component';
+import { NgChartsModule } from 'ng2-charts';
+import { ChartConfiguration, ChartData } from 'chart.js';
+
+type ChartView = 'grouped' | 'overhead' | 'sidebyside' | 'radar';
 
 @Component({
   selector: 'app-explainability-impact',
   standalone: true,
-  imports: [CommonModule, BarComparisonChartComponent, DecimalPipe],
+  imports: [CommonModule, NgChartsModule, DecimalPipe],
   templateUrl: './explainability-impact.component.html',
   styleUrls: ['./explainability-impact.component.scss']
 })
@@ -16,6 +19,17 @@ export class ExplainabilityImpactComponent implements OnInit {
   isLoading = false;
   error = '';
   results: ExplainabilityHistoryResult[] = [];
+  activeView: ChartView = 'grouped';
+  
+  // Chart configs
+  responseTimeChartConfig: ChartConfiguration = { type: 'bar', data: {} as ChartData };
+  overheadChartConfig: ChartConfiguration = { type: 'bar', data: {} as ChartData };
+  sideBySideDisabledChartConfig: ChartConfiguration = { type: 'bar', data: {} as ChartData };
+  sideBySideEnabledChartConfig: ChartConfiguration = { type: 'bar', data: {} as ChartData };
+  radarChartConfig: ChartConfiguration = { type: 'radar', data: {} as ChartData };
+  
+  // Processed data
+  chartData: any[] = [];
 
   constructor(private historyService: HistoryService, private router: Router) {}
 
@@ -29,6 +43,7 @@ export class ExplainabilityImpactComponent implements OnInit {
     this.historyService.getExplainabilityImpact().subscribe({
       next: (data) => {
         this.results = data || [];
+        this.processCharts();
         this.isLoading = false;
       },
       error: (err) => {
@@ -39,30 +54,306 @@ export class ExplainabilityImpactComponent implements OnInit {
     });
   }
 
-  private getGrouped() {
-    const explained = this.results.filter((r) => r.explanationEnabled);
-    const non = this.results.filter((r) => !r.explanationEnabled);
-    const avg = (arr: ExplainabilityHistoryResult[]) => {
-      if (!arr.length) return { error: 0, latencyMs: 0 };
-      const err = arr.reduce((s, r) => s + r.avgError, 0) / arr.length;
-      const lat = arr.reduce((s, r) => s + r.avgResponseTimeSec, 0) / arr.length;
-      return { error: err, latencyMs: lat * 1000 };
+  setActiveView(view: ChartView): void {
+    this.activeView = view;
+  }
+
+  private processCharts(): void {
+    this.chartData = this.historyService.processExplainabilityImpactByProvider(this.results);
+    this.initResponseTimeChart();
+    this.initOverheadChart();
+    this.initSideBySideCharts();
+    this.initRadarChart();
+  }
+
+  private initResponseTimeChart(): void {
+    // PRIMARY CHART: Grouped Bar - Explanation Disabled vs Enabled
+    const providers = this.chartData.map(d => d.provider);
+    const withExplanation = this.chartData.map(d => d.withExplanation);
+    const withoutExplanation = this.chartData.map(d => d.withoutExplanation);
+
+    this.responseTimeChartConfig = {
+      type: 'bar',
+      data: {
+        labels: providers,
+        datasets: [
+          {
+            label: 'Explanation Disabled',
+            data: withoutExplanation,
+            backgroundColor: '#ef4444',
+            borderColor: '#dc2626',
+            borderWidth: 2,
+            borderRadius: 4
+          },
+          {
+            label: 'Explanation Enabled',
+            data: withExplanation,
+            backgroundColor: '#3b82f6',
+            borderColor: '#1e40af',
+            borderWidth: 2,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        indexAxis: 'x',
+        plugins: {
+          legend: { display: true, position: 'top' },
+          title: { display: false },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            font: { weight: 'bold', size: 11 },
+            formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return (value as number).toFixed(1) + 's';
+              }
+            },
+            title: {
+              display: true,
+              text: 'Response Time (seconds)',
+              font: { size: 12 }
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'AI Provider',
+              font: { size: 12 }
+            }
+          }
+        }
+      }
     };
-    return { explained: avg(explained), non: avg(non) };
   }
 
-  get barLabels(): string[] {
-    return ['With explanation', 'Without explanation'];
+  private initOverheadChart(): void {
+    // SECONDARY CHART: Overhead Delta Cost
+    const providers = this.chartData.map(d => d.provider);
+    const overhead = this.chartData.map(d => Math.round(d.overheadDelta * 1000) / 1000);
+    const colors = ['#f59e0b', '#ec4899'];
+
+    this.overheadChartConfig = {
+      type: 'bar',
+      data: {
+        labels: providers,
+        datasets: [
+          {
+            label: 'Explainability Overhead (seconds)',
+            data: overhead,
+            backgroundColor: colors,
+            borderColor: ['#d97706', '#be185d'],
+            borderWidth: 2,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        indexAxis: 'x',
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            font: { weight: 'bold', size: 11 },
+            formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return (value as number).toFixed(2) + 's';
+              }
+            },
+            title: {
+              display: true,
+              text: 'Additional Response Time (seconds)',
+              font: { size: 12 }
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'AI Provider',
+              font: { size: 12 }
+            }
+          }
+        }
+      }
+    };
   }
 
-  get barValues(): number[] {
-    const g = this.getGrouped();
-    return [g.explained.error, g.non.error];
+  private initSideBySideCharts(): void {
+    // TERTIARY CHART: Side-by-side comparison
+    const providers = this.chartData.map(d => d.provider);
+    const disabledTimes = this.chartData.map(d => Math.round(d.withoutExplanation * 100) / 100);
+    const enabledTimes = this.chartData.map(d => Math.round(d.withExplanation * 100) / 100);
+
+    // Explanation Disabled
+    this.sideBySideDisabledChartConfig = {
+      type: 'bar',
+      data: {
+        labels: providers,
+        datasets: [
+          {
+            label: 'Response Time (Explanation Disabled)',
+            data: disabledTimes,
+            backgroundColor: '#ef4444',
+            borderColor: '#dc2626',
+            borderWidth: 2,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            font: { weight: 'bold', size: 11 },
+            formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 10,
+            ticks: {
+              callback: function(value) {
+                return (value as number).toFixed(1) + 's';
+              }
+            },
+            title: {
+              display: true,
+              text: 'Response Time (seconds)',
+              font: { size: 11 }
+            }
+          }
+        }
+      }
+    };
+
+    // Explanation Enabled
+    this.sideBySideEnabledChartConfig = {
+      type: 'bar',
+      data: {
+        labels: providers,
+        datasets: [
+          {
+            label: 'Response Time (Explanation Enabled)',
+            data: enabledTimes,
+            backgroundColor: '#3b82f6',
+            borderColor: '#1e40af',
+            borderWidth: 2,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            font: { weight: 'bold', size: 11 },
+            formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 10,
+            ticks: {
+              callback: function(value) {
+                return (value as number).toFixed(1) + 's';
+              }
+            },
+            title: {
+              display: true,
+              text: 'Response Time (seconds)',
+              font: { size: 11 }
+            }
+          }
+        }
+      }
+    };
   }
 
-  get latencySummary(): { withMs: number; withoutMs: number } {
-    const g = this.getGrouped();
-    return { withMs: g.explained.latencyMs, withoutMs: g.non.latencyMs };
+  private initRadarChart(): void {
+    // OPTIONAL CHART: Radar - Multi-axis performance view
+    const providers = this.chartData.map(d => d.provider);
+    
+    // Normalize values to 0-10 scale
+    const maxTime = Math.max(...this.chartData.map(d => Math.max(d.withExplanation, d.withoutExplanation)));
+    const disabledNormalized = this.chartData.map(d => (d.withoutExplanation / maxTime) * 10);
+    const enabledNormalized = this.chartData.map(d => (d.withExplanation / maxTime) * 10);
+
+    this.radarChartConfig = {
+      type: 'radar',
+      data: {
+        labels: providers,
+        datasets: [
+          {
+            label: 'Explanation Disabled',
+            data: disabledNormalized,
+            borderColor: '#ef4444',
+            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+            pointBackgroundColor: '#ef4444',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            borderWidth: 2
+          },
+          {
+            label: 'Explanation Enabled',
+            data: enabledNormalized,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            pointBackgroundColor: '#3b82f6',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: { display: true, position: 'top' }
+        },
+        scales: {
+          r: {
+            beginAtZero: true,
+            max: 10,
+            ticks: {
+              stepSize: 2
+            },
+            title: {
+              display: true,
+              text: 'Performance (Normalized)',
+              font: { size: 11 }
+            }
+          }
+        }
+      }
+    };
   }
 
   goBack(): void {

@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgChartsModule } from 'ng2-charts';
+import { ChartConfiguration, ChartEvent, ActiveElement } from 'chart.js';
 import { HistoryService } from '../../services/history.service';
-import { StabilityHistoryResult } from '../../models/history.models';
-import { VarianceChartComponent } from '../../../../shared/charts/variance-chart.component';
+import { StabilityHistoryResult, StabilityVarianceChartData, StabilityIndexData, StabilityRadarData, StabilityScatterPoint } from '../../models/history.models';
+
+type ChartView = 'dualbar' | 'radar' | 'index' | 'scatter';
 
 @Component({
   selector: 'app-stability-variance',
   standalone: true,
-  imports: [CommonModule, VarianceChartComponent],
+  imports: [CommonModule, NgChartsModule],
   templateUrl: './stability-variance.component.html',
   styleUrls: ['./stability-variance.component.scss']
 })
@@ -16,6 +19,28 @@ export class StabilityVarianceComponent implements OnInit {
   isLoading = false;
   error = '';
   results: StabilityHistoryResult[] = [];
+  
+  // Expose Math to template
+  Math = Math;
+  
+  activeView: ChartView = 'dualbar';
+  
+  dualBarChartData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [] };
+  dualBarChartOptions: ChartConfiguration<'bar'>['options'] = {};
+  
+  radarChartData: ChartConfiguration<'radar'>['data'] = { labels: [], datasets: [] };
+  radarChartOptions: ChartConfiguration<'radar'>['options'] = {};
+  
+  stabilityIndexChartData: ChartConfiguration<'bar'>['data'] = { labels: [], datasets: [] };
+  stabilityIndexChartOptions: ChartConfiguration<'bar'>['options'] = {};
+  
+  scatterChartData: ChartConfiguration<'scatter'>['data'] = { labels: [], datasets: [] };
+  scatterChartOptions: ChartConfiguration<'scatter'>['options'] = {};
+
+  stabilityVarianceData: StabilityVarianceChartData[] = [];
+  stabilityIndexData: StabilityIndexData[] = [];
+  stabilityRadarData: StabilityRadarData[] = [];
+  stabilityScatterData: StabilityScatterPoint[] = [];
 
   constructor(private historyService: HistoryService, private router: Router) {}
 
@@ -29,6 +54,11 @@ export class StabilityVarianceComponent implements OnInit {
     this.historyService.getStability().subscribe({
       next: (data) => {
         this.results = data || [];
+        this.processData();
+        this.initDualBarChart();
+        this.initRadarChart();
+        this.initStabilityIndexChart();
+        this.initScatterChart();
         this.isLoading = false;
       },
       error: (err) => {
@@ -39,26 +69,257 @@ export class StabilityVarianceComponent implements OnInit {
     });
   }
 
-  private getAverages() {
-    if (!this.results.length) return { estVar: 0, rtVar: 0 };
-    const estVar =
-      this.results.reduce((s, r) => s + r.estimationVariance, 0) /
-      this.results.length;
-    const rtVar =
-      this.results.reduce((s, r) => s + r.responseTimeVariance, 0) /
-      this.results.length;
-    return { estVar, rtVar };
+  processData(): void {
+    this.stabilityVarianceData = this.historyService.processStabilityVariance(this.results);
+    this.stabilityIndexData = this.historyService.processStabilityIndex(this.results);
+    this.stabilityRadarData = this.historyService.processStabilityRadar(this.results);
+    this.stabilityScatterData = this.historyService.processStabilityScatter(this.results);
   }
 
-  get varianceBars(): { label: string; value: number }[] {
-    const a = this.getAverages();
-    return [
-      { label: 'Estimation variance', value: a.estVar },
-      { label: 'Response time variance', value: a.rtVar }
-    ];
+  setActiveView(view: ChartView): void {
+    this.activeView = view;
   }
 
-  goBack(): void {
-    this.router.navigate(['/history']);
+  initDualBarChart(): void {
+    this.dualBarChartData = {
+      labels: this.stabilityVarianceData.map(d => d.provider),
+      datasets: [
+        {
+          label: 'Estimation Variance (Hours)',
+          data: this.stabilityVarianceData.map(d => Math.round(d.estimationVariance * 100) / 100),
+          backgroundColor: 'rgba(54, 162, 235, 0.8)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1,
+          borderRadius: 5
+        },
+        {
+          label: 'Response Time Variance (Seconds)',
+          data: this.stabilityVarianceData.map(d => Math.round(d.responseTimeVariance * 100) / 100),
+          backgroundColor: 'rgba(75, 192, 192, 0.8)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          borderRadius: 5
+        }
+      ]
+    };
+
+    this.dualBarChartOptions = {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { padding: 15, font: { size: 13 } }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12,
+          titleFont: { size: 14, weight: 'bold' },
+          bodyFont: { size: 12 },
+          callbacks: {
+            label: (context) => {
+              const value = typeof context.parsed.y === 'number' ? context.parsed.y.toFixed(2) : context.parsed.y;
+              return `${context.dataset.label}: ${value}`;
+            }
+          }
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          font: { weight: 'bold', size: 11 },
+          formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { font: { size: 11 } },
+          title: { display: true, text: 'Variance Value', font: { size: 12, weight: 'bold' } }
+        },
+        x: {
+          ticks: { font: { size: 12, weight: 'bold' } }
+        }
+      }
+    };
+  }
+
+  initRadarChart(): void {
+    this.radarChartData = {
+      labels: ['Estimation Stability', 'Response Time Stability'],
+      datasets: this.stabilityRadarData.map((item, idx) => ({
+        label: item.provider,
+        data: [item.estimationStability, item.responseTimeStability],
+        borderColor: idx === 0 ? 'rgba(54, 162, 235, 1)' : 'rgba(75, 192, 192, 1)',
+        backgroundColor: idx === 0 ? 'rgba(54, 162, 235, 0.2)' : 'rgba(75, 192, 192, 0.2)',
+        borderWidth: 2,
+        pointBackgroundColor: idx === 0 ? 'rgba(54, 162, 235, 1)' : 'rgba(75, 192, 192, 1)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }))
+    };
+
+    this.radarChartOptions = {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { padding: 15, font: { size: 13 } }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12,
+          callbacks: {
+            label: (context) => {
+              return `${context.dataset.label}: ${context.parsed.r.toFixed(2)}/10`;
+            }
+          }
+        }
+      },
+      scales: {
+        r: {
+          min: 0,
+          max: 10,
+          ticks: { stepSize: 2, font: { size: 11 } },
+          pointLabels: { font: { size: 12, weight: 'bold' } }
+        }
+      }
+    };
+  }
+
+  initStabilityIndexChart(): void {
+    this.stabilityIndexChartData = {
+      labels: this.stabilityIndexData.map(d => d.provider),
+      datasets: [
+        {
+          label: 'Stability Index (1/Total Variance)',
+          data: this.stabilityIndexData.map(d => Math.round(d.stabilityIndex * 10000) / 10000),
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(255, 205, 86, 0.8)',
+            'rgba(153, 102, 255, 0.8)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 205, 86, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          borderWidth: 2,
+          borderRadius: 8
+        }
+      ]
+    };
+
+    this.stabilityIndexChartOptions = {
+      responsive: true,
+      maintainAspectRatio: true,
+      indexAxis: 'y' as const,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'bottom',
+          labels: { padding: 15, font: { size: 13 } }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12,
+          callbacks: {
+            label: (context) => `Stability Index: ${context.parsed.x.toFixed(4)}`
+          }
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'right',
+          font: { weight: 'bold', size: 11 },
+          formatter: (value: any) => (typeof value === 'number' ? value.toFixed(4) : value)
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: { font: { size: 11 } },
+          title: { display: true, text: 'Stability Index (Higher = More Stable)', font: { size: 12, weight: 'bold' } }
+        },
+        y: {
+          ticks: { font: { size: 12, weight: 'bold' } }
+        }
+      }
+    };
+  }
+
+  initScatterChart(): void {
+    const scatterPoints = this.stabilityScatterData.map((item, idx) => ({
+      x: item.estimationVariance,
+      y: item.responseTimeVariance,
+      label: item.provider,
+      color: idx === 0 ? 'rgba(54, 162, 235, 1)' : 'rgba(75, 192, 192, 1)'
+    }));
+
+    this.scatterChartData = {
+      datasets: scatterPoints.map(point => ({
+        label: point.label,
+        data: [{ x: point.x, y: point.y }],
+        backgroundColor: point.color,
+        pointRadius: 10,
+        pointHoverRadius: 12,
+        borderColor: '#fff',
+        borderWidth: 2
+      }))
+    };
+
+    this.scatterChartOptions = {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { padding: 15, font: { size: 13 } }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          padding: 12,
+          callbacks: {
+            label: (context) => {
+              const point = context.raw as any;
+              return `Est. Var: ${point.x.toFixed(2)}h, Resp. Var: ${point.y.toFixed(2)}s`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'linear' as const,
+          position: 'bottom' as const,
+          min: 0,
+          ticks: { font: { size: 11 } },
+          title: { display: true, text: 'Estimation Variance (Hours)', font: { size: 12, weight: 'bold' } }
+        },
+        y: {
+          min: 0,
+          ticks: { font: { size: 11 } },
+          title: { display: true, text: 'Response Time Variance (Seconds)', font: { size: 12, weight: 'bold' } }
+        }
+      }
+    };
+  }
+
+  getStabilityLabel(index: number): string {
+    const stabilityIndex = this.stabilityIndexData[index]?.stabilityIndex || 0;
+    if (stabilityIndex > 0.15) return 'Very Stable';
+    if (stabilityIndex > 0.08) return 'Stable';
+    if (stabilityIndex > 0.02) return 'Moderate';
+    return 'Unstable';
+  }
+
+  getStabilityBadgeClass(index: number): string {
+    const stabilityIndex = this.stabilityIndexData[index]?.stabilityIndex || 0;
+    if (stabilityIndex > 0.15) return 'bg-success';
+    if (stabilityIndex > 0.08) return 'bg-info';
+    if (stabilityIndex > 0.02) return 'bg-warning';
+    return 'bg-danger';
   }
 }
