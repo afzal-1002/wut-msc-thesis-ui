@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { EstimationHistoryRecord, AiHistoryService } from '../../services/ai/ai-history.service';
 import { EstimationHistoryTableComponent } from './estimation-history-table.component';
 import { AccuracyTrendChartComponent } from './accuracy-trend-chart.component';
@@ -8,7 +9,7 @@ import { HistoricalModelComparisonComponent } from './historical-model-compariso
 @Component({
   selector: 'app-ai-estimation-history-page',
   standalone: true,
-  imports: [CommonModule, EstimationHistoryTableComponent, AccuracyTrendChartComponent, HistoricalModelComparisonComponent],
+  imports: [CommonModule, RouterModule, EstimationHistoryTableComponent, AccuracyTrendChartComponent, HistoricalModelComparisonComponent],
   templateUrl: './ai-estimation-history-page.component.html',
   styleUrls: ['./ai-estimation-history-page.component.css']
 })
