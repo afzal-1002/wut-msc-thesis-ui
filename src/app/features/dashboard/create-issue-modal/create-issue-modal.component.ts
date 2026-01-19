@@ -26,7 +26,7 @@ export class CreateIssueModalComponent implements OnInit {
   description: string = '';
   duedate: string = '';
   issuetype: string = 'Bug';
-  assigneeId: string = '';
+  assigneeUsername: string = '';
   labels: string = '';
 
   issueTypes = [
@@ -50,7 +50,7 @@ export class CreateIssueModalComponent implements OnInit {
     this.description = '';
     this.duedate = '';
     this.issuetype = 'Bug';
-    this.assigneeId = '';
+    this.assigneeUsername = '';
     this.labels = '';
     this.errorMessage = '';
     this.successMessage = '';
@@ -81,8 +81,8 @@ export class CreateIssueModalComponent implements OnInit {
       issuePayload.fields.duedate = this.duedate;
     }
 
-    if (this.assigneeId) {
-      issuePayload.fields.assignee = { id: this.assigneeId };
+    if (this.assigneeUsername) {
+      issuePayload.fields.assignee = { emailAddress: this.assigneeUsername.trim() };
     }
 
     // Handle description - support both plain text and rich text format
