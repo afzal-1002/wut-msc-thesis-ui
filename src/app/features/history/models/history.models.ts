@@ -5,6 +5,8 @@ export interface AIHistoryResult {
   createdAt: string; // ISO date
   estimatedHours: number;
   actualHours?: number;
+  errorHours?: number;
+  analysisTimeSec?: number;
   explanationEnabled?: boolean;
   userPromptProvided?: boolean;
 }

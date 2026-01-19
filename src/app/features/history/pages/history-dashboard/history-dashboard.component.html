@@ -1,146 +1,21 @@
 <div class="container mt-5 history-landing">
-  <div class="text-center mb-3">
-    <h2 class="mb-0">AI Estimation History Analysis</h2>
-  </div>
-
-  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2 history-subheader">
-    <p class="text-muted mb-0">Choose what you want to analyze from your historical AI data.</p>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-1">AI Estimation History Analysis</h2>
+      <p class="text-muted mb-0 small">Thesis-ready visual analysis of historical AI data.</p>
+    </div>
     <button class="btn btn-outline-secondary btn-sm history-back-btn" (click)="goBackToDashboard()">
       Back to Home
     </button>
   </div>
 
-  <div class="card history-shell-card">
-    <div class="card-body">
-      <div class="row justify-content-center g-4">
-        <!-- Estimation History Card -->
-        <div class="col-md-6">
-          <div class="card option-card h-100 text-center">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div>
-                <h4 class="card-title mb-2">Estimation History</h4>
-                <p class="card-text small text-muted mb-2">
-                  Timeline of all AI-generated estimations across issues.
-                </p>
-                <hr class="history-card-separator" />
-                <ul class="text-start small text-muted mb-0 ps-3">
-                  <li>Complete estimation records</li>
-                  <li>Filter by issue or model</li>
-                  <li>Export historical data</li>
-                  <li>Trend visualization</li>
-                </ul>
-              </div>
-              <button class="btn btn-primary mt-3" (click)="setActive('history')">View Estimation History</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Accuracy Trend Card -->
-        <div class="col-md-6">
-          <div class="card option-card h-100 text-center">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div>
-                <h4 class="card-title mb-2">Accuracy Trend</h4>
-                <p class="card-text small text-muted mb-2">
-                  Mean absolute error evolution over time.
-                </p>
-                <hr class="history-card-separator" />
-                <ul class="text-start small text-muted mb-0 ps-3">
-                  <li>MAE trends per provider</li>
-                  <li>Temporal accuracy analysis</li>
-                  <li>Model performance tracking</li>
-                </ul>
-              </div>
-              <button class="btn btn-outline-primary mt-3" (click)="setActive('accuracy')">View Accuracy Trend</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Model Comparison Card -->
-        <div class="col-md-6">
-          <div class="card option-card h-100 text-center">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div>
-                <h4 class="card-title mb-2">Model Comparison</h4>
-                <p class="card-text small text-muted mb-2">
-                  Compare Gemini vs DeepSeek across multiple metrics.
-                </p>
-                <hr class="history-card-separator" />
-                <ul class="text-start small text-muted mb-0 ps-3">
-                  <li>Accuracy comparison</li>
-                  <li>Performance metrics</li>
-                  <li>Estimation quality</li>
-                </ul>
-              </div>
-              <button class="btn btn-outline-primary mt-3" (click)="setActive('comparison')">View Model Comparison</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Explainability Impact Card -->
-        <div class="col-md-6">
-          <div class="card option-card h-100 text-center">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div>
-                <h4 class="card-title mb-2">Explainability Impact</h4>
-                <p class="card-text small text-muted mb-2">
-                  Effect of explanations on AI performance.
-                </p>
-                <hr class="history-card-separator" />
-                <ul class="text-start small text-muted mb-0 ps-3">
-                  <li>Explanation effectiveness</li>
-                  <li>Model performance delta</li>
-                  <li>Quality metrics breakdown</li>
-                </ul>
-              </div>
-              <button class="btn btn-outline-primary mt-3" (click)="setActive('explainability')">View Explainability Impact</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Human-in-the-Loop Card -->
-        <div class="col-md-6">
-          <div class="card option-card h-100 text-center">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div>
-                <h4 class="card-title mb-2">Human-in-the-Loop</h4>
-                <p class="card-text small text-muted mb-2">
-                  Feedback impact and human refinement effects.
-                </p>
-                <hr class="history-card-separator" />
-                <ul class="text-start small text-muted mb-0 ps-3">
-                  <li>Feedback distribution</li>
-                  <li>Refinement effectiveness</li>
-                  <li>User acceptance rates</li>
-                </ul>
-              </div>
-              <button class="btn btn-outline-primary mt-3" (click)="setActive('human')">View Human-in-the-Loop</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Stability & Variance Card -->
-        <div class="col-md-6">
-          <div class="card option-card h-100 text-center">
-            <div class="card-body d-flex flex-column justify-content-between">
-              <div>
-                <h4 class="card-title mb-2">Stability & Variance</h4>
-                <p class="card-text small text-muted mb-2">
-                  Model consistency and output variance analysis.
-                </p>
-                <hr class="history-card-separator" />
-                <ul class="text-start small text-muted mb-0 ps-3">
-                  <li>Estimation variance</li>
-                  <li>Consistency metrics</li>
-                  <li>Stability patterns</li>
-                </ul>
-              </div>
-              <button class="btn btn-outline-primary mt-3" (click)="setActive('stability')">View Stability & Variance</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="d-flex gap-2 flex-wrap mb-4 history-tabs">
+    <button class="btn history-tab-btn" [class.active]="activeView === 'history'" (click)="setActive('history')">Estimation History</button>
+    <button class="btn history-tab-btn" [class.active]="activeView === 'accuracy'" (click)="setActive('accuracy')">Accuracy Trend</button>
+    <button class="btn history-tab-btn" [class.active]="activeView === 'comparison'" (click)="setActive('comparison')">Model Comparison</button>
+    <button class="btn history-tab-btn" [class.active]="activeView === 'explainability'" (click)="setActive('explainability')">Explainability Impact</button>
+    <button class="btn history-tab-btn" [class.active]="activeView === 'human'" (click)="setActive('human')">Human-in-Loop</button>
+    <button class="btn history-tab-btn" [class.active]="activeView === 'stability'" (click)="setActive('stability')">Stability & Variance</button>
   </div>
 
   <!-- Active content display below the cards -->
