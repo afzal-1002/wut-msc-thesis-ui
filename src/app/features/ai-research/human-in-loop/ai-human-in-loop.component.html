@@ -1,0 +1,34 @@
+<section class="ai-research-section">
+  <div class="ai-research-section__header">
+    <h5 class="ai-research-section__title">Human-in-the-Loop Impact</h5>
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="goBack()">Back to Home</button>
+  </div>
+
+  <p class="ai-research-section__description">
+    Quantifies how involving a human engineer in the prompting loop changes estimation quality and research relevance.
+  </p>
+
+  <div *ngIf="isLoading" class="ai-research-status text-muted">Loading human-in-the-loop analysis...</div>
+  <div *ngIf="error" class="ai-research-status text-danger">{{ error }}</div>
+
+  <ng-container *ngIf="result">
+    <app-ai-research-chart-card
+      title="Quality vs Relevance"
+      subtitle="With user prompt vs without"
+      caption="Figure: Grouped bar chart showing human-in-the-loop impact on estimation quality and research relevance (with vs without user prompts)."
+    >
+      <app-grouped-bar-chart
+        [categories]="labels"
+        [seriesALabel]="'Quality score'"
+        [seriesBLabel]="'Relevance score'"
+        [seriesAValues]="qualityValues"
+        [seriesBValues]="relevanceValues">
+      </app-grouped-bar-chart>
+    </app-ai-research-chart-card>
+
+    <section class="ai-research-raw-card">
+      <h6 class="mb-2">Raw Human-in-the-Loop Metrics</h6>
+      <pre class="small p-2">{{ result | json }}</pre>
+    </section>
+  </ng-container>
+</section>

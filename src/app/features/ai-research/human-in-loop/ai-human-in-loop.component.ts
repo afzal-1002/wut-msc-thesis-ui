@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AiResearchEvaluationService } from '../../services/ai/ai-research-evaluation.service';
-import { GroupedBarChartComponent } from '../../shared/charts/grouped-bar-chart.component';
-import { AuthService } from '../../services/auth/auth.service';
+import { AiResearchEvaluationService } from '../../../services/ai/ai-research-evaluation.service';
+import { GroupedBarChartComponent } from '../../../shared/charts/grouped-bar-chart.component';
+import { AuthService } from '../../../services/auth/auth.service';
+import { AiResearchChartCardComponent } from '../components/ai-research-chart-card/ai-research-chart-card.component';
 
 @Component({
   selector: 'app-ai-human-in-loop',
   standalone: true,
-  imports: [CommonModule, GroupedBarChartComponent],
+  imports: [CommonModule, GroupedBarChartComponent, AiResearchChartCardComponent],
   templateUrl: './ai-human-in-loop.component.html',
-  styleUrls: ['./ai-human-in-loop.component.css']
+  styleUrls: ['./ai-human-in-loop.component.css', '../research-shared.css']
 })
 export class AiHumanInTheLoopComponent {
   isLoading = false;

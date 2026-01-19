@@ -1,0 +1,33 @@
+<section class="ai-research-section">
+  <div class="ai-research-section__header">
+    <h5 class="ai-research-section__title">Explainability Trade-off</h5>
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="goBack()">Back to Home</button>
+  </div>
+
+  <p class="ai-research-section__description">
+    Evaluates the trade-off between explanation quality and latency when enabling or disabling explanation generation.
+  </p>
+
+  <div *ngIf="isLoading" class="ai-research-status text-muted">Loading explainability analysis...</div>
+  <div *ngIf="error" class="ai-research-status text-danger">{{ error }}</div>
+
+  <ng-container *ngIf="result">
+    <app-ai-research-chart-card
+      title="Quality vs Latency"
+      subtitle="Comparison of explanation-enabled vs disabled runs"
+      caption="Figure: Grouped bar chart showing explainability trade-off between engineering quality score and response latency for explanation-enabled vs disabled runs.">
+      <app-grouped-bar-chart
+        [categories]="labels"
+        [seriesALabel]="'Quality score'"
+        [seriesBLabel]="'Latency (s)'"
+        [seriesAValues]="qualityValues"
+        [seriesBValues]="latencyValues">
+      </app-grouped-bar-chart>
+    </app-ai-research-chart-card>
+
+    <section class="ai-research-raw-card">
+      <h6 class="mb-2">Raw Explainability Metrics</h6>
+      <pre class="small p-2">{{ result | json }}</pre>
+    </section>
+  </ng-container>
+</section>

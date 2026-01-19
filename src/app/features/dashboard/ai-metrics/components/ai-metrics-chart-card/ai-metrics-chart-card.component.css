@@ -4,6 +4,20 @@
   padding: 1rem;
   background-color: #ffffff;
   box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+  width: 100%;
+}
+
+.chart-card--dense {
+  padding: 0.5rem 0.65rem;
+}
+
+.chart-card--dense .chart-card__caption {
+  margin-top: 0.35rem;
+}
+
+.chart-card--constrained {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .chart-card__header {
@@ -31,15 +45,9 @@
   gap: 0.35rem;
 }
 
-.chart-card__body canvas {
-  max-width: 640px;
-  width: 100%;
-  min-height: 260px;
-}
-
+.chart-card__body canvas,
 .chart-card__body--compact canvas {
-  max-width: 360px;
-  min-height: 200px;
+  width: 100%;
 }
 
 .chart-card__addon {
@@ -47,7 +55,7 @@
 }
 
 .chart-card__caption {
-  margin-top: 0.6rem;
+  margin-top: 0.35rem;
   text-align: center;
   font-size: 0.8rem;
   color: #6b7280;

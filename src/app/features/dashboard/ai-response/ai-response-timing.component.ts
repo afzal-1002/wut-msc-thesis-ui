@@ -1,23 +1,19 @@
-
-import { Component } from '@angular/core';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Chart } from 'chart.js';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NgChartsModule } from 'ng2-charts';
 import { AiEstimationsService } from '../../../services/ai/ai-estimations.service';
-
-Chart.register(ChartDataLabels);
+import { AiResponseStatsComponent } from './ai-response-stats.component';
+import { AiResponseExtremesComponent } from './ai-response-extremes.component';
 @Component({
   selector: 'app-ai-response-timing',
   standalone: true,
-  imports: [CommonModule, NgChartsModule],
+  imports: [CommonModule, AiResponseStatsComponent, AiResponseExtremesComponent],
   templateUrl: './ai-response-timing.component.html',
   styleUrls: ['./ai-response-timing.component.css']
 })
-export class AiResponseTimingComponent {
+export class AiResponseTimingComponent implements OnInit {
   responseTimeStats: any = null;
   responseTimeSummary: any = null;
-  activeResponseView: 'stats' | 'summary' | null = null;
+  activeResponseView: 'stats' | 'summary' = 'stats';
   isLoadingResponseTime = false;
   responseTimeError = '';
 
@@ -151,8 +147,18 @@ export class AiResponseTimingComponent {
 
   constructor(private aiService: AiEstimationsService) {}
 
+  ngOnInit(): void {
+    this.setActiveResponseView('stats');
+  }
+
   setActiveResponseView(view: 'stats' | 'summary'): void {
-    if (this.activeResponseView === view) return;
+    if (this.activeResponseView === view) {
+      const hasStats = view === 'stats' && this.responseTimeStats;
+      const hasSummary = view === 'summary' && this.responseTimeSummary;
+      if (hasStats || hasSummary) {
+        return;
+      }
+    }
     this.activeResponseView = view;
     if (view === 'stats') {
       this.loadResponseTimeStats();
@@ -162,7 +168,6 @@ export class AiResponseTimingComponent {
   }
 
   loadResponseTimeStats(): void {
-    this.activeResponseView = 'stats';
     if (this.responseTimeStats && !this.responseTimeError) {
       return;
     }
@@ -201,7 +206,6 @@ export class AiResponseTimingComponent {
   }
 
   loadResponseTimeSummary(): void {
-    this.activeResponseView = 'summary';
     if (this.responseTimeSummary && !this.responseTimeError) {
       return;
     }

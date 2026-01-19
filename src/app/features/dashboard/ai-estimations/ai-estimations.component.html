@@ -95,7 +95,12 @@
                 <li>API-backed evaluation</li>
               </ul>
             </div>
-            <button class="btn btn-outline-info mt-3" (click)="goToResponseEvaluation()">Response Evaluation</button>
+            <button
+              type="button"
+              class="btn btn-outline-info mt-3"
+              [routerLink]="['/ai-estimations/response-evaluation']">
+              Response Evaluation
+            </button>
           </div>
         </div>
       </div>

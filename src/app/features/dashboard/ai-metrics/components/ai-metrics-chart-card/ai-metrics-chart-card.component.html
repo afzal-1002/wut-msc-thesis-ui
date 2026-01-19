@@ -1,11 +1,23 @@
-<section class="chart-card" [class.chart-card--compact]="size === 'compact'">
+<section
+  class="chart-card"
+  [class.chart-card--compact]="size === 'compact'"
+  [class.chart-card--dense]="dense"
+  [class.chart-card--constrained]="!!cardMaxWidth"
+  [style.max-width.px]="cardMaxWidth || null">
   <header class="chart-card__header">
     <h5 class="chart-card__title">{{ title }}</h5>
     <p *ngIf="subtitle" class="chart-card__subtitle">{{ subtitle }}</p>
   </header>
 
   <div class="chart-card__body" [class.chart-card__body--compact]="size === 'compact'" *ngIf="hasData; else chartCardEmpty">
-    <canvas baseChart [type]="chartType" [data]="chartData" [options]="chartOptions"></canvas>
+    <canvas
+      baseChart
+      [type]="chartType"
+      [data]="chartData"
+      [options]="chartOptions"
+      [style.max-width.px]="resolvedMaxWidth"
+      [style.min-height.px]="resolvedMinHeight"
+      [style.height.px]="resolvedMinHeight"></canvas>
     <div class="chart-card__addon">
       <ng-content></ng-content>
     </div>

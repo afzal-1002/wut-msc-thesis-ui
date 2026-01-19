@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AiResearchEvaluationService } from '../../services/ai/ai-research-evaluation.service';
-import { AuthService } from '../../services/auth/auth.service';
+import { AiResearchEvaluationService } from '../../../services/ai/ai-research-evaluation.service';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
-  selector: 'app-ai-hybrid-strategy',
+  selector: 'app-ai-research-summary',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './ai-hybrid-strategy.component.html',
-  styleUrls: ['./ai-hybrid-strategy.component.css']
+  templateUrl: './ai-research-summary.component.html',
+  styleUrls: ['./ai-research-summary.component.css', '../research-shared.css']
 })
-export class AiHybridStrategyComponent {
+export class AiResearchSummaryComponent {
   isLoading = false;
   error = '';
   result: any = null;
@@ -21,20 +21,20 @@ export class AiHybridStrategyComponent {
     private router: Router,
     private authService: AuthService
   ) {
-    this.loadHybridStrategy();
+    this.loadSummary();
   }
 
-  loadHybridStrategy(): void {
+  loadSummary(): void {
     this.isLoading = true;
     this.error = '';
-    this.researchService.getHybridStrategy().subscribe({
+    this.researchService.getResearchSummary().subscribe({
       next: (res) => {
         this.result = res;
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Hybrid strategy error', err);
-        this.error = 'Failed to load hybrid strategy recommendation.';
+        console.error('Research summary error', err);
+        this.error = 'Failed to load research summary.';
         this.isLoading = false;
       }
     });

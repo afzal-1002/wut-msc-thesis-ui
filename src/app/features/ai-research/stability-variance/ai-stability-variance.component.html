@@ -1,0 +1,46 @@
+<section class="ai-research-section">
+  <div class="ai-research-section__header">
+    <h5 class="ai-research-section__title">Stability &amp; Variance</h5>
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="goBack()">Back to Home</button>
+  </div>
+
+  <p class="ai-research-section__description">
+    Analyses run-to-run stability and variance in estimation and response time across AI models.
+  </p>
+
+  <div *ngIf="isLoading" class="ai-research-status text-muted">Loading stability analysis...</div>
+  <div *ngIf="error" class="ai-research-status text-danger">{{ error }}</div>
+
+  <ng-container *ngIf="result">
+    <div class="ai-research-chart-stack">
+      <app-ai-research-chart-card
+        title="Variance by Provider"
+        subtitle="Estimation vs response time variance"
+        caption="Figure: Stability and variance profile of AI estimations and response times across repeated experiments."
+      >
+        <app-grouped-bar-chart
+          *ngIf="varianceCategories.length"
+          [categories]="varianceCategories"
+          [seriesALabel]="'Estimation variance'"
+          [seriesBLabel]="'Response time variance'"
+          [seriesAValues]="estimationVariancePerProvider"
+          [seriesBValues]="responseTimeVariancePerProvider">
+        </app-grouped-bar-chart>
+      </app-ai-research-chart-card>
+
+      <app-ai-research-chart-card
+        title="Variance Summary"
+        subtitle="Average dispersion across all models"
+      >
+        <div class="variance-summary-wrapper">
+          <app-variance-chart [variances]="varianceSummary"></app-variance-chart>
+        </div>
+      </app-ai-research-chart-card>
+    </div>
+
+    <section class="ai-research-raw-card">
+      <h6 class="mb-2">Raw Stability Metrics</h6>
+      <pre class="small p-2">{{ result | json }}</pre>
+    </section>
+  </ng-container>
+</section>

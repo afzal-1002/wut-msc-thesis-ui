@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AiResearchEvaluationService } from '../../services/ai/ai-research-evaluation.service';
-import { VarianceChartComponent } from '../../shared/charts/variance-chart.component';
-import { GroupedBarChartComponent } from '../../shared/charts/grouped-bar-chart.component';
-import { AuthService } from '../../services/auth/auth.service';
+import { AiResearchEvaluationService } from '../../../services/ai/ai-research-evaluation.service';
+import { VarianceChartComponent } from '../../../shared/charts/variance-chart.component';
+import { GroupedBarChartComponent } from '../../../shared/charts/grouped-bar-chart.component';
+import { AuthService } from '../../../services/auth/auth.service';
+import { AiResearchChartCardComponent } from '../components/ai-research-chart-card/ai-research-chart-card.component';
 
 @Component({
   selector: 'app-ai-stability-variance',
   standalone: true,
-  imports: [CommonModule, VarianceChartComponent, GroupedBarChartComponent],
+  imports: [CommonModule, VarianceChartComponent, GroupedBarChartComponent, AiResearchChartCardComponent],
   templateUrl: './ai-stability-variance.component.html',
-  styleUrls: ['./ai-stability-variance.component.css']
+  styleUrls: ['./ai-stability-variance.component.css', '../research-shared.css']
 })
 export class AiStabilityVarianceComponent {
   isLoading = false;

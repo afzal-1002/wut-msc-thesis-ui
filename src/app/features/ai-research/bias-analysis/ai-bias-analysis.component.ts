@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AiResearchEvaluationService } from '../../services/ai/ai-research-evaluation.service';
-import { BarComparisonChartComponent } from '../../shared/charts/bar-comparison-chart.component';
-import { AuthService } from '../../services/auth/auth.service';
+import { AiResearchEvaluationService } from '../../../services/ai/ai-research-evaluation.service';
+import { BarComparisonChartComponent } from '../../../shared/charts/bar-comparison-chart.component';
+import { AuthService } from '../../../services/auth/auth.service';
+import { AiResearchChartCardComponent } from '../components/ai-research-chart-card/ai-research-chart-card.component';
 
 @Component({
   selector: 'app-ai-bias-analysis',
   standalone: true,
-  imports: [CommonModule, BarComparisonChartComponent],
+  imports: [CommonModule, BarComparisonChartComponent, AiResearchChartCardComponent],
   templateUrl: './ai-bias-analysis.component.html',
-  styleUrls: ['./ai-bias-analysis.component.css']
+  styleUrls: ['./ai-bias-analysis.component.css', '../research-shared.css']
 })
 export class AiBiasAnalysisComponent {
   isLoading = false;

@@ -23,6 +23,14 @@ import { AiEstimationsComponent } from './features/dashboard/ai-estimations/ai-e
 import { AiEvaluationComponent } from './features/dashboard/ai-evaluation/ai-evaluation.component';
 import { AiMetricsComponent } from './features/dashboard/ai-metrics/ai-metrics.component';
 import { AiComparisonComponent } from './features/dashboard/ai-model-comparison/ai-comparison.component';
+import { AiResponseEvaluationComponent } from './features/dashboard/ai-response/ai-response-evaluation.component';
+import { AiResearchDashboardComponent } from './features/ai-research/ai-research-dashboard.component';
+import { AiBiasAnalysisComponent } from './features/ai-research/bias-analysis/ai-bias-analysis.component';
+import { AiExplainabilityTradeoffComponent } from './features/ai-research/explainability-tradeoff/ai-explainability-tradeoff.component';
+import { AiStabilityVarianceComponent } from './features/ai-research/stability-variance/ai-stability-variance.component';
+import { AiHumanInTheLoopComponent } from './features/ai-research/human-in-loop/ai-human-in-loop.component';
+import { AiHybridStrategyComponent } from './features/ai-research/hybrid-strategy/ai-hybrid-strategy.component';
+import { AiResearchSummaryComponent } from './features/ai-research/research-summary/ai-research-summary.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -53,6 +61,21 @@ export const routes: Routes = [
     { path: 'ai-estimations/evaluation', component: AiEvaluationComponent, canActivate: [AuthGuard] },
     { path: 'ai-estimations/metrics', component: AiMetricsComponent, canActivate: [AuthGuard] },
     { path: 'ai-estimations/comparison', component: AiComparisonComponent, canActivate: [AuthGuard] },
+    { path: 'ai-estimations/response-evaluation', component: AiResponseEvaluationComponent, canActivate: [AuthGuard] },
+    {
+        path: 'ai-research',
+        component: AiResearchDashboardComponent,
+        canActivate: [AuthGuard],
+        children: [
+            { path: '', pathMatch: 'full', redirectTo: 'bias' },
+            { path: 'bias', component: AiBiasAnalysisComponent },
+            { path: 'explainability', component: AiExplainabilityTradeoffComponent },
+            { path: 'stability', component: AiStabilityVarianceComponent },
+            { path: 'human-in-loop', component: AiHumanInTheLoopComponent },
+            { path: 'hybrid', component: AiHybridStrategyComponent },
+            { path: 'summary', component: AiResearchSummaryComponent }
+        ]
+    },
 
     // Dashboards (by user id)
     { path: 'user-dashboard/:userId', component: UserDashboardComponent, canActivate: [AuthGuard] },

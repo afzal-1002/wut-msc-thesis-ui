@@ -151,6 +151,7 @@ export class AiMetricsComponent {
   comparisonRadarData: any = null;
   comparisonRadarOptions: ChartOptions<'radar'> = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { display: true, position: 'top' },
       datalabels: {

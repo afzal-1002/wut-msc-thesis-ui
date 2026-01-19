@@ -1,77 +1,36 @@
-<div class="evaluation-wrapper">
-  <div *ngIf="isLoading" class="small text-muted text-center">
-    Calculating feature impact...
-  </div>
-
-  <div *ngIf="!isLoading && error" class="alert alert-danger py-1 small">
-    {{ error }}
-  </div>
-
-  <ng-container *ngIf="!isLoading && !error">
-    <div class="metric-band" *ngIf="summaryMetrics.length">
-      <div class="metric-chip" *ngFor="let metric of summaryMetrics">
-        <span class="metric-chip__label">{{ metric.label }}</span>
-        <span class="metric-chip__value">{{ metric.value }}</span>
-      </div>
-    </div>
-
-    <div class="evaluation-grid">
-      <figure class="chart-card chart-card--dual-pie">
-        <h5 class="chart-title">Markdown Feature Impact</h5>
-        <p class="chart-subtitle">Enabled vs disabled distributions.</p>
-
-        <div class="dual-pie-grid">
-          <div class="dual-pie-grid__item">
-            <h6 class="dual-pie-grid__title">Enabled</h6>
-            <canvas
-              *ngIf="markdownEnabledPieData"
+<div class="content-wrapper">
+  <figure class="chart-card" *ngIf="markdownEnabledPieData || markdownDisabledPieData">
+    <h5 class="chart-title">Markdown Feature Impact</h5>
+    <p class="chart-subtitle">Enabled vs disabled distributions.</p>
+    <div class="d-flex flex-wrap justify-content-center gap-4">
+      <canvas *ngIf="markdownEnabledPieData"
               baseChart
               [data]="markdownEnabledPieData"
               [options]="markdownPieOptions"
-              [type]="markdownPieType">
-            </canvas>
-            <p *ngIf="!markdownEnabledPieData" class="text-muted small text-center mt-2">No enabled data.</p>
-          </div>
+              [type]="markdownPieType"
+              style="max-width: 280px;"></canvas>
 
-          <div class="dual-pie-grid__item">
-            <h6 class="dual-pie-grid__title">Disabled</h6>
-            <canvas
-              *ngIf="markdownDisabledPieData"
+      <canvas *ngIf="markdownDisabledPieData"
               baseChart
               [data]="markdownDisabledPieData"
               [options]="markdownPieOptions"
-              [type]="markdownPieType">
-            </canvas>
-            <p *ngIf="!markdownDisabledPieData" class="text-muted small text-center mt-2">No disabled data.</p>
-          </div>
-        </div>
-
-        <figcaption class="chart-caption">
-          Figure: Total runs and average analysis time when Markdown is toggled.
-        </figcaption>
-      </figure>
-
-      <figure class="chart-card">
-        <h5 class="chart-title">Markdown Comparison</h5>
-        <p class="chart-subtitle">Bar comparison of runs &amp; time.</p>
-
-        <canvas
-          *ngIf="markdownBarData?.datasets?.length"
-          baseChart
-          [data]="markdownBarData"
-          [options]="markdownBarOptions"
-          [type]="markdownBarType"
-          style="max-height: 300px;">
-        </canvas>
-
-        <p *ngIf="!markdownBarData?.datasets?.length" class="text-muted small text-center mt-3">
-          Comparative bar data is unavailable.
-        </p>
-
-        <figcaption class="chart-caption">
-          Figure: Relative performance difference between Markdown enabled and disabled modes.
-        </figcaption>
-      </figure>
+              [type]="markdownPieType"
+              style="max-width: 280px;"></canvas>
     </div>
-  </ng-container>
+    <figcaption class="chart-caption">
+      Figure: Total runs and average analysis time when Markdown is toggled.
+    </figcaption>
+  </figure>
+
+  <figure class="chart-card" *ngIf="markdownBarData?.datasets?.length">
+    <h5 class="chart-title">Markdown Comparison</h5>
+    <p class="chart-subtitle">Bar comparison of runs &amp; time.</p>
+    <canvas baseChart
+            [data]="markdownBarData"
+            [options]="markdownBarOptions"
+            [type]="markdownBarType"></canvas>
+    <figcaption class="chart-caption">
+      Figure: Relative performance difference between Markdown enabled and disabled modes.
+    </figcaption>
+  </figure>
 </div>

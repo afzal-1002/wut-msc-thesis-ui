@@ -18,6 +18,10 @@ export class AiMetricsChartCardComponent {
   @Input() chartData: any;
   @Input() chartOptions: any;
   @Input() size: 'default' | 'compact' = 'default';
+  @Input() canvasMaxWidth?: number;
+  @Input() canvasMinHeight?: number;
+  @Input() dense = false;
+  @Input() cardMaxWidth?: number;
   @Input() emptyMessage = 'No data available for this visualization.';
 
   get hasData(): boolean {
@@ -26,5 +30,19 @@ export class AiMetricsChartCardComponent {
       Array.isArray(this.chartData.datasets) &&
       this.chartData.datasets.length
     );
+  }
+
+  get resolvedMaxWidth(): number {
+    if (typeof this.canvasMaxWidth === 'number') {
+      return this.canvasMaxWidth;
+    }
+    return this.size === 'compact' ? 340 : 560;
+  }
+
+  get resolvedMinHeight(): number {
+    if (typeof this.canvasMinHeight === 'number') {
+      return this.canvasMinHeight;
+    }
+    return this.size === 'compact' ? 160 : 200;
   }
 }

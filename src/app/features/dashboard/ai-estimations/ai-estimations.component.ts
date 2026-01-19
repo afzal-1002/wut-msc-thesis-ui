@@ -1,19 +1,16 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-ai-estimations',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './ai-estimations.component.html',
   styleUrls: ['./ai-estimations.component.css']
 })
 export class AiEstimationsComponent {
-    goToResponseEvaluation(): void {
-      this.router.navigate(['/ai-estimations/response-evaluation']);
-    }
   constructor(private router: Router, private authService: AuthService) {}
 
   goToEvaluation(): void {

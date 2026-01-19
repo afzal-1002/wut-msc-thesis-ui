@@ -1,11 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgChartsModule } from 'ng2-charts';
+import { AiMetricsChartCardComponent } from '../../ai-metrics/components/ai-metrics-chart-card/ai-metrics-chart-card.component';
 
 @Component({
   selector: 'app-ai-eval-model-comparison',
   standalone: true,
-  imports: [CommonModule, NgChartsModule],
+  imports: [CommonModule, NgChartsModule, AiMetricsChartCardComponent],
   templateUrl: './ai-eval-model-comparison.component.html',
   styleUrls: ['./ai-eval-model-comparison.component.css']
 })

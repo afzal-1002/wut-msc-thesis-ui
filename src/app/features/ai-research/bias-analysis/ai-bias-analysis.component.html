@@ -1,0 +1,27 @@
+<section class="ai-research-section">
+  <div class="ai-research-section__header">
+    <h5 class="ai-research-section__title">Bias &amp; Error Analysis</h5>
+    <button type="button" class="btn btn-outline-secondary btn-sm" routerLink="/home">Back to Home</button>
+  </div>
+
+  <p class="ai-research-section__description">
+    Compares mean absolute error (MAE), mean squared error (MSE) and bias score between AI providers.
+  </p>
+
+  <div *ngIf="isLoading" class="ai-research-status text-muted">Loading bias analysis...</div>
+  <div *ngIf="error" class="ai-research-status text-danger">{{ error }}</div>
+
+  <ng-container *ngIf="result">
+    <app-ai-research-chart-card
+      title="MAE Comparison"
+      subtitle="Mean absolute error per AI provider"
+      caption="Figure: Mean absolute error (MAE) comparison between Gemini and DeepSeek based on empirical estimation data.">
+      <app-bar-comparison-chart [labels]="modelLabels" [values]="maeValues"></app-bar-comparison-chart>
+    </app-ai-research-chart-card>
+
+    <section class="ai-research-raw-card">
+      <h6 class="mb-2">Raw Bias &amp; Error Metrics</h6>
+      <pre class="small p-2">{{ result | json }}</pre>
+    </section>
+  </ng-container>
+</section>

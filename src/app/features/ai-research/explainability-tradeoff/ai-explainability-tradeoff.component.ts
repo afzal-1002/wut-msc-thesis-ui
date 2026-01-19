@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AiResearchEvaluationService } from '../../services/ai/ai-research-evaluation.service';
-import { GroupedBarChartComponent } from '../../shared/charts/grouped-bar-chart.component';
-import { AuthService } from '../../services/auth/auth.service';
+import { AiResearchEvaluationService } from '../../../services/ai/ai-research-evaluation.service';
+import { GroupedBarChartComponent } from '../../../shared/charts/grouped-bar-chart.component';
+import { AuthService } from '../../../services/auth/auth.service';
+import { AiResearchChartCardComponent } from '../components/ai-research-chart-card/ai-research-chart-card.component';
 
 @Component({
   selector: 'app-ai-explainability-tradeoff',
   standalone: true,
-  imports: [CommonModule, GroupedBarChartComponent],
+  imports: [CommonModule, GroupedBarChartComponent, AiResearchChartCardComponent],
   templateUrl: './ai-explainability-tradeoff.component.html',
-  styleUrls: ['./ai-explainability-tradeoff.component.css']
+  styleUrls: ['./ai-explainability-tradeoff.component.css', '../research-shared.css']
 })
 export class AiExplainabilityTradeoffComponent {
   isLoading = false;

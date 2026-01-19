@@ -60,27 +60,18 @@
         </figcaption>
       </figure>
 
-      <figure class="chart-card">
-        <h5 class="chart-title">Capability Radar</h5>
-        <p class="chart-subtitle">Normalized trade-offs across speed, estimation, stability, relevance, and verbosity.</p>
-
-        <canvas
-          *ngIf="comparisonRadarData?.datasets?.length"
-          baseChart
-          [data]="comparisonRadarData"
-          [options]="comparisonRadarOptions"
-          [type]="comparisonRadarType"
-          style="max-height: 360px;">
-        </canvas>
-
-        <p *ngIf="!comparisonRadarData?.datasets?.length" class="text-muted small text-center mt-3">
-          Radar synthesis requires a full comparison payload.
-        </p>
-
-        <figcaption class="chart-caption">
-          Figure: Relative strengths per provider after normalizing every metric to a 0–1 scale.
-        </figcaption>
-      </figure>
+      <app-ai-metrics-chart-card
+        title="Capability Radar"
+        subtitle="Normalized trade-offs across speed, estimation, stability, relevance, and verbosity."
+        caption="Figure: Relative strengths per provider after normalizing every metric to a 0–1 scale."
+        emptyMessage="Radar synthesis requires a full comparison payload."
+        [chartType]="comparisonRadarType"
+        [chartData]="comparisonRadarData"
+        [chartOptions]="comparisonRadarOptions"
+        [dense]="true"
+        [canvasMaxWidth]="720"
+        [canvasMinHeight]="300">
+      </app-ai-metrics-chart-card>
 
       <figure class="chart-card">
         <h5 class="chart-title">Composite Decision Score</h5>
