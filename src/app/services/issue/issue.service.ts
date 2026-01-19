@@ -44,7 +44,7 @@ export class IssueService {
   createIssue(issueData: any, baseUrl: string): Observable<any> {
     const params = { baseUrl };
     return this.http.post<any>(
-      `${this.apiUrl}/issues/create`,
+      `${this.apiUrl}/issues`,
       issueData,
       { params }
     );
