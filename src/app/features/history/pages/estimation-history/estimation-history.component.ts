@@ -135,7 +135,9 @@ export class EstimationHistoryComponent implements OnInit {
             data: data,
             backgroundColor: '#3b82f6',
             borderColor: '#1e40af',
-            borderWidth: 1
+            borderWidth: 1,
+            barPercentage: 0.5,
+            categoryPercentage: 0.6
           }
         ]
       },
@@ -213,7 +215,9 @@ export class EstimationHistoryComponent implements OnInit {
             data: data,
             backgroundColor: '#8b5cf6',
             borderColor: '#6d28d9',
-            borderWidth: 1
+            borderWidth: 1,
+            barPercentage: 0.5,
+            categoryPercentage: 0.6
           }
         ]
       },
