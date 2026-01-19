@@ -1,0 +1,43 @@
+<div class="container mt-4 history-page">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h2 class="mb-1">Explainability Impact</h2>
+      <p class="text-muted mb-0">Effect of explanations on AI performance metrics.</p>
+    </div>
+    <div>
+      <button class="btn btn-outline-secondary btn-sm history-back-btn" (click)="goBack()">
+        &larr; Back to History
+      </button>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title mb-1">Explainability Impact Analysis</h5>
+      <p class="text-muted small mb-3">Average estimation error and latency with vs without explanations.</p>
+
+      <div *ngIf="isLoading" class="small text-muted">Loading explainability impact...</div>
+      <div *ngIf="error" class="small text-danger">{{ error }}</div>
+
+      <ng-container *ngIf="!isLoading && !error && results?.length">
+        <app-bar-comparison-chart [labels]="barLabels" [values]="barValues"></app-bar-comparison-chart>
+
+        <div class="small text-muted mt-3 p-2 bg-light rounded">
+          <div class="mb-2">
+            <strong>Response Time Summary:</strong>
+          </div>
+          <div>
+            With explanation: ~{{ latencySummary.withMs | number: '1.0-0' }} ms average
+          </div>
+          <div>
+            Without explanation: ~{{ latencySummary.withoutMs | number: '1.0-0' }} ms average
+          </div>
+        </div>
+      </ng-container>
+
+      <div *ngIf="!isLoading && !error && !results?.length" class="small text-muted">
+        No explainability impact history available.
+      </div>
+    </div>
+  </div>
+</div>

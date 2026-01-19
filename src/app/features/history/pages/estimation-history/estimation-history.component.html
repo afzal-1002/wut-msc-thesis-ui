@@ -1,0 +1,33 @@
+<div class="container mt-4 history-page">
+  <div class="d-flex justify-content-between align-items-start mb-3">
+    <div>
+      <h2 class="mb-1">Estimation History</h2>
+      <p class="text-muted mb-0">Timeline of AI-generated estimations with actual hours and configuration flags.</p>
+    </div>
+    <div>
+      <button class="btn btn-outline-secondary btn-sm history-back-btn" (click)="goBack()">
+        &larr; Back to History
+      </button>
+    </div>
+  </div>
+
+  <div class="card shadow-sm estimation-history-shell">
+    <div class="card-body">
+      <div *ngIf="isLoading" class="small text-muted">Loading estimation history...</div>
+      <div *ngIf="error" class="small text-danger">{{ error }}</div>
+
+      <div *ngIf="!isLoading && !error && !estimations?.length" class="small text-muted">
+        No historical estimations available yet.
+      </div>
+
+      <ng-container *ngIf="!isLoading && !error && estimations?.length">
+        <p class="small text-muted mb-3">
+          Displaying {{ estimations.length }} estimation records.
+        </p>
+        <div class="history-outer-panel">
+          <app-estimation-history-table [history]="estimations"></app-estimation-history-table>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

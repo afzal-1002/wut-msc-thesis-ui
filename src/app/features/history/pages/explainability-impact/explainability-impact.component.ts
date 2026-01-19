@@ -1,8 +1,9 @@
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { HistoryService } from '../../services/history.service';
 import { ExplainabilityHistoryResult } from '../../models/history.models';
-import { BarComparisonChartComponent } from '../../../shared/charts/bar-comparison-chart.component';
+import { BarComparisonChartComponent } from '../../../../shared/charts/bar-comparison-chart.component';
 
 @Component({
   selector: 'app-explainability-impact',
@@ -16,7 +17,7 @@ export class ExplainabilityImpactComponent implements OnInit {
   error = '';
   results: ExplainabilityHistoryResult[] = [];
 
-  constructor(private historyService: HistoryService) {}
+  constructor(private historyService: HistoryService, private router: Router) {}
 
   ngOnInit(): void {
     this.load();
@@ -62,5 +63,9 @@ export class ExplainabilityImpactComponent implements OnInit {
   get latencySummary(): { withMs: number; withoutMs: number } {
     const g = this.getGrouped();
     return { withMs: g.explained.latencyMs, withoutMs: g.non.latencyMs };
+  }
+
+  goBack(): void {
+    this.router.navigate(['/history']);
   }
 }

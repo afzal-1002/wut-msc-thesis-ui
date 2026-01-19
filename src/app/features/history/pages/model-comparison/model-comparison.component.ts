@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { HistoryService } from '../../services/history.service';
 import { ModelComparisonResult } from '../../models/history.models';
-import { BarComparisonChartComponent } from '../../../shared/charts/bar-comparison-chart.component';
+import { BarComparisonChartComponent } from '../../../../shared/charts/bar-comparison-chart.component';
 
 @Component({
   selector: 'app-model-comparison',
@@ -16,7 +17,7 @@ export class ModelComparisonComponent implements OnInit {
   error = '';
   comparison: ModelComparisonResult[] = [];
 
-  constructor(private historyService: HistoryService) {}
+  constructor(private historyService: HistoryService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadComparison();
@@ -63,5 +64,9 @@ export class ModelComparisonComponent implements OnInit {
     const gem = this.getErrorsFor('gemini');
     const ds = this.getErrorsFor('deepSeek');
     return [this.getAverage(gem), this.getAverage(ds)];
+  }
+
+  goBack(): void {
+    this.router.navigate(['/history']);
   }
 }

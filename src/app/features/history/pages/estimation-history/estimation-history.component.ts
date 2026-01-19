@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { HistoryService } from '../../services/history.service';
 import { AIHistoryResult } from '../../models/history.models';
-import { EstimationHistoryTableComponent } from '../../../features/history/estimation-history-table.component';
+import { EstimationHistoryTableComponent } from '../../estimation-history-table.component';
 
 @Component({
   selector: 'app-estimation-history',
@@ -16,7 +17,7 @@ export class EstimationHistoryComponent implements OnInit {
   error = '';
   estimations: AIHistoryResult[] = [];
 
-  constructor(private historyService: HistoryService) {}
+  constructor(private historyService: HistoryService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadEstimations();
@@ -36,5 +37,9 @@ export class EstimationHistoryComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/history']);
   }
 }

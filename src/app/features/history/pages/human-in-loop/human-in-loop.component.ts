@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { HistoryService } from '../../services/history.service';
 import { HumanInLoopHistoryResult } from '../../models/history.models';
-import { GroupedBarChartComponent } from '../../../shared/charts/grouped-bar-chart.component';
+import { GroupedBarChartComponent } from '../../../../shared/charts/grouped-bar-chart.component';
 
 @Component({
   selector: 'app-human-in-loop',
@@ -16,7 +17,7 @@ export class HumanInLoopComponent implements OnInit {
   error = '';
   results: HumanInLoopHistoryResult[] = [];
 
-  constructor(private historyService: HistoryService) {}
+  constructor(private historyService: HistoryService, private router: Router) {}
 
   ngOnInit(): void {
     this.load();
@@ -77,5 +78,9 @@ export class HumanInLoopComponent implements OnInit {
   get seriesBValues(): number[] {
     const g = this.group();
     return [g.withPrompt.variance, g.withoutPrompt.variance];
+  }
+
+  goBack(): void {
+    this.router.navigate(['/history']);
   }
 }

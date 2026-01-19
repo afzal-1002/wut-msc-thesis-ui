@@ -32,6 +32,7 @@ import { AiHumanInTheLoopComponent } from './features/ai-research/human-in-loop/
 import { AiHybridStrategyComponent } from './features/ai-research/hybrid-strategy/ai-hybrid-strategy.component';
 import { AiResearchSummaryComponent } from './features/ai-research/research-summary/ai-research-summary.component';
 import { AiEstimationHistoryPageComponent } from './features/history/ai-estimation-history-page.component';
+import { HistoryDashboardComponent } from './features/history/pages/history-dashboard/history-dashboard.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -64,6 +65,7 @@ export const routes: Routes = [
     { path: 'ai-estimations/comparison', component: AiComparisonComponent, canActivate: [AuthGuard] },
     { path: 'ai-estimations/response-evaluation', component: AiResponseEvaluationComponent, canActivate: [AuthGuard] },
     { path: 'ai-history', component: AiEstimationHistoryPageComponent, canActivate: [AuthGuard] },
+    { path: 'history', component: HistoryDashboardComponent, canActivate: [AuthGuard] },
     {
         path: 'ai-research',
         component: AiResearchDashboardComponent,

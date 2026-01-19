@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { HistoryService } from '../../services/history.service';
 import { AccuracyTrendResult } from '../../models/history.models';
 import { FormsModule } from '@angular/forms';
-import { LineTrendChartComponent } from '../../../shared/charts/line-trend-chart.component';
+import { LineTrendChartComponent } from '../../../../shared/charts/line-trend-chart.component';
 
 @Component({
   selector: 'app-accuracy-trend',
@@ -18,7 +19,7 @@ export class AccuracyTrendComponent implements OnInit {
   error = '';
   trend: AccuracyTrendResult[] = [];
 
-  constructor(private historyService: HistoryService) {}
+  constructor(private historyService: HistoryService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadTrend();
@@ -46,5 +47,9 @@ export class AccuracyTrendComponent implements OnInit {
 
   get maePoints(): number[] {
     return (this.trend || []).map((t) => t.meanAbsoluteError);
+  }
+
+  goBack(): void {
+    this.router.navigate(['/history']);
   }
 }

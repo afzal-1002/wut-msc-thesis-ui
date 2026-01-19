@@ -7,7 +7,7 @@ import { ModelComparisonComponent } from '../model-comparison/model-comparison.c
 import { ExplainabilityImpactComponent } from '../explainability-impact/explainability-impact.component';
 import { HumanInLoopComponent } from '../human-in-loop/human-in-loop.component';
 import { StabilityVarianceComponent } from '../stability-variance/stability-variance.component';
-import { AuthService } from '../../../services/auth/auth.service';
+import { AuthService } from '../../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-history-dashboard',

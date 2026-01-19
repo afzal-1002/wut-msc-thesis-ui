@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { HistoryService } from '../../services/history.service';
 import { StabilityHistoryResult } from '../../models/history.models';
-import { VarianceChartComponent } from '../../../shared/charts/variance-chart.component';
+import { VarianceChartComponent } from '../../../../shared/charts/variance-chart.component';
 
 @Component({
   selector: 'app-stability-variance',
@@ -16,7 +17,7 @@ export class StabilityVarianceComponent implements OnInit {
   error = '';
   results: StabilityHistoryResult[] = [];
 
-  constructor(private historyService: HistoryService) {}
+  constructor(private historyService: HistoryService, private router: Router) {}
 
   ngOnInit(): void {
     this.load();
@@ -55,5 +56,9 @@ export class StabilityVarianceComponent implements OnInit {
       { label: 'Estimation variance', value: a.estVar },
       { label: 'Response time variance', value: a.rtVar }
     ];
+  }
+
+  goBack(): void {
+    this.router.navigate(['/history']);
   }
 }
