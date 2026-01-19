@@ -71,7 +71,7 @@
       <div class="issue-details">
         <div class="detail-row">
           <span class="label">Description:</span>
-          <span class="value">{{ issue.fields?.description || 'No description provided' }}</span>
+          <span class="value">{{ getDescription(issue.fields?.description) }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Assignee:</span>

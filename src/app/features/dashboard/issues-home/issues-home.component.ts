@@ -162,6 +162,35 @@ export class IssuesHomeComponent implements OnInit {
     this.router.navigate(['/projects']);
   }
 
+  getDescription(description: any): string {
+    if (!description) {
+      return 'No description provided';
+    }
+    
+    // If it's a string, return it
+    if (typeof description === 'string') {
+      return description;
+    }
+    
+    // If it's an object with content property (common in Jira rich text)
+    if (typeof description === 'object' && description.content) {
+      // Try to extract text from content array
+      if (Array.isArray(description.content)) {
+        return description.content
+          .map((item: any) => {
+            if (item.content && Array.isArray(item.content)) {
+              return item.content.map((c: any) => c.text || '').join('');
+            }
+            return item.text || '';
+          })
+          .join(' ')
+          .trim() || 'No description provided';
+      }
+    }
+    
+    return 'No description provided';
+  }
+
   viewDetails(issue: any): void {
     const issueKey = issue.key;
     // Navigate to issue details page
