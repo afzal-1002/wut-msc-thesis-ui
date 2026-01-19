@@ -3,11 +3,12 @@ import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IssueService } from '../../../services/issue/issue.service';
 import { AuthService } from '../../../services/auth/auth.service';
+import { CreateIssueModalComponent } from '../create-issue-modal/create-issue-modal.component';
 
 @Component({
   selector: 'app-issues-home',
   standalone: true,
-  imports: [NgIf, NgFor, CommonModule],
+  imports: [NgIf, NgFor, CommonModule, CreateIssueModalComponent],
   templateUrl: './issues-home.component.html',
   styleUrls: ['./issues-home.component.css']
 })
@@ -20,8 +21,9 @@ export class IssuesHomeComponent implements OnInit {
   searchQuery = '';
   filterStatus = '';
   filterPriority = '';
-  private baseUrl: string | null = null;
+  baseUrl: string | null = null;
   deletingIssueKey: string | null = null;
+  showCreateIssueModal = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -195,5 +197,20 @@ export class IssuesHomeComponent implements OnInit {
     const issueKey = issue.key;
     // Navigate to issue details page
     this.router.navigate(['/issue-details', issueKey]);
+  }
+
+  openCreateIssueModal(): void {
+    this.showCreateIssueModal = true;
+  }
+
+  closeCreateIssueModal(): void {
+    this.showCreateIssueModal = false;
+  }
+
+  onIssueCreated(newIssue: any): void {
+    console.log('✅ Issue created, refreshing list:', newIssue);
+    this.showCreateIssueModal = false;
+    // Reload issues
+    this.loadIssues();
   }
 }

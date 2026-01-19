@@ -13,10 +13,19 @@
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .header-content {
   flex: 1;
+  min-width: 250px;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
 .page-title {

@@ -4,7 +4,10 @@
       <h2 class="page-title">Issues - {{ projectKey }}</h2>
       <p class="page-subtitle">All issues and bugs for this project</p>
     </div>
-    <button class="btn btn-secondary" (click)="goBack()">← Back to Projects</button>
+    <div class="header-actions">
+      <button class="btn btn-success" (click)="openCreateIssueModal()">➕ Create Issue</button>
+      <button class="btn btn-secondary" (click)="goBack()">← Back to Projects</button>
+    </div>
   </div>
 
   <div class="filters-section">
@@ -123,3 +126,12 @@
     <button class="btn btn-secondary" (click)="goBack()">← Back to Projects</button>
   </div>
 </div>
+
+<!-- Create Issue Modal -->
+<app-create-issue-modal
+  [isOpen]="showCreateIssueModal"
+  [projectKey]="projectKey"
+  [baseUrl]="baseUrl"
+  (close)="closeCreateIssueModal()"
+  (issueCreated)="onIssueCreated($event)"
+></app-create-issue-modal>
