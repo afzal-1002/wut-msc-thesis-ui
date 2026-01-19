@@ -403,7 +403,7 @@ export class EstimationHistoryComponent implements OnInit {
 
     const allValues = datasets.flatMap(d => d.data as number[]);
     const maxValue = Math.max(...allValues);
-    const axisMax = maxValue * 1.2; // Add 20% padding
+    const axisMax = maxValue + 2;
 
     this.frequencyHeatmapChartConfig = {
       type: 'bar',

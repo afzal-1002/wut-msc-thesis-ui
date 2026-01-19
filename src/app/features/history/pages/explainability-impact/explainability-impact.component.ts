@@ -72,10 +72,10 @@ export class ExplainabilityImpactComponent implements OnInit {
     const withExplanation = this.chartData.map(d => d.withExplanation);
     const withoutExplanation = this.chartData.map(d => d.withoutExplanation);
     
-    // Calculate axis padding (20% above max value)
+    // Calculate axis padding (max value + 2)
     const allValues = [...withExplanation, ...withoutExplanation];
     const maxValue = Math.max(...allValues);
-    const axisMax = maxValue * 1.2;
+    const axisMax = maxValue + 2;
 
     this.responseTimeChartConfig = {
       type: 'bar',
@@ -147,9 +147,9 @@ export class ExplainabilityImpactComponent implements OnInit {
     const overhead = this.chartData.map(d => Math.round(d.overheadDelta * 1000) / 1000);
     const colors = ['#f59e0b', '#ec4899'];
     
-    // Calculate axis padding (20% above max value)
+    // Calculate axis padding (max value + 2)
     const maxValue = Math.max(...overhead);
-    const axisMax = maxValue * 1.2;
+    const axisMax = maxValue + 2;
 
     this.overheadChartConfig = {
       type: 'bar',
@@ -214,7 +214,7 @@ export class ExplainabilityImpactComponent implements OnInit {
 
     // Explanation Disabled
     const disabledMaxValue = Math.max(...disabledTimes);
-    const disabledAxisMax = disabledMaxValue * 1.2;
+    const disabledAxisMax = disabledMaxValue + 2;
     
     this.sideBySideDisabledChartConfig = {
       type: 'bar',
@@ -264,7 +264,7 @@ export class ExplainabilityImpactComponent implements OnInit {
 
     // Explanation Enabled
     const enabledMaxValue = Math.max(...enabledTimes);
-    const enabledAxisMax = enabledMaxValue * 1.2;
+    const enabledAxisMax = enabledMaxValue + 2;
     
     this.sideBySideEnabledChartConfig = {
       type: 'bar',

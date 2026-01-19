@@ -85,7 +85,7 @@ export class StabilityVarianceComponent implements OnInit {
     const respData = this.stabilityVarianceData.map(d => Math.round(d.responseTimeVariance * 100) / 100);
     const allValues = [...estData, ...respData];
     const maxValue = Math.max(...allValues);
-    const axisMax = maxValue * 1.2; // Add 20% padding
+    const axisMax = maxValue + 2;
 
     this.dualBarChartData = {
       labels: this.stabilityVarianceData.map(d => d.provider),
@@ -199,7 +199,7 @@ export class StabilityVarianceComponent implements OnInit {
   initStabilityIndexChart(): void {
     const indexData = this.stabilityIndexData.map(d => Math.round(d.stabilityIndex * 10000) / 10000);
     const maxValue = Math.max(...indexData);
-    const axisMax = maxValue * 1.2; // Add 20% padding
+    const axisMax = maxValue + 2;
 
     this.stabilityIndexChartData = {
       labels: this.stabilityIndexData.map(d => d.provider),
