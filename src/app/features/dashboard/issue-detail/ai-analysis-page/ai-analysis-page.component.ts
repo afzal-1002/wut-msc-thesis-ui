@@ -203,26 +203,49 @@ export class AiAnalysisPageComponent implements OnInit {
     // First check if AI comments already exist
     this.jiraCommentService.getAIComments(issueKey).subscribe({
       next: (existingComments: any[]) => {
+        console.log('🔍 Checking for existing AI comments:', existingComments);
+        
         if (existingComments && existingComments.length > 0) {
-          // AI comments already exist
+          // AI comments already exist - don't allow adding more
           this.isUpdating = false;
-          this.errorMessage = `⚠️ AI Analysis Comments Already Exist: This issue already has ${existingComments.length} AI analysis comment(s).
+          
+          // Check if comments are actually visible or hidden
+          const commentCount = existingComments.length;
+          const isVisible = existingComments.some(c => c?.visible !== false);
+          
+          this.errorMessage = `⚠️ AI Analysis Comments Already Exist: This issue already has ${commentCount} AI analysis comment(s).
+
+These comments may be:
+• Hidden from view (filtered by role or permissions)
+• Existing in the system but not displaying properly
 
 To add a new comment:
-1️⃣  Go back to the issue details page
-2️⃣  Delete the existing AI analysis comment(s) first
-3️⃣  Return here and try adding a new comment
+1️⃣  Contact your Jira administrator to check for hidden AI comments
+2️⃣  Or try deleting comments from the issue if you have permission
+3️⃣  Then return here and try adding a new comment
 
-Or modify your current AI Analysis comment by selecting different sections.`;
+Alternatively, if you see no AI comments above, this may be a backend issue that needs investigation.`;
         } else {
           // No existing AI comments, safe to add new one
+          console.log('✅ No existing AI comments found, proceeding to create');
           this.createNewComment(issueKey, request);
         }
       },
       error: (err: any) => {
-        // If getAIComments fails, try to create anyway
-        console.warn('Could not check existing AI comments, attempting to create:', err);
-        this.createNewComment(issueKey, request);
+        // If getAIComments fails, still show helpful error
+        console.warn('⚠️ Could not check existing AI comments:', err);
+        this.isUpdating = false;
+        this.errorMessage = `⚠️ Unable to Check for Existing Comments: The system couldn't verify if AI comments already exist.
+
+Error details: ${err?.error?.message || err?.message || 'Unknown error'}
+
+What to do:
+1️⃣  Check the issue details page manually
+2️⃣  Look for any comments with "🤖 AI Analysis" header
+3️⃣  If you see AI comments, delete them first
+4️⃣  Then try adding a new comment
+
+If you don't see any AI comments but keep getting this error, it's a backend issue.`;
       }
     });
   }
@@ -248,14 +271,21 @@ Or modify your current AI Analysis comment by selecting different sections.`;
         
         // Handle specific error cases
         if (err?.status === 409) {
-          this.errorMessage = `⚠️ Comment Conflict: A similar AI analysis comment already exists on this issue.
-          
-To resolve:
-1️⃣  Go back to the issue and delete the existing AI analysis comment
-2️⃣  Return here and try adding the comment again
-3️⃣  Or select DIFFERENT sections from the analysis
+          this.errorMessage = `⚠️ Comment Conflict (409): The backend detected a duplicate or similar comment.
 
-If the issue has multiple AI comments, delete all of them and try again.`;
+This could mean:
+• A very similar AI analysis comment already exists
+• The comment was partially saved before
+• The backend's duplicate detection is being strict
+
+To resolve:
+1️⃣  Go back to the issue details page
+2️⃣  Look for comments with "🤖 AI Analysis" header (even hidden ones)
+3️⃣  Try deleting ALL AI analysis comments
+4️⃣  Reload the page (F5)
+5️⃣  Return here and try again with DIFFERENT selections
+
+Or contact your administrator if the issue persists.`;
         } else {
           this.errorMessage = err?.error?.message || err?.message || 'Failed to add comment.';
         }
