@@ -1149,7 +1149,7 @@ export class AiEvaluationComponent {
           align: 'top',
           offset: 5,
           color: '#1f2937',
-          font: { weight: 'bold', size: 10 },
+          font: { weight: 'bold', size: 13 },
           formatter: (value: any, context: any) => {
             if (context?.datasetIndex === undefined || context?.dataIndex === undefined) {
               return '';
@@ -1486,7 +1486,7 @@ export class AiEvaluationComponent {
           anchor: 'center',
           align: 'center',
           color: '#fff',
-          font: { weight: 'bold', size: 11 },
+          font: { weight: 'bold', size: 13 },
           formatter: (value: any, context: any) => {
             if (!value || typeof value !== 'object') {
               return '';
