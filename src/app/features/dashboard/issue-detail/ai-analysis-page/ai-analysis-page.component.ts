@@ -41,11 +41,6 @@ export class AiAnalysisPageComponent implements OnInit {
   // optional selection of specific markdown sections from the chosen AI response
   sectionSelections: { title: string; content: string; selected: boolean }[] = [];
 
-  // Quick comment addition
-  newCommentText = '';
-  addCommentInProgress = false;
-  addCommentErrorMessage = '';
-
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -205,78 +200,27 @@ export class AiAnalysisPageComponent implements OnInit {
     this.updateSuccessMessage = '';
     this.errorMessage = '';
 
-    this.jiraCommentService.updateFullComment(issueKey, request).subscribe({
-      next: () => {
-        this.isUpdating = false;
-        this.updateSuccessMessage = 'Jira comment updated successfully with selected AI content.';
-      },
-      error: (err: any) => {
-        this.isUpdating = false;
-        console.error('Failed to update Jira comment', err);
-        
-        // Handle specific error cases
-        if (err?.status === 409) {
-          this.errorMessage = '⚠️ Comment conflict: This comment already exists in Jira. The backend needs to be updated to handle existing comments. Please contact your administrator.';
-        } else if (err?.status === 405 || err?.message?.includes('PUT')) {
-          this.errorMessage = '⚠️ Update method not available: The backend is being updated to support comment updates. Please try again later.';
-        } else {
-          this.errorMessage = err?.error?.message || err?.message || 'Failed to update Jira comment.';
-        }
-      }
-    });
-  }
-
-  /**
-   * Add a new Jira comment with the user's text
-   * Uses the same API endpoint as the issue details page
-   */
-  addComment(): void {
-    if (!this.analysis || !this.newCommentText.trim() || this.addCommentInProgress) {
-      return;
-    }
-
-    const text = this.newCommentText.trim();
-    const issueKey = this.analysis.issueKey || this.issueKey;
-
-    const request: JiraCommentUpdateRequest = {
-      body: {
-        type: 'doc',
-        version: 1,
-        content: [
-          {
-            type: 'paragraph',
-            content: [
-              {
-                type: 'text',
-                text
-              }
-            ]
-          }
-        ]
-      }
-    };
-
-    this.addCommentInProgress = true;
-    this.addCommentErrorMessage = '';
-
+    // Use createComment to add new comment with selected content
     this.jiraCommentService.createComment(issueKey, request).subscribe({
       next: () => {
-        this.addCommentInProgress = false;
-        this.newCommentText = '';
-        this.updateSuccessMessage = '✅ Comment added to Jira successfully!';
-        // Auto-clear success message after 3 seconds
+        this.isUpdating = false;
+        this.updateSuccessMessage = '✅ Comment added to Jira successfully with selected AI content.';
+        // Reset selections after successful submission
+        this.selectedCommentIndexes.clear();
+        this.includeGeneration = true;
         setTimeout(() => {
           this.updateSuccessMessage = '';
         }, 3000);
       },
       error: (err: any) => {
-        this.addCommentInProgress = false;
+        this.isUpdating = false;
         console.error('Failed to add comment', err);
         
+        // Handle specific error cases
         if (err?.status === 409) {
-          this.addCommentErrorMessage = '⚠️ Comment conflict: A similar comment already exists. Please contact your administrator.';
+          this.errorMessage = '⚠️ Comment conflict: A similar comment already exists. Please modify your selection and try again.';
         } else {
-          this.addCommentErrorMessage = err?.error?.message || err?.message || 'Failed to add comment.';
+          this.errorMessage = err?.error?.message || err?.message || 'Failed to add comment.';
         }
       }
     });
