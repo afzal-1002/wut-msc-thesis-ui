@@ -1130,20 +1130,20 @@ export class AiEvaluationComponent {
     }
 
     this.qualityVsSpeedScatterData = { datasets };
-    // Extract X values from datasets for max calculation
-    const xValues = datasets.flatMap(ds => ds.data.map((d: any) => d.x));
-    const xAxisMax = this.computeXAxisMax(xValues);
+    // Extract Y values from datasets for max calculation
+    const yValues = datasets.flatMap(ds => ds.data.map((d: any) => d.y));
+    const yAxisMax = this.computeYAxisMaxWithIncrements(yValues);
     this.qualityVsSpeedScatterOptions = {
       responsive: true,
       scales: {
         x: {
           title: { display: true, text: 'Avg response time (s)' },
-          beginAtZero: true,
-          max: xAxisMax
+          beginAtZero: true
         },
         y: {
           title: { display: true, text: 'Engineering relevance score' },
-          beginAtZero: true
+          beginAtZero: true,
+          max: yAxisMax
         }
       },
       plugins: {
@@ -1473,20 +1473,20 @@ export class AiEvaluationComponent {
     }
 
     this.speedQualityBubbleData = { datasets };
-    // Extract X values from datasets for max calculation
-    const xValues = datasets.flatMap(ds => ds.data.map((d: any) => d.x));
-    const xAxisMax = this.computeXAxisMax(xValues);
+    // Extract Y values from datasets for max calculation
+    const yValues = datasets.flatMap(ds => ds.data.map((d: any) => d.y));
+    const yAxisMax = this.computeYAxisMaxWithIncrements(yValues);
     this.speedQualityBubbleOptions = {
       responsive: true,
       scales: {
         x: {
           title: { display: true, text: 'Avg response time (s)' },
-          beginAtZero: true,
-          max: xAxisMax
+          beginAtZero: true
         },
         y: {
           title: { display: true, text: 'Engineering relevance' },
-          beginAtZero: true
+          beginAtZero: true,
+          max: yAxisMax
         }
       },
       plugins: {
@@ -1786,8 +1786,8 @@ export class AiEvaluationComponent {
     return even + 2;
   }
 
-  // Utility: compute X-axis max by extending the data maximum by 2 increments
-  private computeXAxisMax(values: number[]): number {
+  // Utility: compute Y-axis max by extending the data maximum by 2 increments
+  private computeYAxisMaxWithIncrements(values: number[]): number {
     if (!values || !values.length) {
       return 2;
     }
