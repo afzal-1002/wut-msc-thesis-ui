@@ -1,4 +1,3 @@
-// app.routes.ts
 import { Routes } from '@angular/router';
 import { AboutComponent } from './shared/component/about/about.component';
 import { HomeComponent } from './shared/component/home/home.component';
@@ -33,6 +32,7 @@ import { AiHybridStrategyComponent } from './features/ai-research/hybrid-strateg
 import { AiResearchSummaryComponent } from './features/ai-research/research-summary/ai-research-summary.component';
 import { AiEstimationHistoryPageComponent } from './features/history/ai-estimation-history-page.component';
 import { HistoryDashboardComponent } from './features/history/pages/history-dashboard/history-dashboard.component';
+import { ApiLogsDashboardComponent } from './features/api-logs/api-logs-dashboard.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -84,6 +84,9 @@ export const routes: Routes = [
     // Dashboards (by user id)
     { path: 'user-dashboard/:userId', component: UserDashboardComponent, canActivate: [AuthGuard] },
     { path: 'admin-dashboard/:userId', component: AdminDashboardComponent, canActivate: [AuthGuard] },
+
+    // API Logs Dashboard
+    { path: 'api-logs', component: ApiLogsDashboardComponent, canActivate: [AuthGuard] },
 
     // Password reset
     { path: 'resetPassword', component: ResetPassowrdComponent },

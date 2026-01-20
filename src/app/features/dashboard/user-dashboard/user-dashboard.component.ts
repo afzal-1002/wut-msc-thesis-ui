@@ -27,6 +27,7 @@ export class UserDashboardComponent implements OnInit {
   { icon: '📊', title: 'Model Comparison', description: 'Compare AI models (Gemini vs DeepSeek)', button: 'Open Comparison', link: '/ai-estimations/comparison' },
   { icon: '🧪', title: 'AI Research', description: 'Bias, stability, explainability and human-in-the-loop analysis', button: 'Open AI Research', link: '/ai-research' },
   { icon: '🕒', title: 'Historical AI Performance',   description: 'Analyse past estimations and accuracy over time',        button: 'Open History',        link: '/history' },
+  { icon: '📋', title: 'API Logs', description: 'Monitor and analyze API calls and errors', button: 'View API Logs', link: '/api-logs' },
     { icon: '🔔', title: 'Notifications',  description: 'Stay up to date',            button: 'Alerts',         link: '/notifications' },
     { icon: '👤', title: 'Profile',        description: 'Edit your profile',          button: 'My Profile',     link: '/view-profile' },
 
