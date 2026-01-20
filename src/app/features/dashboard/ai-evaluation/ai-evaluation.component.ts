@@ -527,7 +527,15 @@ export class AiEvaluationComponent {
     this.stabilityPieOptions = {
       responsive: true,
       plugins: {
-        legend: { position: 'top' },
+        legend: {
+          position: 'top',
+          labels: {
+            boxWidth: 12,
+            padding: 15,
+            font: { size: 11 }
+          },
+          maxWidth: 1000
+        },
         datalabels: {
           color: '#222',
           font: { weight: 'bold', size: 12 },
@@ -622,7 +630,15 @@ export class AiEvaluationComponent {
     this.markdownPieOptions = {
       responsive: true,
       plugins: {
-        legend: { position: 'top' },
+        legend: {
+          position: 'top',
+          labels: {
+            boxWidth: 12,
+            padding: 15,
+            font: { size: 11 }
+          },
+          maxWidth: 1000
+        },
         datalabels: {
           color: '#222',
           font: { weight: 'bold', size: 12 },
