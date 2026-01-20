@@ -7,6 +7,7 @@ import { ApiLogsListComponent } from './api-logs-list/api-logs-list.component';
 import { ApiLogsFilterComponent } from './api-logs-filter/api-logs-filter.component';
 import { ApiLogsFailedComponent } from './api-logs-failed/api-logs-failed.component';
 import { ApiLogDetailsComponent } from './api-log-details/api-log-details.component';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-api-logs-dashboard',
@@ -28,7 +29,8 @@ export class ApiLogsDashboardComponent implements OnInit {
 
   constructor(
     private apiLogService: ApiLogService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -118,5 +120,26 @@ export class ApiLogsDashboardComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/dashboard']);
+  }
+
+    goBackToDashboard(): void {
+    const user = this.authService.currentUser;
+    console.log('🔙 Back button clicked. Current user:', user);
+    
+    if (user && user.id != null) {
+      // Navigate the same way as after login so we reach the Welcome dashboard
+      console.log('✅ Navigating to user dashboard with ID:', user.id);
+      this.router.navigate(['user-dashboard', user.id]).catch(err => {
+        console.error('❌ Navigation failed:', err);
+      });
+    } else {
+      console.warn('⚠️ No user ID found. Attempting fallback navigation.');
+      // Fallback: go back in history (usually the dashboard), otherwise home
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        this.router.navigate(['/']);
+      }
+    }
   }
 }
