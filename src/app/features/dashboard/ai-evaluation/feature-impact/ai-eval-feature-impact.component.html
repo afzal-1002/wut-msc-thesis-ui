@@ -7,15 +7,13 @@
               baseChart
               [data]="markdownEnabledPieData"
               [options]="markdownPieOptions"
-              [type]="markdownPieType"
-              style="max-width: 150px;"></canvas>
+              [type]="markdownPieType"></canvas>
 
       <canvas *ngIf="markdownDisabledPieData"
               baseChart
               [data]="markdownDisabledPieData"
               [options]="markdownPieOptions"
-              [type]="markdownPieType"
-              style="max-width: 150px;"></canvas>
+              [type]="markdownPieType"></canvas>
     </div>
     <figcaption class="chart-caption">
       Figure: Total runs and average analysis time when Markdown is toggled.
