@@ -1513,19 +1513,19 @@ export class AiEvaluationComponent {
         {
           label: 'Minimum hours',
           data: minSegments,
-          backgroundColor: '#cbd5f5',
+          backgroundColor: '#3b82f6',
           stack: 'estRange'
         },
         {
           label: 'Avg delta',
           data: midSegments,
-          backgroundColor: '#818cf8',
+          backgroundColor: '#06b6d4',
           stack: 'estRange'
         },
         {
           label: 'Tail risk',
           data: topSegments,
-          backgroundColor: '#6366f1',
+          backgroundColor: '#ec4899',
           stack: 'estRange'
         }
       ]
@@ -1537,7 +1537,17 @@ export class AiEvaluationComponent {
         x: { stacked: true }
       },
       plugins: {
-        legend: { position: 'bottom' }
+        legend: { position: 'bottom' },
+        datalabels: {
+          anchor: 'center',
+          align: 'center',
+          color: '#fff',
+          font: { weight: 'bold', size: 11 },
+          formatter: (value: any) => {
+            const num = typeof value === 'number' ? value : Number(value);
+            return Number.isFinite(num) && num > 0 ? num.toFixed(2) : '';
+          }
+        }
       }
     };
     this.estimationRangeStackedType = 'bar';
