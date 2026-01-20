@@ -1144,6 +1144,25 @@ export class AiEvaluationComponent {
       },
       plugins: {
         legend: { position: 'bottom' },
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          offset: 5,
+          color: '#1f2937',
+          font: { weight: 'bold', size: 10 },
+          formatter: (value: any, context: any) => {
+            if (context?.datasetIndex === undefined || context?.dataIndex === undefined) {
+              return '';
+            }
+            const data = context.dataset?.data?.[context.dataIndex];
+            if (!data || typeof data !== 'object') {
+              return '';
+            }
+            const x = typeof data.x === 'number' ? data.x.toFixed(2) : '0.00';
+            const y = typeof data.y === 'number' ? data.y.toFixed(2) : '0.00';
+            return `x: ${x}\ny: ${y}`;
+          }
+        },
         tooltip: {
           callbacks: {
             label: (context: any) => {
