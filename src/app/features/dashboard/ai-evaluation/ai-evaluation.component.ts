@@ -265,9 +265,13 @@ export class AiEvaluationComponent {
     this.providerBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax([gAvgHours, dAvgHours])
+          max: this.computeYAxisMax([gAvgHours, dAvgHours]),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -304,9 +308,13 @@ export class AiEvaluationComponent {
     this.byIssueTimeBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax([gAvgTimeSec, dAvgTimeSec])
+          max: this.computeYAxisMax([gAvgTimeSec, dAvgTimeSec]),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -355,9 +363,13 @@ export class AiEvaluationComponent {
     this.byIssueAllStatsBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax(allStatValues)
+          max: this.computeYAxisMax(allStatValues),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -398,9 +410,13 @@ export class AiEvaluationComponent {
     this.byIssueOverallBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax(overallValues)
+          max: this.computeYAxisMax(overallValues),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -457,9 +473,13 @@ export class AiEvaluationComponent {
     this.stabilityBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax(values)
+          max: this.computeYAxisMax(values),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -680,9 +700,13 @@ export class AiEvaluationComponent {
     this.markdownBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax(allValues)
+          max: this.computeYAxisMax(allValues),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -767,9 +791,13 @@ export class AiEvaluationComponent {
     this.modelByModelBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax(barValues)
+          max: this.computeYAxisMax(barValues),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -847,10 +875,14 @@ export class AiEvaluationComponent {
     this.comparisonPerfAvgBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
           grid: { color: '#eee' },
-          max: this.computeYAxisMax(avgs)
+          max: this.computeYAxisMax(avgs),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -916,10 +948,14 @@ export class AiEvaluationComponent {
     this.comparisonPerfDetailBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
           grid: { color: '#eee' },
-          max: this.computeYAxisMax(perfDetailValues)
+          max: this.computeYAxisMax(perfDetailValues),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -1049,9 +1085,13 @@ export class AiEvaluationComponent {
     this.estimationComparisonBarOptions = {
       responsive: true,
       scales: {
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMaxWithIncrements(values)
+          max: this.computeYAxisMaxWithIncrements(values),
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -1150,12 +1190,14 @@ export class AiEvaluationComponent {
       scales: {
         x: {
           title: { display: true, text: 'Avg response time (s)' },
-          beginAtZero: true
+          beginAtZero: true,
+          ticks: { font: { weight: 'bold' } }
         },
         y: {
           title: { display: true, text: 'Engineering relevance score' },
           beginAtZero: true,
-          max: yAxisMax
+          max: yAxisMax,
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -1241,7 +1283,14 @@ export class AiEvaluationComponent {
     this.compositeScoreBarOptions = {
       responsive: true,
       scales: {
-        y: { beginAtZero: true, suggestedMax: 1 }
+        x: {
+          ticks: { font: { weight: 'bold' } }
+        },
+        y: {
+          beginAtZero: true,
+          suggestedMax: 1,
+          ticks: { font: { weight: 'bold' } }
+        }
       },
       plugins: {
         legend: { display: false },
@@ -1328,7 +1377,11 @@ export class AiEvaluationComponent {
         x: {
           suggestedMin: -1,
           suggestedMax: 1,
-          grid: { color: '#e2e8f0' }
+          grid: { color: '#e2e8f0' },
+          ticks: { font: { weight: 'bold' } }
+        },
+        y: {
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {
@@ -1493,12 +1546,14 @@ export class AiEvaluationComponent {
       scales: {
         x: {
           title: { display: true, text: 'Avg response time (s)' },
-          beginAtZero: true
+          beginAtZero: true,
+          ticks: { font: { weight: 'bold' } }
         },
         y: {
           title: { display: true, text: 'Engineering relevance' },
           beginAtZero: true,
-          max: yAxisMax
+          max: yAxisMax,
+          ticks: { font: { weight: 'bold' } }
         }
       },
       plugins: {

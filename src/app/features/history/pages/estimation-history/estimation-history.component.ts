@@ -163,16 +163,15 @@ export class EstimationHistoryComponent implements OnInit {
           }
         },
         scales: {
+          x: {
+            ticks: { font: { weight: 'bold' } }
+          },
           y: {
             beginAtZero: true,
-            max: axisMax
+            max: axisMax,
+            ticks: { font: { weight: 'bold' } }
           }
         }
-      }
-    };
-  }
-
-  private initStabilityOverTimeChart(): void {
     const geminiData = this.stabilityOverTimeData.map(d => d.geminiEstimation || null);
     const deepseekData = this.stabilityOverTimeData.map(d => d.deepseekEstimation || null);
     
@@ -252,9 +251,13 @@ export class EstimationHistoryComponent implements OnInit {
           }
         },
         scales: {
+          x: {
+            ticks: { font: { weight: 'bold' } }
+          },
           y: {
             beginAtZero: true,
-            max: axisMax
+            max: axisMax,
+            ticks: { font: { weight: 'bold' } }
           }
         }
       }
@@ -314,9 +317,13 @@ export class EstimationHistoryComponent implements OnInit {
           }
         },
         scales: {
+          x: {
+            ticks: { font: { weight: 'bold' } }
+          },
           y: {
             beginAtZero: true,
-            max: axisMax
+            max: axisMax,
+            ticks: { font: { weight: 'bold' } }
           }
         }
       }
@@ -376,9 +383,13 @@ export class EstimationHistoryComponent implements OnInit {
           }
         },
         scales: {
+          x: {
+            ticks: { font: { weight: 'bold' } }
+          },
           y: {
             beginAtZero: true,
-            max: axisMax
+            max: axisMax,
+            ticks: { font: { weight: 'bold' } }
           }
         }
       }
