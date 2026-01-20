@@ -245,5 +245,49 @@
         <button type="button" class="btn-close" (click)="updateSuccessMessage = ''"></button>
       </div>
     </div>
+
+    <!-- Add Comment Section -->
+    <div class="add-comment-panel card p-3 mt-4">
+      <h4 class="card-title mb-3">➕ Add Comment to Jira</h4>
+      
+      <div *ngIf="addCommentErrorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{ addCommentErrorMessage }}
+        <button type="button" class="btn-close" (click)="addCommentErrorMessage = ''"></button>
+      </div>
+
+      <textarea
+        class="form-control mb-2"
+        rows="3"
+        placeholder="Write a new comment..."
+        [(ngModel)]="newCommentText"
+        [disabled]="addCommentInProgress"
+      ></textarea>
+
+      <div class="d-flex gap-2 align-items-center">
+        <button
+          type="button"
+          class="btn btn-sm btn-primary"
+          [disabled]="addCommentInProgress || !newCommentText.trim()"
+          (click)="addComment()"
+        >
+          <span *ngIf="!addCommentInProgress">Add Comment</span>
+          <span *ngIf="addCommentInProgress">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span class="ms-1">Adding…</span>
+          </span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-secondary"
+          [disabled]="addCommentInProgress"
+          (click)="newCommentText = ''"
+        >
+          Clear
+        </button>
+        <span class="text-muted small ms-2" *ngIf="!newCommentText.trim()">
+          Enter comment text and click Add Comment
+        </span>
+      </div>
+    </div>
   </div>
 </div>

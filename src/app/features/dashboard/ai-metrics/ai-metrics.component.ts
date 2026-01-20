@@ -198,11 +198,122 @@ export class AiMetricsComponent {
   hoursThreshold: number | null = null;
   daysThreshold: number | null = null;
 
+  // Bug filter properties
+  availableBugs: any[] = [];
+  filteredBugs: any[] = [];
+  showBugDropdown = false;
+  isLoadingBugs = false;
+
   metricsResult: any = null;
   isLoadingMetrics = false;
   metricsError = '';
 
-  constructor(private aiEstimationsService: AiEstimationsService, private router: Router) {}
+  constructor(
+    private aiEstimationsService: AiEstimationsService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadAvailableBugs();
+  }
+
+  /**
+   * Trigger dropdown to show available bugs after loading
+   */
+  private showBugOptionsOnLoad(): void {
+    if (this.availableBugs.length > 0 && this.activeMetricsTab === 'metrics-issue') {
+      this.filteredBugs = this.availableBugs;
+      this.showBugDropdown = true;
+    }
+  }
+
+  /**
+   * Load available bugs from backend for filtering
+   * Uses getAllMetrics to fetch all metrics and extracts unique issue keys
+   */
+  private loadAvailableBugs(): void {
+    this.isLoadingBugs = true;
+    
+    this.aiEstimationsService.getAllMetrics().subscribe({
+      next: (metricsData: any[]) => {
+        this.isLoadingBugs = false;
+        
+        if (!Array.isArray(metricsData)) {
+          console.warn('⚠️ Metrics data is not an array');
+          this.availableBugs = [];
+          return;
+        }
+
+        // Extract unique issue keys from metrics
+        const uniqueIssueKeys = new Map<string, any>();
+        
+        metricsData.forEach((metric: any) => {
+          const issueKey = metric.issueKey;
+          if (issueKey && !uniqueIssueKeys.has(issueKey)) {
+            uniqueIssueKeys.set(issueKey, {
+              key: issueKey,
+              id: issueKey,
+              summary: `Issue ${issueKey}` // Display format
+            });
+          }
+        });
+
+        // Convert map to array
+        this.availableBugs = Array.from(uniqueIssueKeys.values());
+        this.filteredBugs = this.availableBugs;
+        
+        console.log('✅ Loaded available issue keys from metrics:', this.availableBugs.length);
+        console.log('📋 Issue keys:', this.availableBugs.map((b: any) => b.key).join(', '));
+        
+        // Auto-show dropdown with bug options on load
+        this.showBugOptionsOnLoad();
+      },
+      error: (err: any) => {
+        this.isLoadingBugs = false;
+        console.warn('⚠️ Failed to load metrics, bug filter will be empty', err);
+        this.availableBugs = [];
+        // Bug filter remains available but empty - user can still type manually
+      }
+    });
+  }
+
+  /**
+   * Filter bugs based on user input
+   */
+  onBugInputChange(event: any): void {
+    const searchTerm = (event?.target?.value || this.metricsIssueKey).toLowerCase();
+
+    if (!searchTerm) {
+      this.filteredBugs = this.availableBugs;
+      this.showBugDropdown = false;
+      return;
+    }
+
+    this.filteredBugs = this.availableBugs.filter(bug =>
+      (bug.key && bug.key.toLowerCase().includes(searchTerm)) ||
+      (bug.id && bug.id.toLowerCase().includes(searchTerm)) ||
+      (bug.summary && bug.summary.toLowerCase().includes(searchTerm))
+    );
+
+    this.showBugDropdown = this.filteredBugs.length > 0;
+  }
+
+  /**
+   * Select bug from dropdown
+   */
+  selectBug(bug: any): void {
+    this.metricsIssueKey = bug.key || bug.id;
+    this.showBugDropdown = false;
+    this.filteredBugs = [];
+    console.log('✅ Selected bug:', this.metricsIssueKey);
+  }
+
+  /**
+   * Close bug dropdown
+   */
+  closeBugDropdown(): void {
+    this.showBugDropdown = false;
+  }
 
   goBack(): void {
     this.router.navigate(['/ai-estimations']);

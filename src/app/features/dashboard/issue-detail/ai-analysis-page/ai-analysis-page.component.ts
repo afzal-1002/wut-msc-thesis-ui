@@ -41,6 +41,11 @@ export class AiAnalysisPageComponent implements OnInit {
   // optional selection of specific markdown sections from the chosen AI response
   sectionSelections: { title: string; content: string; selected: boolean }[] = [];
 
+  // Quick comment addition
+  newCommentText = '';
+  addCommentInProgress = false;
+  addCommentErrorMessage = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -179,7 +184,8 @@ export class AiAnalysisPageComponent implements OnInit {
       return;
     }
 
-    const content = this.buildAtlassianContentFromTexts(texts);
+    // Build AI Analysis header with metadata
+    const content = this.buildAIAnalysisCommentContent(texts);
 
     const request: JiraCommentUpdateRequest = {
       body: {
@@ -207,7 +213,71 @@ export class AiAnalysisPageComponent implements OnInit {
       error: (err: any) => {
         this.isUpdating = false;
         console.error('Failed to update Jira comment', err);
-        this.errorMessage = err?.error?.message || err?.message || 'Failed to update Jira comment.';
+        
+        // Handle specific error cases
+        if (err?.status === 409) {
+          this.errorMessage = '⚠️ Comment conflict: This comment already exists in Jira. The backend needs to be updated to handle existing comments. Please contact your administrator.';
+        } else if (err?.status === 405 || err?.message?.includes('PUT')) {
+          this.errorMessage = '⚠️ Update method not available: The backend is being updated to support comment updates. Please try again later.';
+        } else {
+          this.errorMessage = err?.error?.message || err?.message || 'Failed to update Jira comment.';
+        }
+      }
+    });
+  }
+
+  /**
+   * Add a new Jira comment with the user's text
+   * Uses the same API endpoint as the issue details page
+   */
+  addComment(): void {
+    if (!this.analysis || !this.newCommentText.trim() || this.addCommentInProgress) {
+      return;
+    }
+
+    const text = this.newCommentText.trim();
+    const issueKey = this.analysis.issueKey || this.issueKey;
+
+    const request: JiraCommentUpdateRequest = {
+      body: {
+        type: 'doc',
+        version: 1,
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text
+              }
+            ]
+          }
+        ]
+      }
+    };
+
+    this.addCommentInProgress = true;
+    this.addCommentErrorMessage = '';
+
+    this.jiraCommentService.createComment(issueKey, request).subscribe({
+      next: () => {
+        this.addCommentInProgress = false;
+        this.newCommentText = '';
+        this.updateSuccessMessage = '✅ Comment added to Jira successfully!';
+        // Auto-clear success message after 3 seconds
+        setTimeout(() => {
+          this.updateSuccessMessage = '';
+        }, 3000);
+      },
+      error: (err: any) => {
+        this.addCommentInProgress = false;
+        console.error('Failed to add comment', err);
+        
+        if (err?.status === 409) {
+          this.addCommentErrorMessage = '⚠️ Comment conflict: A similar comment already exists. Please contact your administrator.';
+        } else {
+          this.addCommentErrorMessage = err?.error?.message || err?.message || 'Failed to add comment.';
+        }
       }
     });
   }
@@ -371,6 +441,55 @@ export class AiAnalysisPageComponent implements OnInit {
         ]
       });
     }
+
+    return docContent;
+  }
+
+  /**
+   * Build complete AI Analysis comment with header, metadata, and formatted content
+   * Follows ADF (Atlassian Document Format) for Jira comments
+   */
+  private buildAIAnalysisCommentContent(texts: string[]): any[] {
+    const docContent: any[] = [];
+
+    // Add AI Analysis header with strong formatting
+    docContent.push({
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: '🤖 AI Analysis',
+          marks: [{ type: 'strong' }]
+        },
+        {
+          type: 'text',
+          text: ` | Model: ${this.aiModel === 'BOTH' ? this.commentModelChoice : this.aiModel}`
+        }
+      ]
+    });
+
+    // Add metadata line
+    const timestamp = new Date().toLocaleString();
+    docContent.push({
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: `Generated: ${timestamp}`,
+          marks: [{ type: 'code' }]
+        }
+      ]
+    });
+
+    // Add separator/spacing
+    docContent.push({
+      type: 'paragraph',
+      content: [{ type: 'text', text: '' }]
+    });
+
+    // Add the main content with proper ADF formatting
+    const mainContent = this.buildAtlassianContentFromTexts(texts);
+    docContent.push(...mainContent);
 
     return docContent;
   }

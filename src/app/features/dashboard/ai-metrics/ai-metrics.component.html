@@ -24,13 +24,33 @@
           </div>
           <div class="flex-grow-1 mb-2 metrics-input-wrapper">
             <ng-container [ngSwitch]="activeMetricsTab">
-            <div *ngSwitchCase="'metrics-issue'">
+            <div *ngSwitchCase="'metrics-issue'" class="position-relative">
               <label class="form-label mb-1 visually-hidden">Issue Key</label>
               <input
                 class="form-control form-control-sm"
                 [(ngModel)]="metricsIssueKey"
-                placeholder="Issue Key (e.g. BUG-5)"
+                (input)="onBugInputChange($event)"
+                (focus)="onBugInputChange($event)"
+                placeholder="Issue Key (e.g. BUG-5) - Type to search or select"
+                autocomplete="off"
               />
+              <!-- Bug dropdown filter -->
+              <div *ngIf="showBugDropdown && filteredBugs.length > 0" class="bug-dropdown">
+                <div class="bug-dropdown-list">
+                  <div
+                    *ngFor="let bug of filteredBugs.slice(0, 10)"
+                    class="bug-dropdown-item"
+                    (click)="selectBug(bug)"
+                  >
+                    <strong>{{ bug.key || bug.id }}</strong>
+                    <span *ngIf="bug.summary" class="bug-summary">{{ bug.summary }}</span>
+                  </div>
+                  <div *ngIf="filteredBugs.length > 10" class="bug-dropdown-more">
+                    ... and {{ filteredBugs.length - 10 }} more
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="isLoadingBugs" class="small text-muted mt-1">Loading bugs...</div>
             </div>
             <div *ngSwitchCase="'metrics-model'">
               <label class="form-label mb-1 visually-hidden">AI Provider</label>
