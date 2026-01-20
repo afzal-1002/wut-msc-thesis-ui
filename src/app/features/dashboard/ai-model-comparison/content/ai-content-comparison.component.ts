@@ -42,7 +42,7 @@ export class AiContentComparisonComponent implements OnInit {
         max: 3,
         ticks: { stepSize: 1 },
         grid: { color: '#e5e7eb' },
-        title: { display: true, text: 'Engineering relevance score' }
+        title: { display: false, text: 'Engineering relevance score' }
       }
     }
   };

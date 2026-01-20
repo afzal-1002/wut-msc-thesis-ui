@@ -26,6 +26,11 @@ export class AiEstimationComparisonComponent implements OnInit {
     responsive: true,
     plugins: {
       legend: { display: false },
+      title: {
+        display: false,
+        text: 'AI Model Estimation Comparison',
+        font: { size: 14, weight: 'bold' }
+      },
       datalabels: {
         anchor: 'end',
         align: 'end',
@@ -35,12 +40,17 @@ export class AiEstimationComparisonComponent implements OnInit {
       }
     },
     scales: {
-      x: { grid: { display: false } },
+      x: {
+        grid: { display: false },
+        ticks: { font: { weight: 'bold', size: 11 } },
+        title: { display: false, text: 'AI Model', font: { weight: 'bold', size: 12 } }
+      },
       y: {
         type: 'linear',
         beginAtZero: true,
         grid: { color: '#e5e7eb' },
-        title: { display: true, text: 'Estimated hours' }
+        ticks: { font: { weight: 'bold', size: 11 } },
+        title: { display: false, text: 'Estimated hours', font: { weight: 'bold', size: 12 } }
       }
     }
   };

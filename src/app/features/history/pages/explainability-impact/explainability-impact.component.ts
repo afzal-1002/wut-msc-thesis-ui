@@ -90,7 +90,9 @@ export class ExplainabilityImpactComponent implements OnInit {
             backgroundColor: '#ef4444',
             borderColor: '#dc2626',
             borderWidth: 2,
-            borderRadius: 4
+            borderRadius: 4,
+            barPercentage: 0.35,
+            categoryPercentage: 0.5
           },
           {
             label: 'Explanation Enabled',
@@ -98,7 +100,9 @@ export class ExplainabilityImpactComponent implements OnInit {
             backgroundColor: '#3b82f6',
             borderColor: '#1e40af',
             borderWidth: 2,
-            borderRadius: 4
+            borderRadius: 4,
+            barPercentage: 0.35,
+            categoryPercentage: 0.5
           }
         ]
       },
@@ -107,7 +111,7 @@ export class ExplainabilityImpactComponent implements OnInit {
         maintainAspectRatio: true,
         indexAxis: 'x',
         plugins: {
-          legend: { display: true, position: 'top' },
+          legend: { display: false, position: 'top' },
           title: { display: false },
           datalabels: {
             anchor: 'end',
@@ -126,14 +130,14 @@ export class ExplainabilityImpactComponent implements OnInit {
               }
             },
             title: {
-              display: true,
+              display: false,
               text: 'Response Time (seconds)',
               font: { size: 12 }
             }
           },
           x: {
             title: {
-              display: true,
+              display: false,
               text: 'AI Provider',
               font: { size: 12 }
             }
@@ -193,14 +197,14 @@ export class ExplainabilityImpactComponent implements OnInit {
               }
             },
             title: {
-              display: true,
+              display: false,
               text: 'Additional Response Time (seconds)',
               font: { size: 12 }
             }
           },
           x: {
             title: {
-              display: true,
+              display: false,
               text: 'AI Provider',
               font: { size: 12 }
             }
@@ -259,7 +263,7 @@ export class ExplainabilityImpactComponent implements OnInit {
               }
             },
             title: {
-              display: true,
+              display: false,
               text: 'Response Time (seconds)',
               font: { size: 11 }
             }
@@ -311,7 +315,7 @@ export class ExplainabilityImpactComponent implements OnInit {
               }
             },
             title: {
-              display: true,
+              display: false,
               text: 'Response Time (seconds)',
               font: { size: 11 }
             }
@@ -361,7 +365,7 @@ export class ExplainabilityImpactComponent implements OnInit {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-          legend: { display: true, position: 'top' }
+          legend: { display: false, position: 'top' }
         },
         scales: {
           r: {
@@ -371,7 +375,7 @@ export class ExplainabilityImpactComponent implements OnInit {
               stepSize: 2
             },
             title: {
-              display: true,
+              display: false,
               text: 'Performance (Normalized)',
               font: { size: 11 }
             }

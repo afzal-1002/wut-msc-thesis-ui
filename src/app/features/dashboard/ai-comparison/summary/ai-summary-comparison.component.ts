@@ -43,7 +43,7 @@ export class AiSummaryComparisonComponent implements OnInit {
       x: { grid: { display: false } },
       y: {
         beginAtZero: true,
-        title: { display: true, text: 'Categories won' },
+        title: { display: false, text: 'Categories won' },
         ticks: { stepSize: 1 },
         grid: { color: '#e5e7eb' }
       }
@@ -88,7 +88,7 @@ export class AiSummaryComparisonComponent implements OnInit {
               beginAtZero: true,
               min: 0,
               max: axisMax,
-              title: { display: true, text: 'Categories won' },
+              title: { display: false, text: 'Categories won' },
               ticks: { stepSize: 1 },
               grid: { color: '#e5e7eb' }
             }

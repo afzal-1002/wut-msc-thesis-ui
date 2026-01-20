@@ -145,8 +145,8 @@ export class EstimationHistoryComponent implements OnInit {
             backgroundColor: colors,
             borderColor: colors.map(c => this.darkenColor(c, 0.2)),
             borderWidth: 1,
-            barPercentage: 0.5,
-            categoryPercentage: 0.6
+            barPercentage: 0.35,
+            categoryPercentage: 0.5
           }
         ]
       },
@@ -155,23 +155,35 @@ export class EstimationHistoryComponent implements OnInit {
         maintainAspectRatio: true,
         plugins: {
           legend: { display: false },
+          title: {
+            display: false,
+            text: '📊 Estimation Comparison by Model',
+            font: { size: 16, weight: 'bold' }
+          },
           datalabels: {
             anchor: 'end',
             align: 'top',
-            font: { weight: 'bold' },
+            font: { weight: 'bold', size: 12 },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
           }
         },
         scales: {
           x: {
-            ticks: { font: { weight: 'bold' } }
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'AI Provider', font: { weight: 'bold', size: 12 } }
           },
           y: {
             beginAtZero: true,
             max: axisMax,
-            ticks: { font: { weight: 'bold' } }
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'Hours', font: { weight: 'bold', size: 12 } }
           }
         }
+      }
+    };
+  }
+
+  private initStabilityOverTimeChart(): void {
     const geminiData = this.stabilityOverTimeData.map(d => d.geminiEstimation || null);
     const deepseekData = this.stabilityOverTimeData.map(d => d.deepseekEstimation || null);
     
@@ -186,7 +198,8 @@ export class EstimationHistoryComponent implements OnInit {
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
             tension: 0.4,
-            fill: true
+            fill: true,
+            borderWidth: 2
           },
           {
             label: 'DEEPSEEK',
@@ -194,7 +207,8 @@ export class EstimationHistoryComponent implements OnInit {
             borderColor: '#ef4444',
             backgroundColor: 'rgba(239, 68, 68, 0.1)',
             tension: 0.4,
-            fill: true
+            fill: true,
+            borderWidth: 2
           }
         ]
       },
@@ -202,7 +216,28 @@ export class EstimationHistoryComponent implements OnInit {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-          legend: { display: true }
+          legend: {
+            display: false,
+            labels: { font: { weight: 'bold', size: 11 } }
+          },
+          title: {
+            display: false,
+            text: '📈 Estimation Stability Over Time',
+            font: { size: 16, weight: 'bold' }
+          },
+          datalabels: {
+            font: { weight: 'bold', size: 10 }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'Date', font: { weight: 'bold', size: 12 } }
+          },
+          y: {
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'Hours', font: { weight: 'bold', size: 12 } }
+          }
         }
       }
     };
@@ -233,8 +268,8 @@ export class EstimationHistoryComponent implements OnInit {
             backgroundColor: colors,
             borderColor: colors.map(c => this.darkenColor(c, 0.2)),
             borderWidth: 1,
-            barPercentage: 0.5,
-            categoryPercentage: 0.6
+            barPercentage: 0.35,
+            categoryPercentage: 0.5
           }
         ]
       },
@@ -243,21 +278,28 @@ export class EstimationHistoryComponent implements OnInit {
         maintainAspectRatio: true,
         plugins: {
           legend: { display: false },
+          title: {
+            display: false,
+            text: '⚡ Analysis Time Comparison',
+            font: { size: 16, weight: 'bold' }
+          },
           datalabels: {
             anchor: 'end',
             align: 'top',
-            font: { weight: 'bold' },
+            font: { weight: 'bold', size: 12 },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
           }
         },
         scales: {
           x: {
-            ticks: { font: { weight: 'bold' } }
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'AI Provider', font: { weight: 'bold', size: 12 } }
           },
           y: {
             beginAtZero: true,
             max: axisMax,
-            ticks: { font: { weight: 'bold' } }
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'Seconds', font: { weight: 'bold', size: 12 } }
           }
         }
       }
@@ -295,12 +337,16 @@ export class EstimationHistoryComponent implements OnInit {
           {
             label: 'With Explanation',
             data: withExplanation,
-            backgroundColor: '#10b981'
+            backgroundColor: '#10b981',
+            barPercentage: 0.35,
+            categoryPercentage: 0.5
           },
           {
             label: 'Without Explanation',
             data: withoutExplanation,
-            backgroundColor: '#f59e0b'
+            backgroundColor: '#f59e0b',
+            barPercentage: 0.35,
+            categoryPercentage: 0.5
           }
         ]
       },
@@ -308,22 +354,32 @@ export class EstimationHistoryComponent implements OnInit {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-          legend: { display: true },
+          legend: {
+            display: false,
+            labels: { font: { weight: 'bold', size: 11 } }
+          },
+          title: {
+            display: false,
+            text: '💡 Explanation Impact on Estimation',
+            font: { size: 16, weight: 'bold' }
+          },
           datalabels: {
             anchor: 'end',
             align: 'top',
-            font: { weight: 'bold' },
+            font: { weight: 'bold', size: 12 },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
           }
         },
         scales: {
           x: {
-            ticks: { font: { weight: 'bold' } }
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'AI Provider', font: { weight: 'bold', size: 12 } }
           },
           y: {
             beginAtZero: true,
             max: axisMax,
-            ticks: { font: { weight: 'bold' } }
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'Hours', font: { weight: 'bold', size: 12 } }
           }
         }
       }
@@ -361,12 +417,16 @@ export class EstimationHistoryComponent implements OnInit {
           {
             label: 'With User Prompt',
             data: withPrompt,
-            backgroundColor: '#06b6d4'
+            backgroundColor: '#06b6d4',
+            barPercentage: 0.35,
+            categoryPercentage: 0.5
           },
           {
             label: 'Without User Prompt',
             data: withoutPrompt,
-            backgroundColor: '#ec4899'
+            backgroundColor: '#ec4899',
+            barPercentage: 0.35,
+            categoryPercentage: 0.5
           }
         ]
       },
@@ -374,22 +434,32 @@ export class EstimationHistoryComponent implements OnInit {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-          legend: { display: true },
+          legend: {
+            display: false,
+            labels: { font: { weight: 'bold', size: 11 } }
+          },
+          title: {
+            display: false,
+            text: '🎯 Human Prompt Influence on Estimation',
+            font: { size: 16, weight: 'bold' }
+          },
           datalabels: {
             anchor: 'end',
             align: 'top',
-            font: { weight: 'bold' },
+            font: { weight: 'bold', size: 12 },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
           }
         },
         scales: {
           x: {
-            ticks: { font: { weight: 'bold' } }
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'AI Provider', font: { weight: 'bold', size: 12 } }
           },
           y: {
             beginAtZero: true,
             max: axisMax,
-            ticks: { font: { weight: 'bold' } }
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'Hours', font: { weight: 'bold', size: 12 } }
           }
         }
       }
@@ -414,7 +484,20 @@ export class EstimationHistoryComponent implements OnInit {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-          legend: { display: true, position: 'bottom' }
+          legend: {
+            display: false,
+            position: 'bottom',
+            labels: { font: { weight: 'bold', size: 11 } }
+          },
+          title: {
+            display: false,
+            text: '📋 AI Usage Distribution',
+            font: { size: 16, weight: 'bold' }
+          },
+          datalabels: {
+            font: { weight: 'bold', size: 12 },
+            formatter: (value: any) => (typeof value === 'number' ? `${value}` : value)
+          }
         }
       }
     };
@@ -450,18 +533,32 @@ export class EstimationHistoryComponent implements OnInit {
         responsive: true,
         maintainAspectRatio: true,
         plugins: {
-          legend: { display: true },
+          legend: {
+            display: false,
+            labels: { font: { weight: 'bold', size: 11 } }
+          },
+          title: {
+            display: false,
+            text: '🔥 Estimation Range Frequency Distribution',
+            font: { size: 16, weight: 'bold' }
+          },
           datalabels: {
             anchor: 'end',
             align: 'top',
-            font: { weight: 'bold' },
+            font: { weight: 'bold', size: 12 },
             formatter: (value: any) => (typeof value === 'number' ? value.toFixed(0) : value)
           }
         },
         scales: {
+          x: {
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'Estimation Range', font: { weight: 'bold', size: 12 } }
+          },
           y: {
             beginAtZero: true,
-            max: axisMax
+            max: axisMax,
+            ticks: { font: { weight: 'bold', size: 11 } },
+            title: { display: false, text: 'Frequency', font: { weight: 'bold', size: 12 } }
           }
         }
       }

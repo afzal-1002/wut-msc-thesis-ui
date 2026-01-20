@@ -38,7 +38,7 @@ export class AiPerformanceComparisonComponent implements OnInit {
       x: { grid: { display: false } },
       y: {
         beginAtZero: true,
-        title: { display: true, text: 'Avg response time (s)' },
+        title: { display: false, text: 'Avg response time (s)' },
         grid: { color: '#e5e7eb' }
       }
     }

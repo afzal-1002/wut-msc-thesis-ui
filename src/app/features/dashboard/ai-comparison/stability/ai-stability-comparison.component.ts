@@ -39,7 +39,7 @@ export class AiStabilityComparisonComponent implements OnInit {
       x: { grid: { display: false } },
       y: {
         beginAtZero: true,
-        title: { display: true, text: 'Std deviation (hours)' },
+        title: { display: false, text: 'Std deviation (hours)' },
         grid: { color: '#e5e7eb' }
       }
     }

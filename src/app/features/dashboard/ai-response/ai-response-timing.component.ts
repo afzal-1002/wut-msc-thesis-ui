@@ -34,7 +34,11 @@ export class AiResponseTimingComponent implements OnInit {
     responsive: true,
     plugins: {
       legend: { display: false },
-      title: { display: false },
+      title: {
+        display: false,
+        text: 'Average Response Time',
+        font: { size: 14, weight: 'bold' }
+      },
       datalabels: {
         anchor: 'end' as const,
         align: 'end' as const,
@@ -49,8 +53,17 @@ export class AiResponseTimingComponent implements OnInit {
       }
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      x: {
+        grid: { display: false },
+        ticks: { font: { weight: 'bold' as const, size: 11 } },
+        title: { display: false, text: 'AI Provider', font: { weight: 'bold' as const, size: 12 } }
+      },
+      y: {
+        beginAtZero: true,
+        grid: { color: '#eee' },
+        ticks: { font: { weight: 'bold' as const, size: 11 } },
+        title: { display: false, text: 'Response Time (s)', font: { weight: 'bold' as const, size: 12 } }
+      }
     }
   };
   barChartType = 'bar';
@@ -85,8 +98,15 @@ export class AiResponseTimingComponent implements OnInit {
   boxChartOptions = {
     responsive: true,
     plugins: {
-      legend: { display: true },
-      title: { display: false },
+      legend: {
+        display: false,
+        labels: { font: { weight: 'bold' as const, size: 11 } }
+      },
+      title: {
+        display: false,
+        text: 'Response Time Statistics (Min/Max/StdDev)',
+        font: { size: 14, weight: 'bold' as const }
+      },
       datalabels: {
         anchor: 'end' as const,
         align: 'end' as const,
@@ -101,8 +121,17 @@ export class AiResponseTimingComponent implements OnInit {
       }
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      x: {
+        grid: { display: false },
+        ticks: { font: { weight: 'bold' as const, size: 11 } },
+        title: { display: false, text: 'AI Provider', font: { weight: 'bold' as const, size: 12 } }
+      },
+      y: {
+        beginAtZero: true,
+        grid: { color: '#eee' },
+        ticks: { font: { weight: 'bold' as const, size: 11 } },
+        title: { display: false, text: 'Time (s)', font: { weight: 'bold' as const, size: 12 } }
+      }
     }
   };
   boxChartType = 'bar';
@@ -115,8 +144,15 @@ export class AiResponseTimingComponent implements OnInit {
   radarChartOptions = {
     responsive: true,
     plugins: {
-      legend: { display: true },
-      title: { display: false },
+      legend: {
+        display: false,
+        labels: { font: { weight: 'bold' as const, size: 11 } }
+      },
+      title: {
+        display: false,
+        text: 'Multi-Metric Response Analysis',
+        font: { size: 14, weight: 'bold' as const }
+      },
       datalabels: {
         color: '#222',
         font: { weight: 'bold' as const, size: 13 },
@@ -126,6 +162,12 @@ export class AiResponseTimingComponent implements OnInit {
           }
           return value;
         }
+      }
+    },
+    scales: {
+      r: {
+        beginAtZero: true,
+        ticks: { font: { weight: 'bold' as const, size: 10 } }
       }
     }
   };
@@ -139,8 +181,28 @@ export class AiResponseTimingComponent implements OnInit {
   lineChartOptions = {
     responsive: true,
     plugins: {
-      legend: { display: true },
-      title: { display: false }
+      legend: {
+        display: false,
+        labels: { font: { weight: 'bold' as const, size: 11 } }
+      },
+      title: {
+        display: false,
+        text: 'Response Time Trends',
+        font: { size: 14, weight: 'bold' as const }
+      },
+      datalabels: {
+        font: { weight: 'bold' as const, size: 11 }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { font: { weight: 'bold' as const, size: 11 } },
+        title: { display: false, text: 'Time', font: { weight: 'bold' as const, size: 12 } }
+      },
+      y: {
+        ticks: { font: { weight: 'bold' as const, size: 11 } },
+        title: { display: false, text: 'Response Time (s)', font: { weight: 'bold' as const, size: 12 } }
+      }
     }
   };
   lineChartType = 'line';

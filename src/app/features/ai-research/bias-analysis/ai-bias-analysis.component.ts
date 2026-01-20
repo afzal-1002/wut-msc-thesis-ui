@@ -38,12 +38,26 @@ export class AiBiasAnalysisComponent {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
+      title: {
+        display: false,
+        text: 'Mean Absolute Error (MAE) by Model',
+        font: { size: 14, weight: 'bold' }
+      },
       tooltip: { enabled: true },
       datalabels: this.datalabelsConfig
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#e2e8f0' } }
+      x: {
+        grid: { display: false },
+        ticks: { font: { weight: 'bold', size: 11 } },
+        title: { display: false, text: 'AI Provider', font: { weight: 'bold', size: 12 } }
+      },
+      y: {
+        beginAtZero: true,
+        grid: { color: '#e2e8f0' },
+        ticks: { font: { weight: 'bold', size: 11 } },
+        title: { display: false, text: 'Error Value', font: { weight: 'bold', size: 12 } }
+      }
     }
   };
 
@@ -52,8 +66,20 @@ export class AiBiasAnalysisComponent {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: 'bottom' },
-      tooltip: { enabled: true }
+      legend: {
+        position: 'bottom',
+        labels: { font: { weight: 'bold', size: 11 } }
+      },
+      title: {
+        display: false,
+        text: 'Error Metrics Breakdown',
+        font: { size: 14, weight: 'bold' }
+      },
+      tooltip: { enabled: true },
+      datalabels: {
+        font: { weight: 'bold', size: 11 },
+        formatter: (value: any) => (typeof value === 'number' ? value.toFixed(2) : value)
+      }
     }
   };
 

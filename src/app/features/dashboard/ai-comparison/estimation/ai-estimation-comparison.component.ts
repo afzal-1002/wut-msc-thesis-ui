@@ -38,7 +38,7 @@ export class AiEstimationComparisonComponent implements OnInit {
       x: { grid: { display: false } },
       y: {
         beginAtZero: true,
-        title: { display: true, text: 'Avg estimated hours' },
+        title: { display: false, text: 'Avg estimated hours' },
         grid: { color: '#e5e7eb' }
       }
     }

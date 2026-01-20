@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { AiEstimationsService } from '../../../services/ai/ai-estimations.service';
 import { Router } from '@angular/router';
 import { AiMetricsChartCardComponent } from './components/ai-metrics-chart-card/ai-metrics-chart-card.component';
+import { calculateYAxis, getYAxisFromDatasets } from '../../../shared/utils/chart-axis.utils';
 
 Chart.register(ChartDataLabels);
 
@@ -20,6 +21,54 @@ Chart.register(ChartDataLabels);
 export class AiMetricsComponent {
     providerBarType: 'bar' = 'bar';
     markdownPieType: 'pie' = 'pie';
+    
+    // Thesis chart tracking
+    showThesisOnly = false;
+    thesisCharts = {
+      'providerComparison': {
+        title: 'Provider Comparison',
+        recommended: true,
+        priority: 'Essential',
+        reason: 'Direct comparison of AI performance'
+      },
+      'estimationRange': {
+        title: 'Estimation Range',
+        recommended: true,
+        priority: 'Essential',
+        reason: 'Shows estimation accuracy & variance'
+      },
+      'stabilityBox': {
+        title: 'Stability Spread (Box Plot)',
+        recommended: true,
+        priority: 'Essential',
+        reason: 'Professional statistical analysis'
+      },
+      'dualMetricVariance': {
+        title: 'Dual Metric Variance',
+        recommended: true,
+        priority: 'Essential',
+        reason: 'Key trade-off insights'
+      },
+      'comparisonRadar': {
+        title: 'Multi-Criteria Radar',
+        recommended: true,
+        priority: 'Essential',
+        reason: 'Holistic comparison view'
+      },
+      'responseTime': {
+        title: 'Response Time',
+        recommended: false,
+        priority: 'Secondary',
+        reason: 'System efficiency'
+      },
+      'markdownPie': {
+        title: 'Markdown Distribution',
+        recommended: false,
+        priority: 'Optional',
+        reason: 'Feature analysis'
+      }
+    };
+
   providerBarData: { labels: string[]; datasets: Array<any> } = {
     labels: [],
     datasets: [
@@ -30,7 +79,7 @@ export class AiMetricsComponent {
         borderColor: ['#2563eb', '#b45309', '#2563eb', '#b45309'],
         borderWidth: 1.5,
         borderRadius: 0,
-        maxBarThickness: 28
+        maxBarThickness: 16
       }
     ]
   };
@@ -38,7 +87,11 @@ export class AiMetricsComponent {
     responsive: true,
     plugins: {
       legend: { display: false },
-      title: { display: false },
+      title: {
+        display: false,
+        text: 'Provider Comparison - Average Resolution Time',
+        font: { size: 14, weight: 'bold' }
+      },
       datalabels: {
         anchor: 'end' as const,
         align: 'end' as const,
@@ -53,8 +106,19 @@ export class AiMetricsComponent {
       }
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      x: {
+        grid: { display: false },
+        ticks: { font: { weight: 'bold', size: 11 } },
+        title: { display: false, text: 'AI Provider', font: { weight: 'bold', size: 12 } }
+      },
+      y: {
+        beginAtZero: true,
+        grid: { color: '#eee' },
+        ticks: { 
+          font: { weight: 'bold', size: 11 }
+        },
+        title: { display: false, text: 'Hours', font: { weight: 'bold', size: 12 } }
+      }
     }
   };
 
@@ -73,7 +137,16 @@ export class AiMetricsComponent {
   markdownPieOptions: ChartOptions<'pie'> = {
     responsive: true,
     plugins: {
-      legend: { display: true, position: 'top' },
+      legend: {
+        display: false,
+        position: 'top',
+        labels: { font: { weight: 'bold', size: 12 } }
+      },
+      title: {
+        display: false,
+        text: 'Markdown Output Distribution',
+        font: { size: 14, weight: 'bold' }
+      },
       datalabels: {
         color: '#222',
         font: { weight: 'bold' as const, size: 14 },
@@ -93,6 +166,11 @@ export class AiMetricsComponent {
     responsive: true,
     plugins: {
       legend: { display: false },
+      title: {
+        display: false,
+        text: 'Response Time Analysis',
+        font: { size: 14, weight: 'bold' }
+      },
       datalabels: {
         anchor: 'end',
         align: 'end',
@@ -102,8 +180,17 @@ export class AiMetricsComponent {
       }
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      x: {
+        grid: { display: false },
+        ticks: { font: { weight: 'bold', size: 11 } },
+        title: { display: false, text: 'AI Provider', font: { weight: 'bold', size: 12 } }
+      },
+      y: {
+        beginAtZero: true,
+        grid: { color: '#eee' },
+        ticks: { font: { weight: 'bold', size: 11 } },
+        title: { display: false, text: 'Time (seconds)', font: { weight: 'bold', size: 12 } }
+      }
     }
   };
   responseTimeBarType: 'bar' = 'bar';
@@ -112,7 +199,12 @@ export class AiMetricsComponent {
   estimationRangeBarOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
-      legend: { display: true, position: 'top' },
+      legend: { display: false, position: 'top', labels: { font: { weight: 'bold', size: 11 } } },
+      title: {
+        display: false,
+        text: 'Estimation Range Distribution',
+        font: { size: 14, weight: 'bold' }
+      },
       datalabels: {
         anchor: 'end',
         align: 'end',
@@ -122,8 +214,8 @@ export class AiMetricsComponent {
       }
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 11 } }, title: { display: false, text: 'Estimation Range', font: { weight: 'bold', size: 12 } } },
+      y: { beginAtZero: true, grid: { color: '#eee' }, ticks: { font: { weight: 'bold', size: 11 } }, title: { display: false, text: 'Count', font: { weight: 'bold', size: 12 } } }
     }
   };
   estimationRangeBarType: 'bar' = 'bar';
@@ -132,7 +224,12 @@ export class AiMetricsComponent {
   estimationTrendLineOptions: ChartOptions<'line'> = {
     responsive: true,
     plugins: {
-      legend: { display: true, position: 'top' },
+      legend: { display: false, position: 'top', labels: { font: { weight: 'bold', size: 11 } } },
+      title: {
+        display: false,
+        text: 'Estimation Trend Analysis',
+        font: { size: 14, weight: 'bold' }
+      },
       datalabels: {
         anchor: 'end',
         align: 'top',
@@ -142,8 +239,8 @@ export class AiMetricsComponent {
       }
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 11 } }, title: { display: false, text: 'Time Period', font: { weight: 'bold', size: 12 } } },
+      y: { beginAtZero: true, grid: { color: '#eee' }, ticks: { font: { weight: 'bold', size: 11 } }, title: { display: false, text: 'Estimation Score', font: { weight: 'bold', size: 12 } } }
     }
   };
   estimationTrendLineType: 'line' = 'line';
@@ -153,7 +250,12 @@ export class AiMetricsComponent {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: true, position: 'top' },
+      legend: { display: false, position: 'top', labels: { font: { weight: 'bold', size: 11 } } },
+      title: {
+        display: false,
+        text: 'Model Comparison Radar',
+        font: { size: 14, weight: 'bold' }
+      },
       datalabels: {
         color: '#111',
         font: { weight: 'bold', size: 11 },
@@ -165,7 +267,8 @@ export class AiMetricsComponent {
         beginAtZero: true,
         grid: { color: '#e5e7eb' },
         angleLines: { color: '#e5e7eb' },
-        pointLabels: { color: '#374151', font: { size: 11 } }
+        pointLabels: { color: '#374151', font: { weight: 'bold', size: 12 } },
+        ticks: { font: { weight: 'bold', size: 11 } }
       }
     }
   };
@@ -176,7 +279,12 @@ export class AiMetricsComponent {
   stabilityBoxBarOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
-      legend: { display: true, position: 'top' },
+      legend: { display: false, position: 'top', labels: { font: { weight: 'bold', size: 11 } } },
+      title: {
+        display: false,
+        text: 'Stability Analysis',
+        font: { size: 14, weight: 'bold' }
+      },
       datalabels: {
         anchor: 'end',
         align: 'end',
@@ -186,8 +294,8 @@ export class AiMetricsComponent {
       }
     },
     scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true, grid: { color: '#eee' } }
+      x: { grid: { display: false }, ticks: { font: { weight: 'bold', size: 11 } }, title: { display: false, text: 'AI Provider', font: { weight: 'bold', size: 12 } } },
+      y: { beginAtZero: true, grid: { color: '#eee' }, ticks: { font: { weight: 'bold', size: 11 } }, title: { display: false, text: 'Stability Score', font: { weight: 'bold', size: 12 } } }
     }
   };
   stabilityBoxBarType: 'bar' = 'bar';
@@ -480,6 +588,22 @@ export class AiMetricsComponent {
     return this.markdownDistribution.reduce((sum, m) => sum + m.value, 0) || 0;
   }
 
+  /**
+   * Update chart options with dynamic Y-axis based on actual data values
+   * Ensures max is one step beyond data AND all grid lines are visible
+   */
+  private updateChartYAxis(options: any, maxDataValue: number): void {
+    if (!options || !options.scales || !options.scales.y) {
+      return;
+    }
+    const yAxisConfig = this.getYAxisConfig([maxDataValue]);
+    options.scales.y.max = yAxisConfig.max;
+    options.scales.y.ticks = {
+      ...options.scales.y.ticks,
+      stepSize: yAxisConfig.stepSize
+    };
+  }
+
   // Build additional Chart.js datasets from current metricsResult
   private prepareCharts(): void {
     const metrics = this.asArray();
@@ -537,7 +661,7 @@ export class AiMetricsComponent {
           borderColor: ['#2563eb', '#b45309', '#2563eb', '#b45309'],
           borderWidth: 1.5,
           borderRadius: 0,
-          maxBarThickness: 28
+          maxBarThickness: 16
         }
       ]
     };
@@ -547,7 +671,11 @@ export class AiMetricsComponent {
         x: { grid: { display: false } },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax(avgResponseTimes)
+          max: this.getYAxisConfig(avgResponseTimes).max,
+          grid: { display: true },
+          ticks: {
+            stepSize: this.getYAxisConfig(avgResponseTimes).stepSize
+          }
         }
       },
       plugins: {
@@ -600,7 +728,7 @@ export class AiMetricsComponent {
           borderColor: '#2563eb',
           borderWidth: 1.5,
           borderRadius: 0,
-          maxBarThickness: 26
+          maxBarThickness: 14
         },
         {
           label: 'Avg hours',
@@ -609,7 +737,7 @@ export class AiMetricsComponent {
           borderColor: '#b45309',
           borderWidth: 1.5,
           borderRadius: 0,
-          maxBarThickness: 26
+          maxBarThickness: 14
         },
         {
           label: 'Max hours',
@@ -618,7 +746,7 @@ export class AiMetricsComponent {
           borderColor: '#c2410c',
           borderWidth: 1.5,
           borderRadius: 0,
-          maxBarThickness: 26
+          maxBarThickness: 14
         }
       ]
     };
@@ -628,11 +756,15 @@ export class AiMetricsComponent {
         x: { grid: { display: false } },
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax(rangeValues)
+          max: this.getYAxisConfig(rangeValues).max,
+          grid: { display: true },
+          ticks: {
+            stepSize: this.getYAxisConfig(rangeValues).stepSize
+          }
         }
       },
       plugins: {
-        legend: { display: true },
+        legend: { display: false },
         datalabels: {
           anchor: 'end',
           align: 'end',
@@ -696,7 +828,7 @@ export class AiMetricsComponent {
             borderColor: '#4b5563',
             borderWidth: 1.5,
             borderRadius: 0,
-            maxBarThickness: 24
+            maxBarThickness: 12
           },
           {
             label: 'Q1 (25%)',
@@ -705,7 +837,7 @@ export class AiMetricsComponent {
             borderColor: '#0369a1',
             borderWidth: 1.5,
             borderRadius: 0,
-            maxBarThickness: 24
+            maxBarThickness: 12
           },
           {
             label: 'Median (50%)',
@@ -714,7 +846,7 @@ export class AiMetricsComponent {
             borderColor: '#1d4ed8',
             borderWidth: 1.5,
             borderRadius: 0,
-            maxBarThickness: 24
+            maxBarThickness: 12
           },
           {
             label: 'Q3 (75%)',
@@ -723,7 +855,7 @@ export class AiMetricsComponent {
             borderColor: '#1d4ed8',
             borderWidth: 1.5,
             borderRadius: 0,
-            maxBarThickness: 24
+            maxBarThickness: 12
           },
           {
             label: 'Max hours',
@@ -732,7 +864,7 @@ export class AiMetricsComponent {
             borderColor: '#b91c1c',
             borderWidth: 1.5,
             borderRadius: 0,
-            maxBarThickness: 24
+            maxBarThickness: 12
           }
         ]
       };
@@ -742,11 +874,15 @@ export class AiMetricsComponent {
           x: { grid: { display: false } },
           y: {
             beginAtZero: true,
-            max: this.computeYAxisMax(boxAllValues)
+            max: this.getYAxisConfig(boxAllValues).max,
+            grid: { display: true },
+            ticks: {
+              stepSize: this.getYAxisConfig(boxAllValues).stepSize
+            }
           }
         },
         plugins: {
-          legend: { display: true },
+          legend: { display: false },
           datalabels: {
             anchor: 'end',
             align: 'end',
@@ -798,7 +934,7 @@ export class AiMetricsComponent {
       this.estimationTrendLineOptions = {
         responsive: true,
         plugins: {
-          legend: { display: true },
+          legend: { display: false },
           datalabels: {
             anchor: 'end',
             align: 'top',
@@ -814,7 +950,11 @@ export class AiMetricsComponent {
           x: { grid: { display: false } },
           y: {
             beginAtZero: true,
-            max: this.computeYAxisMax(trendValues)
+            max: this.getYAxisConfig(trendValues).max,
+            grid: { display: true },
+            ticks: {
+              stepSize: this.getYAxisConfig(trendValues).stepSize
+            }
           }
         }
       };
@@ -875,7 +1015,7 @@ export class AiMetricsComponent {
     this.comparisonRadarOptions = {
       responsive: true,
       plugins: {
-        legend: { display: true },
+        legend: { display: false },
         datalabels: {
           color: '#222',
           font: { weight: 'bold', size: 11 },
@@ -896,20 +1036,30 @@ export class AiMetricsComponent {
 
   // Utility: compute a nice Y-axis max with two extra units above the highest value
   private computeYAxisMax(values: number[]): number {
-    if (!values || !values.length) {
+    if (!values || values.length === 0) {
       return 1;
     }
-    const finiteVals = values.filter(v => Number.isFinite(v));
-    if (!finiteVals.length) {
+    const finiteVals = values.filter(v => Number.isFinite(v) && v > 0);
+    if (finiteVals.length === 0) {
       return 1;
     }
-    const rawMax = Math.max(...finiteVals, 0);
-    if (rawMax <= 0) {
-      return 2;
+    const maxValue = Math.max(...finiteVals);
+    return calculateYAxis(maxValue).max;
+  }
+
+  /**
+   * Get complete Y-axis configuration (max and stepSize) for a dataset
+   */
+  private getYAxisConfig(values: number[]): { max: number; stepSize: number } {
+    if (!values || values.length === 0) {
+      return { max: 1, stepSize: 1 };
     }
-    const ceil = Math.ceil(rawMax);
-    const even = ceil % 2 === 0 ? ceil : ceil + 1;
-    return even + 2;
+    const finiteVals = values.filter(v => Number.isFinite(v) && v > 0);
+    if (finiteVals.length === 0) {
+      return { max: 1, stepSize: 1 };
+    }
+    const maxValue = Math.max(...finiteVals);
+    return calculateYAxis(maxValue);
   }
 
   get markdownOnPercent(): number {
@@ -922,5 +1072,60 @@ export class AiMetricsComponent {
     if (!this.totalMarkdownRuns) return 0;
     const off = this.markdownDistribution.find((m) => m.label === 'Markdown OFF')?.value ?? 0;
     return (off / this.totalMarkdownRuns) * 100;
+  }
+
+  /**
+   * Toggle thesis-only view mode
+   */
+  toggleThesisMode(): void {
+    this.showThesisOnly = !this.showThesisOnly;
+    console.log(`📖 Thesis Mode: ${this.showThesisOnly ? 'ON' : 'OFF'}`);
+  }
+
+  /**
+   * Check if a chart should be visible in thesis mode
+   */
+  isChartVisibleInThesisMode(chartKey: string): boolean {
+    if (!this.showThesisOnly) return true;
+    const chart = this.thesisCharts[chartKey as keyof typeof this.thesisCharts];
+    return chart?.recommended ?? false;
+  }
+
+  /**
+   * Get thesis badge information for a chart
+   */
+  getThesisBadge(chartKey: string): { show: boolean; priority: string } {
+    const chart = this.thesisCharts[chartKey as keyof typeof this.thesisCharts];
+    return {
+      show: chart?.recommended ?? false,
+      priority: chart?.priority ?? 'N/A'
+    };
+  }
+
+  /**
+   * Export all recommended thesis charts as PNG images
+   * Note: Requires html2canvas library in production
+   */
+  exportThesisCharts(): void {
+    console.log('📥 Preparing to export thesis charts...');
+    const recommendedCharts = Object.entries(this.thesisCharts)
+      .filter(([_, config]) => config.recommended)
+      .map(([key, config]) => `${config.title} (${config.priority})`)
+      .join(', ');
+    
+    console.log(`✅ Ready to export: ${recommendedCharts}`);
+    console.log('💡 Tip: Use browser Print function (Ctrl+P) to save as PDF with all visible charts');
+  }
+
+  /**
+   * Get thesis chart statistics
+   */
+  getThesisStats(): { total: number; recommended: number; secondary: number; optional: number } {
+    return {
+      total: Object.keys(this.thesisCharts).length,
+      recommended: Object.values(this.thesisCharts).filter(c => c.recommended && c.priority === 'Essential').length,
+      secondary: Object.values(this.thesisCharts).filter(c => c.priority === 'Secondary').length,
+      optional: Object.values(this.thesisCharts).filter(c => c.priority === 'Optional').length
+    };
   }
 }

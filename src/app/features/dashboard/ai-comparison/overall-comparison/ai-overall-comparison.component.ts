@@ -4,6 +4,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { AiEstimationsService } from '../../../../services/ai/ai-estimations.service';
 import { Chart, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { calculateYAxis } from '../../../../shared/utils/chart-axis.utils';
 
 let overallPluginsRegistered = false;
 if (typeof window !== 'undefined' && !overallPluginsRegistered) {
@@ -46,7 +47,7 @@ export class AiOverallComparisonComponent implements OnInit {
       x: { grid: { display: false } },
       y: {
         beginAtZero: true,
-        title: { display: true, text: 'Avg response time (s)' },
+        title: { display: false, text: 'Avg response time (s)' },
         grid: { color: '#e5e7eb' }
       }
     }
@@ -81,7 +82,7 @@ export class AiOverallComparisonComponent implements OnInit {
       y: {
         beginAtZero: true,
         position: 'left',
-        title: { display: true, text: 'Stability score / std dev' }
+        title: { display: false, text: 'Stability score / std dev' }
       }
     }
   };
@@ -115,7 +116,7 @@ export class AiOverallComparisonComponent implements OnInit {
       y: {
         beginAtZero: true,
         max: 3,
-        title: { display: true, text: 'Engineering relevance score' }
+        title: { display: false, text: 'Engineering relevance score' }
       }
     }
   };
@@ -338,10 +339,19 @@ export class AiOverallComparisonComponent implements OnInit {
   }
 
   private computeYAxisMax(values: number[]): number {
-    const data = values.filter(v => Number.isFinite(v));
+    const data = values.filter(v => Number.isFinite(v) && v > 0);
     if (!data.length) return 1;
-    const rawMax = Math.max(...data);
-    const ceil = Math.ceil(rawMax);
-    return ceil + 2;
+    const maxValue = Math.max(...data);
+    return calculateYAxis(maxValue).max;
+  }
+
+  /**
+   * Get complete Y-axis configuration (max and stepSize) for a dataset
+   */
+  private getYAxisConfig(values: number[]): { max: number; stepSize: number } {
+    const data = values.filter(v => Number.isFinite(v) && v > 0);
+    if (!data.length) return { max: 1, stepSize: 1 };
+    const maxValue = Math.max(...data);
+    return calculateYAxis(maxValue);
   }
 }

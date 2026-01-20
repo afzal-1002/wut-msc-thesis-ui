@@ -4,6 +4,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { Chart, ChartOptions } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { AiEstimationsService } from '../../../../services/ai/ai-estimations.service';
+import { calculateYAxis } from '../../../../shared/utils/chart-axis.utils';
 
 let pluginsRegistered = false;
 if (typeof window !== 'undefined' && !pluginsRegistered) {
@@ -51,17 +52,28 @@ export class AiOverallComparisonComponent implements OnInit {
         responsive: true,
         plugins: {
             legend: { display: false },
+            title: {
+                display: false,
+                text: 'Performance - Average Response Time',
+                font: { size: 14, weight: 'bold' }
+            },
             datalabels: {
                 anchor: 'end',
                 align: 'end',
+                font: { weight: 'bold', size: 11 },
                 formatter: v => `${Number(v).toFixed(2)}s`
             }
         },
         scales: {
-            x: { grid: { display: false } },
+            x: {
+                grid: { display: false },
+                ticks: { font: { weight: 'bold', size: 11 } },
+                title: { display: false, text: 'AI Model', font: { weight: 'bold', size: 12 } }
+            },
             y: {
                 beginAtZero: true,
-                title: { display: true, text: 'Response time (s)' }
+                ticks: { font: { weight: 'bold', size: 11 } },
+                title: { display: false, text: 'Response time (s)', font: { weight: 'bold', size: 12 } }
             }
         }
     };
@@ -70,21 +82,33 @@ export class AiOverallComparisonComponent implements OnInit {
     estimationGroupedOptions: ChartOptions<'bar'> = {
         responsive: true,
         plugins: {
-            legend: { position: 'bottom' },
+            legend: {
+                position: 'bottom',
+                labels: { font: { weight: 'bold', size: 11 } }
+            },
+            title: {
+                display: false,
+                text: 'Estimation Behavior - Min/Avg/Max Hours',
+                font: { size: 14, weight: 'bold' }
+            },
             datalabels: {
                 anchor: 'end',
                 align: 'end',
+                font: { weight: 'bold', size: 11 },
                 formatter: v => `${Number(v).toFixed(2)}h`
             }
         },
         scales: {
             x: {
                 grid: { display: false },
-                offset: true
+                offset: true,
+                ticks: { font: { weight: 'bold', size: 11 } },
+                title: { display: false, text: 'AI Model', font: { weight: 'bold', size: 12 } }
             },
             y: {
                 beginAtZero: true,
-                title: { display: true, text: 'Estimated resolution time (hours)' }
+                ticks: { font: { weight: 'bold', size: 11 } },
+                title: { display: false, text: 'Estimated resolution time (hours)', font: { weight: 'bold', size: 12 } }
             }
         }
     };
@@ -92,8 +116,17 @@ export class AiOverallComparisonComponent implements OnInit {
     stabilityPieOptions: ChartOptions<'pie'> = {
         responsive: true,
         plugins: {
-            legend: { position: 'bottom' },
+            legend: {
+                position: 'bottom',
+                labels: { font: { weight: 'bold', size: 11 } }
+            },
+            title: {
+                display: false,
+                text: 'Model Stability Distribution',
+                font: { size: 14, weight: 'bold' }
+            },
             datalabels: {
+                font: { weight: 'bold', size: 11 },
                 formatter: v => Number(v).toFixed(2)
             }
         }
@@ -103,29 +136,42 @@ export class AiOverallComparisonComponent implements OnInit {
     contentBarOptions: ChartOptions<'bar'> = {
         responsive: true,
         plugins: {
-            legend: { position: 'bottom' },
+            legend: {
+                position: 'bottom',
+                labels: { font: { weight: 'bold', size: 11 } }
+            },
+            title: {
+                display: false,
+                text: 'Content Quality - Engineering Relevance & Response Length',
+                font: { size: 14, weight: 'bold' }
+            },
             datalabels: {
                 anchor: 'end',
                 align: 'end',
+                font: { weight: 'bold', size: 11 },
                 formatter: v => Number(v).toFixed(2)
             }
         },
         scales: {
             x: {
                 grid: { display: false },
-                offset: true
+                offset: true,
+                ticks: { font: { weight: 'bold', size: 11 } },
+                title: { display: false, text: 'AI Model', font: { weight: 'bold', size: 12 } }
             },
             y: {
                 beginAtZero: true,
                 max: 3,
                 position: 'left',
-                title: { display: true, text: 'Engineering relevance score' }
+                ticks: { font: { weight: 'bold', size: 11 } },
+                title: { display: false, text: 'Engineering relevance score', font: { weight: 'bold', size: 12 } }
             },
             y1: {
                 beginAtZero: true,
                 position: 'right',
                 grid: { drawOnChartArea: false },
-                title: { display: true, text: 'Avg response length (k tokens)' }
+                ticks: { font: { weight: 'bold', size: 11 } },
+                title: { display: false, text: 'Avg response length (k tokens)', font: { weight: 'bold', size: 12 } }
             }
         }
     };
@@ -133,11 +179,23 @@ export class AiOverallComparisonComponent implements OnInit {
     overallRadarOptions: ChartOptions<'radar'> = {
         responsive: true,
         plugins: {
-            legend: { position: 'bottom' },
+            legend: {
+                position: 'bottom',
+                labels: { font: { weight: 'bold', size: 11 } }
+            },
+            title: {
+                display: false,
+                text: 'Overall Model Comparison Radar',
+                font: { size: 14, weight: 'bold' }
+            },
             datalabels: { display: false }
         },
         scales: {
-            r: { beginAtZero: true, suggestedMax: 1 }
+            r: {
+                beginAtZero: true,
+                suggestedMax: 1,
+                ticks: { font: { weight: 'bold', size: 10 } }
+            }
         }
     };
 

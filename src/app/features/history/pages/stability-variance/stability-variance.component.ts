@@ -98,7 +98,9 @@ export class StabilityVarianceComponent implements OnInit {
           backgroundColor: 'rgba(54, 162, 235, 0.8)',
           borderColor: 'rgba(54, 162, 235, 1)',
           borderWidth: 1,
-          borderRadius: 5
+          borderRadius: 5,
+          barPercentage: 0.35,
+          categoryPercentage: 0.5
         },
         {
           label: 'Response Time Variance (Seconds)',
@@ -106,7 +108,9 @@ export class StabilityVarianceComponent implements OnInit {
           backgroundColor: 'rgba(75, 192, 192, 0.8)',
           borderColor: 'rgba(75, 192, 192, 1)',
           borderWidth: 1,
-          borderRadius: 5
+          borderRadius: 5,
+          barPercentage: 0.35,
+          categoryPercentage: 0.5
         }
       ]
     };
@@ -143,7 +147,7 @@ export class StabilityVarianceComponent implements OnInit {
           beginAtZero: true,
           max: axisMax,
           ticks: { font: { size: 11 } },
-          title: { display: true, text: 'Variance Value', font: { size: 12, weight: 'bold' } }
+          title: { display: false, text: 'Variance Value', font: { size: 12, weight: 'bold' } }
         },
         x: {
           ticks: { font: { size: 12, weight: 'bold' } }
@@ -235,7 +239,7 @@ export class StabilityVarianceComponent implements OnInit {
       indexAxis: 'y' as const,
       plugins: {
         legend: {
-          display: true,
+          display: false,
           position: 'bottom',
           labels: { padding: 15, font: { size: 13 } }
         },
@@ -258,7 +262,7 @@ export class StabilityVarianceComponent implements OnInit {
           beginAtZero: true,
           max: axisMax,
           ticks: { font: { size: 11 } },
-          title: { display: true, text: 'Stability Index (Higher = More Stable)', font: { size: 12, weight: 'bold' } }
+          title: { display: false, text: 'Stability Index (Higher = More Stable)', font: { size: 12, weight: 'bold' } }
         },
         y: {
           ticks: { font: { size: 12, weight: 'bold' } }
@@ -312,12 +316,12 @@ export class StabilityVarianceComponent implements OnInit {
           position: 'bottom' as const,
           min: 0,
           ticks: { font: { size: 11 } },
-          title: { display: true, text: 'Estimation Variance (Hours)', font: { size: 12, weight: 'bold' } }
+          title: { display: false, text: 'Estimation Variance (Hours)', font: { size: 12, weight: 'bold' } }
         },
         y: {
           min: 0,
           ticks: { font: { size: 11 } },
-          title: { display: true, text: 'Response Time Variance (Seconds)', font: { size: 12, weight: 'bold' } }
+          title: { display: false, text: 'Response Time Variance (Seconds)', font: { size: 12, weight: 'bold' } }
         }
       }
     };

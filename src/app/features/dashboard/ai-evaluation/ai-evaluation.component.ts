@@ -10,6 +10,7 @@ import { AiEvalByModelComponent } from './by-model/ai-eval-by-model.component';
 import { AiEvalFeatureImpactComponent } from './feature-impact/ai-eval-feature-impact.component';
 import { AiEvalStabilityComponent } from './stability/ai-eval-stability.component';
 import { AiEvaluationControlsComponent } from './controls/ai-evaluation-controls.component';
+import { calculateYAxis } from '../../../shared/utils/chart-axis.utils';
 
 @Component({
   selector: 'app-ai-evaluation',
@@ -373,7 +374,7 @@ export class AiEvaluationComponent {
         }
       },
       plugins: {
-        legend: { display: true },
+        legend: { display: false },
         datalabels: {
           anchor: 'end',
           align: 'end',
@@ -515,7 +516,7 @@ export class AiEvaluationComponent {
     this.stabilityLineOptions = {
       responsive: true,
       plugins: {
-        legend: { display: true },
+        legend: { display: false },
         datalabels: {
           anchor: 'end',
           align: 'top',
@@ -585,7 +586,7 @@ export class AiEvaluationComponent {
     this.stabilityRadarOptions = {
       responsive: true,
       plugins: {
-        legend: { display: true },
+        legend: { display: false },
         datalabels: {
           color: '#222',
           font: { weight: 'bold', size: 11 },
@@ -710,7 +711,7 @@ export class AiEvaluationComponent {
         }
       },
       plugins: {
-        legend: { display: true },
+        legend: { display: false },
         datalabels: {
           anchor: 'end',
           align: 'end',
@@ -959,7 +960,7 @@ export class AiEvaluationComponent {
         }
       },
       plugins: {
-        legend: { display: true },
+        legend: { display: false },
         datalabels: {
           anchor: 'end',
           align: 'end',
@@ -1189,12 +1190,12 @@ export class AiEvaluationComponent {
       responsive: true,
       scales: {
         x: {
-          title: { display: true, text: 'Avg response time (s)' },
+          title: { display: false, text: 'Avg response time (s)' },
           beginAtZero: true,
           ticks: { font: { weight: 'bold' } }
         },
         y: {
-          title: { display: true, text: 'Engineering relevance score' },
+          title: { display: false, text: 'Engineering relevance score' },
           beginAtZero: true,
           max: yAxisMax,
           ticks: { font: { weight: 'bold' } }
@@ -1545,12 +1546,12 @@ export class AiEvaluationComponent {
       responsive: true,
       scales: {
         x: {
-          title: { display: true, text: 'Avg response time (s)' },
+          title: { display: false, text: 'Avg response time (s)' },
           beginAtZero: true,
           ticks: { font: { weight: 'bold' } }
         },
         y: {
-          title: { display: true, text: 'Engineering relevance' },
+          title: { display: false, text: 'Engineering relevance' },
           beginAtZero: true,
           max: yAxisMax,
           ticks: { font: { weight: 'bold' } }
@@ -1642,7 +1643,15 @@ export class AiEvaluationComponent {
     this.estimationRangeStackedOptions = {
       responsive: true,
       scales: {
-        y: { stacked: true, beginAtZero: true, max: yMax },
+        y: { 
+          stacked: true, 
+          beginAtZero: true, 
+          max: yMax,
+          grid: { display: true, drawBorder: true },
+          ticks: {
+            stepSize: this.getYAxisConfig(totals).stepSize
+          }
+        },
         x: { stacked: true }
       },
       plugins: {
@@ -1836,22 +1845,32 @@ export class AiEvaluationComponent {
     return Number.isFinite(num) ? num : 0;
   }
 
-  // Utility: compute a nice Y-axis max with two extra units above the highest value
+  // Utility: compute a nice Y-axis max with dynamic step sizing
   private computeYAxisMax(values: number[]): number {
-    if (!values || !values.length) {
+    if (!values || values.length === 0) {
       return 1;
     }
-    const finiteVals = values.filter(v => Number.isFinite(v));
-    if (!finiteVals.length) {
+    const finiteVals = values.filter(v => Number.isFinite(v) && v > 0);
+    if (finiteVals.length === 0) {
       return 1;
     }
-    const rawMax = Math.max(...finiteVals, 0);
-    if (rawMax <= 0) {
-      return 2;
+    const maxValue = Math.max(...finiteVals);
+    return calculateYAxis(maxValue).max;
+  }
+
+  /**
+   * Get complete Y-axis configuration (max and stepSize) for a dataset
+   */
+  private getYAxisConfig(values: number[]): { max: number; stepSize: number } {
+    if (!values || values.length === 0) {
+      return { max: 1, stepSize: 1 };
     }
-    const ceil = Math.ceil(rawMax);
-    const even = ceil % 2 === 0 ? ceil : ceil + 1;
-    return even + 2;
+    const finiteVals = values.filter(v => Number.isFinite(v) && v > 0);
+    if (finiteVals.length === 0) {
+      return { max: 1, stepSize: 1 };
+    }
+    const maxValue = Math.max(...finiteVals);
+    return calculateYAxis(maxValue);
   }
 
   // Utility: compute Y-axis max by extending the data maximum by 2 increments
