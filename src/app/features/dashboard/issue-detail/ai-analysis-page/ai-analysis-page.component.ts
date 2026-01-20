@@ -232,20 +232,21 @@ Alternatively, if you see no AI comments above, this may be a backend issue that
         }
       },
       error: (err: any) => {
-        // If getAIComments fails, still show helpful error
-        console.warn('⚠️ Could not check existing AI comments:', err);
-        this.isUpdating = false;
-        this.errorMessage = `⚠️ Unable to Check for Existing Comments: The system couldn't verify if AI comments already exist.
+        // If endpoint returns 404 or other error, just proceed with creation
+        // The backend will catch duplicates during POST if they exist
+        console.warn('⚠️ Could not check existing AI comments (endpoint may not be implemented):', err?.status);
+        
+        if (err?.status === 404) {
+          console.log('📝 AI comments endpoint returned 404 - proceeding with comment creation');
+          this.createNewComment(issueKey, request);
+        } else {
+          this.isUpdating = false;
+          this.errorMessage = `⚠️ Connection Error: Could not verify existing comments.
 
-Error details: ${err?.error?.message || err?.message || 'Unknown error'}
+Error: ${err?.status} ${err?.statusText || ''}
 
-What to do:
-1️⃣  Check the issue details page manually
-2️⃣  Look for any comments with "🤖 AI Analysis" header
-3️⃣  If you see AI comments, delete them first
-4️⃣  Then try adding a new comment
-
-If you don't see any AI comments but keep getting this error, it's a backend issue.`;
+This is likely a temporary backend issue. Try again in a moment.`;
+        }
       }
     });
   }
