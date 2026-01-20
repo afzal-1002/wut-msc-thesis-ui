@@ -1130,12 +1130,16 @@ export class AiEvaluationComponent {
     }
 
     this.qualityVsSpeedScatterData = { datasets };
+    // Extract X values from datasets for max calculation
+    const xValues = datasets.flatMap(ds => ds.data.map((d: any) => d.x));
+    const xAxisMax = this.computeXAxisMax(xValues);
     this.qualityVsSpeedScatterOptions = {
       responsive: true,
       scales: {
         x: {
           title: { display: true, text: 'Avg response time (s)' },
-          beginAtZero: true
+          beginAtZero: true,
+          max: xAxisMax
         },
         y: {
           title: { display: true, text: 'Engineering relevance score' },
@@ -1469,12 +1473,16 @@ export class AiEvaluationComponent {
     }
 
     this.speedQualityBubbleData = { datasets };
+    // Extract X values from datasets for max calculation
+    const xValues = datasets.flatMap(ds => ds.data.map((d: any) => d.x));
+    const xAxisMax = this.computeXAxisMax(xValues);
     this.speedQualityBubbleOptions = {
       responsive: true,
       scales: {
         x: {
           title: { display: true, text: 'Avg response time (s)' },
-          beginAtZero: true
+          beginAtZero: true,
+          max: xAxisMax
         },
         y: {
           title: { display: true, text: 'Engineering relevance' },
@@ -1776,6 +1784,30 @@ export class AiEvaluationComponent {
     const ceil = Math.ceil(rawMax);
     const even = ceil % 2 === 0 ? ceil : ceil + 1;
     return even + 2;
+  }
+
+  // Utility: compute X-axis max by extending the data maximum by 2 increments
+  private computeXAxisMax(values: number[]): number {
+    if (!values || !values.length) {
+      return 2;
+    }
+    const finiteVals = values.filter(v => Number.isFinite(v));
+    if (!finiteVals.length) {
+      return 2;
+    }
+    const rawMax = Math.max(...finiteVals, 0);
+    if (rawMax <= 0) {
+      return 2;
+    }
+    // Determine step size: typically 0.2 for small numbers
+    let stepSize = 0.2;
+    if (rawMax > 10) {
+      stepSize = 1;
+    } else if (rawMax > 5) {
+      stepSize = 0.5;
+    }
+    // Add 2 increments to the max value
+    return rawMax + (2 * stepSize);
   }
 
   get stabilityIssueLabel(): string {
