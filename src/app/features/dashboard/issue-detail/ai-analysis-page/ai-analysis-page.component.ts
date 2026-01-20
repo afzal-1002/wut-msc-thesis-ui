@@ -200,7 +200,37 @@ export class AiAnalysisPageComponent implements OnInit {
     this.updateSuccessMessage = '';
     this.errorMessage = '';
 
-    // Use createComment to add new comment with selected content
+    // First check if AI comments already exist
+    this.jiraCommentService.getAIComments(issueKey).subscribe({
+      next: (existingComments: any[]) => {
+        if (existingComments && existingComments.length > 0) {
+          // AI comments already exist
+          this.isUpdating = false;
+          this.errorMessage = `⚠️ AI Analysis Comments Already Exist: This issue already has ${existingComments.length} AI analysis comment(s).
+
+To add a new comment:
+1️⃣  Go back to the issue details page
+2️⃣  Delete the existing AI analysis comment(s) first
+3️⃣  Return here and try adding a new comment
+
+Or modify your current AI Analysis comment by selecting different sections.`;
+        } else {
+          // No existing AI comments, safe to add new one
+          this.createNewComment(issueKey, request);
+        }
+      },
+      error: (err: any) => {
+        // If getAIComments fails, try to create anyway
+        console.warn('Could not check existing AI comments, attempting to create:', err);
+        this.createNewComment(issueKey, request);
+      }
+    });
+  }
+
+  /**
+   * Helper method to create a new Jira comment
+   */
+  private createNewComment(issueKey: string, request: JiraCommentUpdateRequest): void {
     this.jiraCommentService.createComment(issueKey, request).subscribe({
       next: () => {
         this.isUpdating = false;
@@ -221,11 +251,11 @@ export class AiAnalysisPageComponent implements OnInit {
           this.errorMessage = `⚠️ Comment Conflict: A similar AI analysis comment already exists on this issue.
           
 To resolve:
-1️⃣  Select DIFFERENT sections or content from the analysis
-2️⃣  Or go back to the issue and delete the existing AI analysis comment first
-3️⃣  Then try adding a new comment with modified content
+1️⃣  Go back to the issue and delete the existing AI analysis comment
+2️⃣  Return here and try adding the comment again
+3️⃣  Or select DIFFERENT sections from the analysis
 
-If you keep getting this error, the AI analysis content is too similar to an existing comment.`;
+If the issue has multiple AI comments, delete all of them and try again.`;
         } else {
           this.errorMessage = err?.error?.message || err?.message || 'Failed to add comment.';
         }
