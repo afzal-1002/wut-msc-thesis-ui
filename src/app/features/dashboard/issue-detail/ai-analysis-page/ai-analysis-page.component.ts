@@ -218,7 +218,14 @@ export class AiAnalysisPageComponent implements OnInit {
         
         // Handle specific error cases
         if (err?.status === 409) {
-          this.errorMessage = '⚠️ Comment conflict: A similar comment already exists. Please modify your selection and try again.';
+          this.errorMessage = `⚠️ Comment Conflict: A similar AI analysis comment already exists on this issue.
+          
+To resolve:
+1️⃣  Select DIFFERENT sections or content from the analysis
+2️⃣  Or go back to the issue and delete the existing AI analysis comment first
+3️⃣  Then try adding a new comment with modified content
+
+If you keep getting this error, the AI analysis content is too similar to an existing comment.`;
         } else {
           this.errorMessage = err?.error?.message || err?.message || 'Failed to add comment.';
         }
