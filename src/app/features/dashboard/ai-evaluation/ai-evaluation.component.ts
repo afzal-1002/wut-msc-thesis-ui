@@ -1482,6 +1482,20 @@ export class AiEvaluationComponent {
         }
       },
       plugins: {
+        datalabels: {
+          anchor: 'center',
+          align: 'center',
+          color: '#fff',
+          font: { weight: 'bold', size: 11 },
+          formatter: (value: any, context: any) => {
+            if (!value || typeof value !== 'object') {
+              return '';
+            }
+            const x = typeof value.x === 'number' ? value.x.toFixed(2) : '0.00';
+            const y = typeof value.y === 'number' ? value.y.toFixed(2) : '0.00';
+            return `x: ${x}\ny: ${y}`;
+          }
+        },
         tooltip: {
           callbacks: {
             label: (context: any) => {
