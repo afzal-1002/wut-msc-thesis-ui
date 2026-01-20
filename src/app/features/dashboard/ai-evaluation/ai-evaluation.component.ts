@@ -1040,7 +1040,7 @@ export class AiEvaluationComponent {
         {
           label: 'Avg estimated hours',
           data: values,
-          backgroundColor: ['#3b82f6', '#22c55e'],
+          backgroundColor: ['#3b82f6', '#f97316'],
           borderRadius: 8,
           maxBarThickness: 32
         }
@@ -1051,7 +1051,7 @@ export class AiEvaluationComponent {
       scales: {
         y: {
           beginAtZero: true,
-          max: this.computeYAxisMax(values)
+          max: this.computeYAxisMaxWithIncrements(values)
         }
       },
       plugins: {
@@ -1812,16 +1812,28 @@ export class AiEvaluationComponent {
     if (rawMax <= 0) {
       return 2;
     }
-    // Determine step size: typically 0.2 for small numbers
+    
+    // Determine appropriate step size based on magnitude
     let stepSize = 0.2;
-    if (rawMax > 10) {
-      stepSize = 1;
+    if (rawMax > 100) {
+      stepSize = 25;
+    } else if (rawMax > 50) {
+      stepSize = 10;
+    } else if (rawMax > 20) {
+      stepSize = 5;
+    } else if (rawMax > 10) {
+      stepSize = 2;
     } else if (rawMax > 5) {
+      stepSize = 1;
+    } else if (rawMax > 2) {
       stepSize = 0.5;
     }
-    // Add 2 increments to the max value
-    return rawMax + (2 * stepSize);
+    
+    // Round up to next step and add 1 more increment
+    const roundedUp = Math.ceil(rawMax / stepSize) * stepSize;
+    return roundedUp + stepSize;
   }
+
 
   get stabilityIssueLabel(): string {
     return (this.evaluationResult?.issueKey ?? this.stabilityIssueKey ?? '').trim();
