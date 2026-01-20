@@ -626,12 +626,8 @@ export class AiEvaluationComponent {
         datalabels: {
           color: '#222',
           font: { weight: 'bold', size: 12 },
-          formatter: (value: any, context: any) => {
-            const label = context?.chart?.data?.labels?.[context.dataIndex] as string | undefined;
+          formatter: (value: any) => {
             const num = typeof value === 'number' ? value : Number(value);
-            if (label && label.toLowerCase().includes('runs')) {
-              return Number.isFinite(num) ? Math.round(num).toString() : value;
-            }
             return Number.isFinite(num) ? num.toFixed(2) : value;
           }
         }

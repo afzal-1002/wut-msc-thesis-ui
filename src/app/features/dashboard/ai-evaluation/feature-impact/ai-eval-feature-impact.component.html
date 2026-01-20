@@ -1,5 +1,5 @@
 <div class="content-wrapper">
-  <figure class="chart-card" *ngIf="markdownEnabledPieData || markdownDisabledPieData">
+  <figure class="chart-card chart-card--pie" *ngIf="markdownEnabledPieData || markdownDisabledPieData">
     <h5 class="chart-title">Markdown Feature Impact</h5>
     <p class="chart-subtitle">Enabled vs disabled distributions.</p>
     <div class="d-flex flex-wrap justify-content-center gap-4">
@@ -8,14 +8,14 @@
               [data]="markdownEnabledPieData"
               [options]="markdownPieOptions"
               [type]="markdownPieType"
-              style="max-width: 200px;"></canvas>
+              style="max-width: 150px;"></canvas>
 
       <canvas *ngIf="markdownDisabledPieData"
               baseChart
               [data]="markdownDisabledPieData"
               [options]="markdownPieOptions"
               [type]="markdownPieType"
-              style="max-width: 200px;"></canvas>
+              style="max-width: 150px;"></canvas>
     </div>
     <figcaption class="chart-caption">
       Figure: Total runs and average analysis time when Markdown is toggled.
