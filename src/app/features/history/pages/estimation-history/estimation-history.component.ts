@@ -203,7 +203,7 @@ export class EstimationHistoryComponent implements OnInit {
   private initPerformanceChart(): void {
     const data = this.performanceMetricsData.map(d => Math.round(d.avgAnalysisTime * 100) / 100);
     const maxValue = Math.max(...data);
-    const axisMax = maxValue * 1.2; // Add 20% padding
+    const axisMax = this.computeYAxisMaxWithIncrements([maxValue]);
     
     this.performanceChartConfig = {
       type: 'bar',
@@ -264,7 +264,7 @@ export class EstimationHistoryComponent implements OnInit {
     
     const allValues = [...withExplanation, ...withoutExplanation];
     const maxValue = Math.max(...allValues);
-    const axisMax = maxValue * 1.2; // Add 20% padding
+    const axisMax = this.computeYAxisMaxWithIncrements(allValues);
 
     this.explanationImpactChartConfig = {
       type: 'bar',
@@ -326,7 +326,7 @@ export class EstimationHistoryComponent implements OnInit {
     
     const allValues = [...withPrompt, ...withoutPrompt];
     const maxValue = Math.max(...allValues);
-    const axisMax = maxValue * 1.2; // Add 20% padding
+    const axisMax = this.computeYAxisMaxWithIncrements(allValues);
 
     this.promptImpactChartConfig = {
       type: 'bar',
@@ -437,6 +437,40 @@ export class EstimationHistoryComponent implements OnInit {
         }
       }
     };
+  }
+
+  private computeYAxisMaxWithIncrements(values: number[]): number {
+    if (!values || !values.length) {
+      return 2;
+    }
+    const finiteVals = values.filter(v => Number.isFinite(v));
+    if (!finiteVals.length) {
+      return 2;
+    }
+    const rawMax = Math.max(...finiteVals, 0);
+    if (rawMax <= 0) {
+      return 2;
+    }
+    
+    // Determine appropriate step size based on magnitude
+    let stepSize = 0.2;
+    if (rawMax > 100) {
+      stepSize = 25;
+    } else if (rawMax > 50) {
+      stepSize = 10;
+    } else if (rawMax > 20) {
+      stepSize = 5;
+    } else if (rawMax > 10) {
+      stepSize = 2;
+    } else if (rawMax > 5) {
+      stepSize = 1;
+    } else if (rawMax > 2) {
+      stepSize = 0.5;
+    }
+    
+    // Round up to next step and add 1 more increment
+    const roundedUp = Math.ceil(rawMax / stepSize) * stepSize;
+    return roundedUp + stepSize;
   }
 
   goBack(): void {
