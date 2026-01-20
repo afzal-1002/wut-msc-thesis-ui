@@ -123,7 +123,16 @@ export class EstimationHistoryComponent implements OnInit {
   private initEstimationComparisonChart(): void {
     const data = this.estimationComparisonData.map(d => Math.round(d.avgEstimation * 100) / 100);
     const maxValue = Math.max(...data);
-    const axisMax = maxValue * 1.2; // Add 20% padding
+    const axisMax = this.computeYAxisMaxWithIncrements([maxValue]);
+    
+    // Define colors for different providers
+    const colorMap: { [key: string]: string } = {
+      'GEMINI': '#3b82f6',
+      'DeepSeek': '#f97316',
+      'DEEPSEEK': '#f97316'
+    };
+    
+    const colors = this.estimationComparisonData.map(d => colorMap[d.provider] || '#8b5cf6');
     
     this.estimationComparisonChartConfig = {
       type: 'bar',
@@ -133,8 +142,8 @@ export class EstimationHistoryComponent implements OnInit {
           {
             label: 'Average Estimation (hours)',
             data: data,
-            backgroundColor: '#3b82f6',
-            borderColor: '#1e40af',
+            backgroundColor: colors,
+            borderColor: colors.map(c => this.darkenColor(c, 0.2)),
             borderWidth: 1,
             barPercentage: 0.5,
             categoryPercentage: 0.6
@@ -205,6 +214,15 @@ export class EstimationHistoryComponent implements OnInit {
     const maxValue = Math.max(...data);
     const axisMax = this.computeYAxisMaxWithIncrements([maxValue]);
     
+    // Define colors for different providers
+    const colorMap: { [key: string]: string } = {
+      'GEMINI': '#8b5cf6',
+      'DeepSeek': '#f97316',
+      'DEEPSEEK': '#f97316'
+    };
+    
+    const colors = this.performanceMetricsData.map(d => colorMap[d.provider] || '#06b6d4');
+    
     this.performanceChartConfig = {
       type: 'bar',
       data: {
@@ -213,8 +231,8 @@ export class EstimationHistoryComponent implements OnInit {
           {
             label: 'Avg Analysis Time (sec)',
             data: data,
-            backgroundColor: '#8b5cf6',
-            borderColor: '#6d28d9',
+            backgroundColor: colors,
+            borderColor: colors.map(c => this.darkenColor(c, 0.2)),
             borderWidth: 1,
             barPercentage: 0.5,
             categoryPercentage: 0.6
@@ -471,6 +489,16 @@ export class EstimationHistoryComponent implements OnInit {
     // Round up to next step and add 1 more increment
     const roundedUp = Math.ceil(rawMax / stepSize) * stepSize;
     return roundedUp + stepSize;
+  }
+
+  private darkenColor(color: string, amount: number): string {
+    const usePound = color[0] === '#';
+    const col = usePound ? color.slice(1) : color;
+    const num = parseInt(col, 16);
+    const r = Math.max(0, (num >> 16) - Math.round(255 * amount));
+    const g = Math.max(0, (num >> 8 & 0x00FF) - Math.round(255 * amount));
+    const b = Math.max(0, (num & 0x0000FF) - Math.round(255 * amount));
+    return (usePound ? '#' : '') + (0x1000000 + r * 0x10000 + g * 0x100 + b).toString(16).slice(1);
   }
 
   goBack(): void {
