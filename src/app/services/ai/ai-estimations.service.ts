@@ -7,98 +7,94 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class AiEstimationsService {
-  private baseEvaluationUrl = `${environment.apiUrl}/api/wut/ai/evaluation`;
-  private baseMetricsUrl = `${environment.apiUrl}/api/wut/ai/metrics`;
-  private baseComparisonUrl = `${environment.apiUrl}/api/wut/ai/comparison`;
-
   constructor(private http: HttpClient) {}
 
   // Evaluation endpoints
   getEvaluationByIssue(issueKey: string): Observable<any> {
-    return this.http.get<any>(`${this.baseEvaluationUrl}/issue/${issueKey}`);
+    return this.http.get<any>(`/api/wut/ai/evaluation/issue/${issueKey}`);
   }
 
   getEvaluationByModel(provider: string): Observable<any> {
-    return this.http.get<any>(`${this.baseEvaluationUrl}/model/${provider}`);
+    return this.http.get<any>(`/api/wut/ai/evaluation/model/${provider}`);
   }
 
   getModelComparison(): Observable<any> {
-    return this.http.get<any>(`${this.baseEvaluationUrl}/compare`);
+    return this.http.get<any>('/api/wut/ai/evaluation/compare');
   }
 
   getFeatureImpact(): Observable<any> {
-    return this.http.get<any>(`${this.baseEvaluationUrl}/features`);
+    return this.http.get<any>('/api/wut/ai/evaluation/features');
   }
 
   getStabilityAnalysis(issueKey: string): Observable<any> {
-    return this.http.get<any>(`${this.baseEvaluationUrl}/stability/${issueKey}`);
+    return this.http.get<any>(`/api/wut/ai/evaluation/stability/${issueKey}`);
   }
 
   // Metrics endpoints
   getMetricsByIssue(issueKey: string): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/issue/${issueKey}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/issue/${issueKey}`);
   }
 
   getMetricsByProvider(provider: string): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/provider/${provider}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/provider/${provider}`);
   }
 
   getMetricsByHoursLte(hours: number): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/hours/lessthan-equal/${hours}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/hours/lessthan-equal/${hours}`);
   }
 
   getMetricsByHoursGt(hours: number): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/hours/greaterthan/${hours}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/hours/greaterthan/${hours}`);
   }
 
   getMetricsByDaysLte(days: number): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/days/lessthan-equal/${days}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/days/lessthan-equal/${days}`);
   }
 
   getMetricsByDaysGt(days: number): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/days/greaterthan/${days}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/days/greaterthan/${days}`);
   }
 
   getMetricsByMarkdown(enabled: boolean): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/markdown/${enabled}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/markdown/${enabled}`);
   }
 
   getMetricsByExplanation(enabled: boolean): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/explanation/${enabled}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/explanation/${enabled}`);
   }
 
   // Comparison endpoints (Gemini vs DeepSeek etc.)
   getFullModelComparison(): Observable<any> {
-    return this.http.get<any>(`${this.baseComparisonUrl}/full`);
+    return this.http.get<any>('/api/wut/ai/comparison/full');
   }
 
   getPerformanceComparison(): Observable<any> {
-    return this.http.get<any>(`${this.baseComparisonUrl}/performance`);
+    return this.http.get<any>('/api/wut/ai/comparison/performance');
   }
 
   getEstimationComparison(): Observable<any> {
-    return this.http.get<any>(`${this.baseComparisonUrl}/estimation`);
+    return this.http.get<any>('/api/wut/ai/comparison/estimation');
   }
 
   getContentQualityComparison(): Observable<any> {
-    return this.http.get<any>(`${this.baseComparisonUrl}/content`);
+    return this.http.get<any>('/api/wut/ai/comparison/content');
   }
 
   getStabilityComparison(): Observable<any> {
-    return this.http.get<any>(`${this.baseComparisonUrl}/stability`);
+    return this.http.get<any>('/api/wut/ai/comparison/stability');
   }
 
   getComparisonSummary(): Observable<any> {
-    return this.http.get<any>(`${this.baseComparisonUrl}/summary`);
+    return this.http.get<any>('/api/wut/ai/comparison/summary');
   }
 
   // Response time comparison endpoints (performance tab details)
   getResponseTimeStats(): Observable<any> {
-	return this.http.get<any>(`${this.baseComparisonUrl}/response-time`);
+    return this.http.get<any>('/api/wut/ai/comparison/response-time');
   }
 
   getResponseTimeSummary(): Observable<any> {
-	return this.http.get<any>(`${this.baseComparisonUrl}/response-time/summary`);
+    return this.http.get<any>('/api/wut/ai/comparison/response-time/summary');
   }
 
   // Dashboard endpoints - AI Evaluations
@@ -108,7 +104,7 @@ export class AiEstimationsService {
    * @returns Array of issues with estimation data
    */
   getAllIssuesMetrics(): Observable<any> {
-    return this.http.get<any>(`${this.baseEvaluationUrl}/issues`);
+    return this.http.get<any>('/api/wut/ai/evaluation/issues');
   }
 
   /**
@@ -117,7 +113,7 @@ export class AiEstimationsService {
    * @returns Summary statistics and analysis
    */
   getEvaluationSummary(): Observable<any> {
-    return this.http.get<any>(`${this.baseEvaluationUrl}/summary`);
+    return this.http.get<any>('/api/wut/ai/evaluation/summary');
   }
 
   // =====================================================
@@ -129,7 +125,7 @@ export class AiEstimationsService {
    * @returns List of summary objects for all issues
    */
   getAllIssuesSummary(): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/summary/issues`);
+    return this.http.get<any>('/api/wut/ai/metrics/summary/issues');
   }
 
   /**
@@ -138,7 +134,7 @@ export class AiEstimationsService {
    * @returns Summary object for the issue
    */
   getIssueSummary(issueKey: string): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/summary/issue/${issueKey}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/summary/issue/${issueKey}`);
   }
 
   /**
@@ -147,7 +143,7 @@ export class AiEstimationsService {
    * @returns Summary object for the provider
    */
   getProviderSummary(provider: string): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/summary/provider/${provider}`);
+    return this.http.get<any>(`/api/wut/ai/metrics/summary/provider/${provider}`);
   }
 
   /**
@@ -155,7 +151,7 @@ export class AiEstimationsService {
    * @returns Overall metrics summary object
    */
   getOverallSummary(): Observable<any> {
-    return this.http.get<any>(`${this.baseMetricsUrl}/summary/overall`);
+    return this.http.get<any>('/api/wut/ai/metrics/summary/overall');
   }
 
   /**
@@ -164,6 +160,6 @@ export class AiEstimationsService {
    * @returns Array of all metrics records with issue keys
    */
   getAllMetrics(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseMetricsUrl}`);
+    return this.http.get<any[]>('/api/wut/ai/metrics');
   }
 }

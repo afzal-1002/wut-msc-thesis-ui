@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IssueService {
-  private apiUrl = `${environment.apiUrl}/api/jira`;
-
   constructor(private http: HttpClient) {}
 
   // Get all issues by project key
@@ -25,7 +22,7 @@ export class IssueService {
     
     const params = { baseUrl };
     return this.http.post<any>(
-      `${this.apiUrl}/issues/search/project/issues`,
+      '/api/jira/issues/search/project/issues',
       payload,
       { params }
     );
@@ -35,7 +32,7 @@ export class IssueService {
   getIssueByKey(issueKey: string, baseUrl: string): Observable<any> {
     const params = { baseUrl };
     return this.http.get<any>(
-      `${this.apiUrl}/issues/${issueKey}`,
+      `/api/jira/issues/${issueKey}`,
       { params }
     );
   }
@@ -44,7 +41,7 @@ export class IssueService {
   createIssue(issueData: any, baseUrl: string): Observable<any> {
     const params = { baseUrl };
     return this.http.post<any>(
-      `${this.apiUrl}/issues`,
+      '/api/jira/issues',
       issueData,
       { params }
     );
@@ -54,7 +51,7 @@ export class IssueService {
   updateIssue(issueKey: string, issueData: any, baseUrl: string): Observable<any> {
     const params = { baseUrl };
     return this.http.put<any>(
-      `${this.apiUrl}/issues/${issueKey}`,
+      `/api/jira/issues/${issueKey}`,
       issueData,
       { params }
     );
@@ -64,7 +61,7 @@ export class IssueService {
   deleteIssue(issueKey: string, baseUrl: string): Observable<any> {
     const params = { baseUrl };
     return this.http.delete(
-      `${this.apiUrl}/issues/${issueKey}`,
+      `/api/jira/issues/${issueKey}`,
       { params, responseType: 'text' }
     ) as Observable<string>;
   }
@@ -73,7 +70,7 @@ export class IssueService {
   getIssueByIdOrKey(issueIdOrKey: string, baseUrl: string): Observable<any> {
     const params = { baseUrl };
     return this.http.get<any>(
-      `${this.apiUrl}/issues/${issueIdOrKey}`,
+      `/api/jira/issues/${issueIdOrKey}`,
       { params }
     );
   }
@@ -82,7 +79,7 @@ export class IssueService {
   getIssueWithSelectedFields(issueKey: string, fieldsCsv: string, baseUrl: string): Observable<any> {
     const params = { baseUrl, fields: fieldsCsv };
     return this.http.get<any>(
-      `${this.apiUrl}/issues/${issueKey}`,
+      `/api/jira/issues/${issueKey}`,
       { params }
     );
   }
@@ -91,7 +88,7 @@ export class IssueService {
   bulkFetchIssuesByIdOrKey(issueIdsOrKeys: string[], baseUrl: string): Observable<any> {
     const params = { baseUrl };
     return this.http.post<any>(
-      `${this.apiUrl}/issues/bulk-fetch`,
+      '/api/jira/issues/bulk-fetch',
       { issueIdsOrKeys },
       { params }
     );
@@ -101,27 +98,25 @@ export class IssueService {
   getChangelog(issueIdOrKey: string, baseUrl: string): Observable<any> {
     const params = { baseUrl };
     return this.http.get<any>(
-      `${this.apiUrl}/issues/${issueIdOrKey}/changelog`,
+      `/api/jira/issues/${issueIdOrKey}/changelog`,
       { params }
     );
   }
 
   // Delete a comment from an issue
   deleteIssueComment(issueKey: string, commentId: string, baseUrl: string): Observable<any> {
-    const wutCommentUrl = `${environment.apiUrl}/api/wut/jira/comment`;
     const params = { baseUrl };
     return this.http.delete(
-      `${wutCommentUrl}/${issueKey}/${commentId}`,
+      `/api/wut/jira/comment/${issueKey}/${commentId}`,
       { params, responseType: 'text' }
     ) as Observable<string>;
   }
 
   // Update a Jira comment body
   updateIssueComment(issueKey: string, commentId: string, payload: any, baseUrl: string): Observable<any> {
-    const wutCommentUrl = `${environment.apiUrl}/api/wut/jira/comment`;
     const params = { baseUrl };
     return this.http.put<any>(
-      `${wutCommentUrl}/${issueKey}/${commentId}`,
+      `/api/wut/jira/comment/${issueKey}/${commentId}`,
       payload,
       { params }
     );
@@ -131,7 +126,7 @@ export class IssueService {
   assignIssue(issueIdOrKey: string, accountId: string, baseUrl: string): Observable<any> {
     const params = { baseUrl };
     return this.http.put<any>(
-      `${this.apiUrl}/issues/${issueIdOrKey}/assignee`,
+      `/api/jira/issues/${issueIdOrKey}/assignee`,
       { accountId },
       { params }
     );
@@ -148,7 +143,7 @@ export class IssueService {
     };
     const params = { baseUrl };
     return this.http.post<any>(
-      `${this.apiUrl}/issues/search`,
+      '/api/jira/issues/search',
       payload,
       { params }
     );

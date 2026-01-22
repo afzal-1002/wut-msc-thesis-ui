@@ -4,10 +4,6 @@ import { Observable } from 'rxjs';
 import { AiIssueAnalysis } from '../../models/interface/ai-response.interface';
 import { AiIssueAnalysisOptions, AiChatRequest, DeepSeekChatPayload } from '../../models/interface/ai-analysis-options.interface';
 
-// Note: backend base URL for AI models is separate (port 8084).
-// In production you may want to proxy this via environment.apiUrl instead.
-const AI_BASE_URL = 'http://localhost:8084';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -21,14 +17,14 @@ export class AiModelService {
     const { issueKey, markdown, explanation, includeAttachment } = options;
 
     const basePath = includeAttachment
-      ? `/api/wut/model/gemini/generate-with-attachment/${issueKey}`
-      : `/api/wut/model/gemini/generate/${issueKey}`;
+      ? `/gemini/generate-with-attachment/${issueKey}`
+      : `/gemini/generate/${issueKey}`;
 
     const params = new HttpParams()
       .set('markdown', String(markdown))
       .set('explanation', String(explanation));
 
-    return this.http.get<AiIssueAnalysis>(`${AI_BASE_URL}${basePath}`, { params });
+    return this.http.get<AiIssueAnalysis>(`/api/wut/model${basePath}`, { params });
   }
 
   /**
@@ -36,7 +32,7 @@ export class AiModelService {
    * refined later once the backend contract is finalized.
    */
   geminiChat(request: AiChatRequest): Observable<any> {
-    const url = `${AI_BASE_URL}/api/wut/model/gemini/chat`;
+    const url = '/api/wut/model/gemini/chat';
     return this.http.post<any>(url, {
       message: request.message,
       markdown: request.markdown,
@@ -49,7 +45,7 @@ export class AiModelService {
    */
   deepSeekGenerate(message: string): Observable<string> {
     const params = new HttpParams().set('message', message);
-    return this.http.get(`${AI_BASE_URL}/api/wut/model/deepseek/generate`, {
+    return this.http.get('/api/wut/model/deepseek/generate', {
       params,
       responseType: 'text'
     });
@@ -59,7 +55,7 @@ export class AiModelService {
    * DeepSeek chat endpoint with full payload control.
    */
   deepSeekChat(payload: DeepSeekChatPayload): Observable<any> {
-    const url = `${AI_BASE_URL}/api/wut/model/deepseek/chat`;
+    const url = '/api/wut/model/deepseek/chat';
     return this.http.post<any>(url, payload);
   }
 
@@ -74,7 +70,7 @@ export class AiModelService {
       .set('explanation', String(explanation));
 
     return this.http.get<AiIssueAnalysis>(
-      `${AI_BASE_URL}/api/wut/model/deepseek/issue/${issueKey}`,
+      `/api/wut/model/deepseek/issue/${issueKey}`,
       { params }
     );
   }

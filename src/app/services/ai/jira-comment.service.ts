@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
 
 export interface JiraCommentVisibility {
   type: string;
@@ -30,8 +29,6 @@ export interface JiraCommentUpdateRequest {
   providedIn: 'root'
 })
 export class JiraCommentService {
-  private apiUrl = `${environment.apiUrl}/api/wut/jira/comment`;
-
   constructor(private http: HttpClient) {}
 
   /**
@@ -39,7 +36,7 @@ export class JiraCommentService {
    * POST is used for both create and update operations
    */
   updateFullComment(issueKey: string, request: JiraCommentUpdateRequest): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${issueKey}`, request).pipe(
+    return this.http.post<any>(`/api/wut/jira/comment/${issueKey}`, request).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('❌ Failed to update/create Jira comment:', error);
         return throwError(() => error);
@@ -51,7 +48,7 @@ export class JiraCommentService {
    * Create a new Jira comment
    */
   createComment(issueKey: string, request: JiraCommentUpdateRequest): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${issueKey}`, request);
+    return this.http.post<any>(`/api/wut/jira/comment/${issueKey}`, request);
   }
 
   /**
@@ -59,7 +56,7 @@ export class JiraCommentService {
    * This helps check if an AI comment already exists
    */
   getAIComments(issueKey: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/${issueKey}/ai-comments`);
+    return this.http.get<any>(`/api/wut/jira/comment/${issueKey}/ai-comments`);
   }
 
   /**
@@ -67,6 +64,6 @@ export class JiraCommentService {
    * NOTE: This requires backend implementation of PUT endpoint
    */
   updateCommentById(issueKey: string, commentId: string, request: JiraCommentUpdateRequest): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${issueKey}/${commentId}`, request);
+    return this.http.put<any>(`/api/wut/jira/comment/${issueKey}/${commentId}`, request);
   }
 }

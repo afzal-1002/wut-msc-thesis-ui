@@ -1,14 +1,9 @@
 {
-  "/api/wut/ai": {
-    "target": "http://localhost:8084",
-    "secure": false,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  },
   "/api": {
     "target": "http://localhost:9000",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
-  }
+  },
+  "comment": "Backend URL - see src/config/ngrok.config.ts for centralized configuration. Update localBackend there if needed."
 }

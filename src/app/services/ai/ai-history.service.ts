@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
 
 export interface EstimationHistoryRecord {
   issueKey: string;
@@ -18,11 +17,9 @@ export interface EstimationHistoryRecord {
   providedIn: 'root'
 })
 export class AiHistoryService {
-  private baseUrl = `${environment.apiUrl}/api/wut/ai/history`;
-
   constructor(private http: HttpClient) {}
 
   getEstimationHistory(): Observable<EstimationHistoryRecord[]> {
-    return this.http.get<EstimationHistoryRecord[]>(`${this.baseUrl}/estimations`);
+    return this.http.get<EstimationHistoryRecord[]>('/api/wut/ai/history/estimations');
   }
 }

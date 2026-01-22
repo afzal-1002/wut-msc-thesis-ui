@@ -1,4 +1,6 @@
+import { getApiUrl } from '../config/ngrok.config';
+
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4200'
+  apiUrl: ''  // Use relative paths for all API calls
 };
